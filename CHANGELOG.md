@@ -8,46 +8,67 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### Added
+_No unreleased changes._
 
-- Cookie-based bilingual i18n (`NEXT_LOCALE` cookie) with `en` and `th` dictionaries under `src/dictionaries/`.
-- `LanguageSwitcher` floating flag toggle (🇺🇸 EN / 🇹🇭 TH) with `router.refresh()` for instant server re-render.
-- `LocaleProvider`, `getDictionary()`, and typed `Dictionary` helpers for server and client localization.
-- Bilingual `Menu` and `MenuItem` schema fields (`nameEn`/`nameTh`, `descriptionEn`/`descriptionTh`).
-- Prisma migration `20250622140000_bilingual_menu_fields`.
-- Wi-Fi gate "Skip & View Menu" bypass with locked Wi-Fi banner and re-open trigger on the public menu.
-- `currency` and `language` fields on `Restaurant` model with tenant settings dropdowns (USD, THB, EUR, GBP / English, Thai).
-- `src/lib/locale.ts` utility for validated currency and language options plus dynamic price formatting.
-- Responsive menu item image rendering with loading skeleton and broken-image fallback in `MenuList`.
-- Prisma migration `20250622120000_add_restaurant_locale`.
+---
+
+## [0.2.0] - 2026-06-23
 
 ### Added
 
-- Super-admin `/admin/leads` page with customer email table and CSV export.
-- Super-admin `/admin/restaurants` registry with activate, deactivate, and permanent delete.
+- Super-admin **Customer Emails** page at `/admin/leads` with guest email table and **Export CSV** download.
+- Super-admin **Restaurant Registry** at `/admin/restaurants` with activate, deactivate, and permanent delete.
 - `Restaurant.isActive` flag — deactivated venues hide public menu and block Wi-Fi capture.
+- Tenant **Private Feedback** page at `/dashboard/feedback` — each restaurant sees only its own guest complaints.
+- Shared `FeedbackList` component for consistent feedback table rendering.
+- Live **Resend** email delivery with mobile-responsive HTML review template (Loved it / Could be better buttons).
+- Configurable review follow-up window via `REVIEW_EMAIL_MIN_AGE_MINUTES` and `REVIEW_EMAIL_MAX_AGE_MINUTES` env vars.
+- Cookie-based bilingual i18n (`NEXT_LOCALE` cookie) with English and Thai dictionaries.
+- `LanguageSwitcher` floating flag toggle with instant server re-render.
+- `LocaleProvider`, `getDictionary()`, and typed dictionary helpers.
+- Bilingual menu schema: `nameEn`/`nameTh`, `descriptionEn`/`descriptionTh` on menus and items.
+- Wi-Fi gate **Skip & View Menu** bypass with locked Wi-Fi banner and re-open link.
+- Restaurant **currency** and **language** settings (USD, THB, EUR, GBP / English, Thai).
+- Dynamic price formatting based on restaurant currency and guest locale.
+- Responsive menu item images with loading skeleton and broken-image fallback.
+- Cursor rule to always push completed work to origin (`.cursor/rules/git-push.mdc`).
+- Deep code review document at `docs/CODE_REVIEW.md`.
 
 ### Changed
 
-- Re-enabled `/admin/restaurants` (previously redirected to overview).
-- Private guest feedback now lives on each tenant dashboard at `/dashboard/feedback` instead of super-admin routes.
-- Removed super-admin Restaurants and Feedback pages; old URLs redirect to `/admin`.
-- Review follow-up cron window temporarily set to **50–70 minutes** (~1 hour) for testing; override via `REVIEW_EMAIL_MIN_AGE_MINUTES` / `REVIEW_EMAIL_MAX_AGE_MINUTES` (production target was 23–25 hours).
-- Replaced mock mailer with live Resend SDK delivery and a mobile-responsive HTML review template.
-- Cron review job now isolates per-lead send failures and only marks leads as emailed after successful delivery.
-- Wi-Fi locked banner uses inline reopen link copy aligned with skip-gate UX.
-- `MenuManager` and menu server actions now capture and persist English and Thai menu content.
-- `MenuList` renders localized menu copy from cookie locale with dynamic currency formatting.
-- Wi-Fi unlock API skips duplicate `CustomerLead` creation when email is already registered for the same restaurant while still returning credentials.
-- Refactored `/admin` layout shell to a rigid `flex h-screen` structure with independent main content scrolling and `w-64 shrink-0` desktop sidebar.
-- Rebuilt `AdminSidebar` with slate-based active states, Lucide icons, and a mobile overlay drawer (removed bottom nav that caused layout shift).
-- Standardized admin data tables with overflow-safe wrappers, uppercase slate headers, and consistent `px-6 py-4` row spacing.
-- Re-architected admin overview metrics grid (`sm:grid-cols-2 lg:grid-cols-4`) with explicit Tailwind color tokens.
-- Updated feedback rating badges to emerald (4–5), amber (3), and rose (1–2) tones.
-- Refactored tenant `/dashboard` layout shell to match admin flex structure with independent scrolling main viewport.
-- Rebuilt `DashboardSidebar` with Lucide icons, slate active states, and mobile overlay drawer (removed bottom nav).
-- Reconstructed `SettingsForm` into section cards with responsive `md:grid-cols-2` field grids, focus rings, and loading spinner on save.
-- Polished `MenuQrCode` with centered preview card, clipboard-style link utility, and responsive download button.
+- Product README rewritten as a non-technical feature guide for owners, guests, and operators.
+- Private guest feedback moved from super-admin to each tenant dashboard.
+- Super-admin sidebar: Overview, Restaurants, Customer Emails (feedback monitor removed from admin).
+- `/admin/feedback` redirects to `/admin` overview.
+- Review follow-up cron window temporarily set to **50–70 minutes** for testing (production target: 23–25 hours / 1380–1500 minutes via env).
+- Upgraded Resend SDK from v4 to v6.
+- Cron review job isolates per-lead send failures; marks leads emailed only after successful delivery.
+- Wi-Fi unlock API skips duplicate lead creation for returning guest emails while still returning credentials.
+- Refactored admin and tenant dashboard layouts: rigid `flex h-screen` shell, `w-64` sidebar, independent main scroll.
+- Rebuilt admin and tenant sidebars with Lucide icons, slate active states, and mobile overlay drawers (removed bottom nav).
+- Standardized admin data tables with overflow-safe wrappers and consistent row spacing.
+- Admin overview metrics grid (`sm:grid-cols-2 lg:grid-cols-4`) with explicit color tokens.
+- Feedback rating badges: emerald (4–5), amber (3), rose (1–2).
+- Reconstructed tenant `SettingsForm` into section cards with responsive field grids.
+- Polished `MenuQrCode` with centered preview and download button.
+- Docker build hardened for low-resource Coolify hosts: webpack build, BuildKit caches, separate prod-deps stage, fewer runner layers.
+- `.dockerignore` expanded to exclude `.cursor`, assets, and image files from build context.
+
+### Fixed
+
+- Duplicate Wi-Fi lead rows when same guest email submits twice (application-level dedup before create).
+- `SettingsForm` missing `cn` import (pre-i18n build failure).
+- i18n split: client-safe `i18n.ts` vs server-only `i18n-server.ts` to prevent `next/headers` in client bundle.
+
+### Security
+
+- Documented known gaps in `docs/CODE_REVIEW.md` (cron secret fail-open, Wi-Fi IDOR, feedback spam, cron race, seed wipe risk).
+
+### Migrations
+
+- `20250622120000_add_restaurant_locale` — `currency`, `language` on Restaurant.
+- `20250622140000_bilingual_menu_fields` — bilingual menu columns.
+- `20250623000000_add_restaurant_is_active` — `isActive` on Restaurant.
 
 ---
 
@@ -55,57 +76,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Initial Next.js 16 App Router project with TypeScript and Tailwind CSS 4.
-- Prisma 7 schema: `User`, `Restaurant`, `Menu`, `MenuItem`, `CustomerLead`, `Feedback` with `SUPERADMIN` / `TENANT` roles.
-- Prisma client singleton with `@prisma/adapter-pg` for PostgreSQL.
-- Public menu page at `/menu/[slug]` with blurred menu preview and Wi-Fi gate overlay.
-- Wi-Fi unlock API at `POST /api/lead/unlock-wifi` (email validation, lead capture, credential response).
-- Smart review router at `/review/[leadId]` with Google redirect and internal feedback form.
-- Review cron endpoint at `/api/cron/send-reviews` (23–25 hour lead window, `CRON_SECRET` protection).
-- Feedback API at `POST /api/feedback`.
-- NextAuth.js v5 credentials authentication with JWT sessions and role in session token.
-- Tenant registration server action (creates user + restaurant with auto slug).
-- Tenant dashboard: overview metrics, menu management, settings with QR code generator.
-- Super admin dashboard at `/admin` with platform overview, restaurant registry, and global feedback monitor.
-- Middleware role guards for `/dashboard/*` and `/admin/*` routes.
-- Database seed script (`prisma/seed.ts`) with Green Bistro Coffee sample tenant and super admin user.
-- Manual SQL seed fallback (`prisma/seed-manual.sql`) for Coolify PostgreSQL console.
-- Initial Prisma migration (`20250622000000_init`).
-- Multi-stage production `Dockerfile` with Next.js `output: "standalone"`.
-- `.dockerignore` and `.env.example` for deployment configuration.
-- Marketing landing page at `/` with hero, how-it-works, features, pricing, and footer sections.
-- `lucide-react` icon integration across landing and dashboard surfaces.
-- Shared UI primitives: `Button`, `Input`, `Textarea`, `Badge`, `Card`, `FormAlert`.
-- `PublicMenuExperience` client wrapper to unlock menu after Wi-Fi submission.
+- Initial MenuHub platform on Next.js App Router with TypeScript and Tailwind CSS.
+- Database models: User, Restaurant, Menu, MenuItem, CustomerLead, Feedback.
+- Roles: `SUPERADMIN` (platform operator) and `TENANT` (restaurant owner).
+- Public menu page at `/menu/[slug]` with Wi-Fi gate overlay and lead capture.
+- Wi-Fi unlock endpoint: email validation, lead save, credential response.
+- Smart review router at `/review/[leadId]`: Google redirect for happy guests, private form for unhappy.
+- Review cron endpoint with 23–25 hour lead window and bearer token protection.
+- Feedback submission endpoint for internal negative reviews.
+- Credentials authentication with JWT sessions and role in token.
+- Tenant self-registration: creates user + restaurant with auto-generated slug.
+- Tenant dashboard: overview metrics, menu management, settings with QR code.
+- Super admin dashboard: platform overview, restaurant registry, global feedback monitor.
+- Middleware role guards for `/dashboard/*` and `/admin/*`.
+- Database seed: Green Bistro Coffee sample tenant + super admin user.
+- Manual SQL seed fallback for container PostgreSQL console.
+- Initial database migration.
+- Multi-stage production Docker image with standalone output.
+- Marketing landing page: hero, how-it-works, features, pricing, footer.
+- Shared UI primitives: Button, Input, Textarea, Badge, Card, FormAlert.
+- `PublicMenuExperience` client wrapper for post-Wi-Fi menu unlock.
 - Sticky horizontal category navigation with scroll spy on public menu.
-- Mobile-responsive tenant and super admin navigation (drawer + bottom bar).
-- QR code download component for tenant settings ("Print Station").
-- `CHANGELOG.md` and comprehensive `README.md` project documentation.
+- Mobile-responsive tenant and super admin navigation.
+- QR code download component for tenant settings (Print Station).
+- `CHANGELOG.md` and project documentation.
 
 ### Changed
 
-- Replaced default Next.js skeleton homepage with premium MenuHub marketing landing page.
-- Global UI refactor: slate/zinc design system, micro-shadows, `transition-all duration-200` interactions.
-- Wi-Fi gate upgraded to frosted-glass overlay with iOS-style credential card and copy success animation.
-- Menu list redesigned as card grid with fade-in animations and availability badges.
-- Auth pages updated with gradient backgrounds, icon inputs, and fixed-height error alerts.
-- Metric cards redesigned with icon placeholders and uniform height alignment.
-- Super admin zone styled with indigo accent to distinguish from tenant dashboard.
-- Admin tables enhanced with hover rows, star rating badges, and improved column layout.
-- Review feedback form upgraded with interactive star buttons and mobile-friendly textarea.
-- `db:seed` script updated to invoke `tsx` via explicit Node path for container compatibility.
-- Docker runner stage copies `tsx` and Prisma tooling for in-container migrate/seed operations.
+- Replaced default Next.js homepage with MenuHub marketing landing page.
+- Global UI refactor: slate/zinc design system, micro-shadows, smooth transitions.
+- Wi-Fi gate: frosted-glass overlay, iOS-style credential card, copy animation.
+- Menu list: card grid with fade-in animations and availability badges.
+- Auth pages: gradient backgrounds, icon inputs, fixed-height error alerts.
+- Metric cards: icon placeholders and uniform height.
+- Super admin zone: indigo accent to distinguish from tenant dashboard.
+- Admin tables: hover rows, star rating badges, improved columns.
+- Review feedback form: interactive star buttons, mobile-friendly textarea.
+- Docker runner stage includes database migrate/seed tooling.
 - Root layout metadata updated to MenuHub branding.
-- `globals.css` updated with premium light theme, fade-in animation, and Geist font stack.
+- Global CSS: premium light theme, fade-in animation, Geist font stack.
 
 ### Fixed
 
-- Prisma 7 client initialization requiring explicit PostgreSQL driver adapter.
-- NextAuth session types extended with `userId`, `restaurantId`, and `role` fields.
-- Sign-out button server action isolated to prevent Prisma bundling into client components.
-- Super admin users redirected away from tenant dashboard; tenants blocked from `/admin`.
-- Menu blur state now clears after successful Wi-Fi unlock.
-- Production container `prisma: not found` and `tsx: not found` errors during seed (Docker tooling + manual SQL fallback documented).
+- Database client initialization with PostgreSQL driver adapter.
+- Auth session types extended with userId, restaurantId, and role.
+- Sign-out action isolated to prevent database client in client bundle.
+- Super admin redirected from tenant dashboard; tenants blocked from admin.
+- Menu blur clears after successful Wi-Fi unlock.
+- Production container seed/migrate tooling (`tsx`, `prisma` not found) — Docker fix + manual SQL documented.
 
-[Unreleased]: https://github.com/majidorc/resturant/compare/v0.1.0...HEAD
+---
+
+[Unreleased]: https://github.com/majidorc/resturant/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/majidorc/resturant/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/majidorc/resturant/releases/tag/v0.1.0

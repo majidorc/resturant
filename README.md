@@ -1,245 +1,160 @@
 # MenuHub
 
-Premium multi-tenant SaaS platform for restaurants: digital QR menus, Wi-Fi lead capture, automated review follow-ups, and smart Google review routing.
+Turn every table scan into a guest email, a Wi-Fi unlock, and a Google review — without awkward asks at the counter.
 
-Built with Next.js (App Router), TypeScript, Tailwind CSS, Prisma ORM, PostgreSQL, and NextAuth.js. Production deployments use a Docker standalone build optimized for Coolify.
+MenuHub is a restaurant marketing system. Each venue gets its own digital menu, Wi-Fi lead capture, automated follow-up emails, and smart routing that sends happy guests to Google and unhappy guests to private feedback.
 
----
-
-## Functional Architecture
-
-| Surface | Route(s) | Description |
-|---------|----------|-------------|
-| **Marketing Landing Page** | `/` | Conversion-focused homepage with features, pricing, and signup CTAs |
-| **Authentication** | `/login`, `/register` | Credentials-based auth for tenants and super admins |
-| **Public Menu & Wi-Fi Gate** | `/menu/[slug]` | Mobile-first menu with email-gated Wi-Fi unlock and lead capture |
-| **Smart Review Router** | `/review/[leadId]` | Routes satisfied guests to Google Reviews; unhappy guests to private feedback |
-| **Tenant Dashboard** | `/dashboard/*` | Restaurant owners manage menus, settings, metrics, and QR codes |
-| **Super Admin Dashboard** | `/admin/*` | Platform-wide analytics, restaurant registry, and global feedback monitor |
-| **Cron Job Runner** | `GET/POST /api/cron/send-reviews` | Sends 24-hour review follow-up emails (protected by `CRON_SECRET`) |
-
-### Core Automation Loop
-
-1. Guest scans QR code → opens public menu.
-2. Wi-Fi overlay collects email → saves `CustomerLead` → returns Wi-Fi credentials.
-3. After ~24 hours, cron job emails review request with satisfied/dissatisfied links.
-4. Satisfied clicks → redirect to Google Review URL. Dissatisfied → internal `Feedback` form.
-
-### Roles
-
-- **`TENANT`** — Restaurant owner linked to one `Restaurant` record.
-- **`SUPERADMIN`** — Platform administrator with access to `/admin/*` only.
-
-Middleware enforces role isolation: tenants cannot access admin routes; super admins are redirected away from tenant dashboard routes.
+**Live demo:** [qrmenu.majidorc.com](https://qrmenu.majidorc.com)
 
 ---
 
-## Tech Stack
+## Who Uses MenuHub
 
-- **Framework:** Next.js 16 (App Router), React 19, TypeScript
-- **Styling:** Tailwind CSS 4, Lucide React icons
-- **Database:** PostgreSQL via Prisma ORM 7 (`@prisma/adapter-pg`)
-- **Auth:** NextAuth.js v5 (JWT sessions, Credentials provider, bcrypt password hashing)
-- **QR Codes:** `qrcode.react`
-- **Deployment:** Multi-stage Docker image with `output: "standalone"`
+### Restaurant owner (tenant)
 
----
+Runs one restaurant. Signs up, builds a menu, prints a QR code, and watches leads and feedback roll in from a private dashboard.
 
-## Local Development Setup
+### Platform operator (super admin)
 
-### Prerequisites
+Runs the whole MenuHub installation. Sees platform-wide stats, exports all guest emails, and can activate, deactivate, or remove restaurants.
 
-- Node.js 20+
-- PostgreSQL database
-- npm
+### Guest (no account)
 
-### 1. Clone and install
-
-```bash
-git clone https://github.com/majidorc/resturant.git
-cd resturant
-npm install
-```
-
-### 2. Environment variables
-
-Copy the example file and fill in your values:
-
-```bash
-cp .env.example .env
-```
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `NEXT_PUBLIC_APP_URL` | Yes | Public app URL (e.g. `http://localhost:3000`) |
-| `NEXTAUTH_URL` | Yes | Same as public URL in dev; production domain in prod |
-| `NEXTAUTH_SECRET` | Yes | Random 32+ byte string (`openssl rand -base64 32`) |
-| `AUTH_TRUST_HOST` | Yes (prod) | Set `true` behind Coolify/reverse proxy |
-| `CRON_SECRET` | Yes | Bearer token for `/api/cron/send-reviews` |
-| `RESEND_API_KEY` | No | Email provider key (cron currently logs to console) |
-| `EMAIL_FROM` | No | Sender address for review emails |
-
-### 3. Database setup
-
-```bash
-# Apply migrations
-npm run db:migrate
-
-# Or push schema without migration history (dev only)
-npm run db:push
-
-# Seed sample tenant + super admin (WARNING: wipes existing data)
-npm run db:seed
-```
-
-**Seed credentials:**
-
-| Role | Email | Password |
-|------|-------|----------|
-| Super Admin | `admin@menuhub.com` | `admin1234` |
-| Tenant | `bistro_owner@greenbistro.com` | `bistro1234` |
-
-**Manual seed (if container seed fails):** run SQL from `prisma/seed-manual.sql` in your PostgreSQL console.
-
-### 4. Start dev server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
+Scans a QR code on the table, views the menu, optionally unlocks Wi-Fi with an email, and may receive a follow-up email asking how the visit went.
 
 ---
 
-## Available Scripts
+## The Guest Journey
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start Next.js development server |
-| `npm run build` | Generate Prisma client + production build |
-| `npm run start` | Start production server (non-Docker) |
-| `npm run lint` | Run ESLint |
-| `npm run db:generate` | Regenerate Prisma client |
-| `npm run db:migrate` | Create/apply dev migrations |
-| `npm run db:migrate:deploy` | Apply migrations in production |
-| `npm run db:push` | Push schema to DB (dev shortcut) |
-| `npm run db:seed` | Run seed script |
-| `npm run db:studio` | Open Prisma Studio |
+1. **Scan** — Guest scans the QR code on the table or counter.
+2. **Menu** — They see a mobile-friendly digital menu with photos, prices, and categories in English or Thai.
+3. **Wi-Fi gate** — To get the Wi-Fi password, they enter their email. They can also skip and browse the menu without Wi-Fi.
+4. **Follow-up email** — Hours later, MenuHub sends a friendly email: “How was your visit?”
+5. **Smart routing**
+   - **Loved it** → Guest is sent to the restaurant’s Google Review page.
+   - **Could be better** → Guest fills a private feedback form. Only the restaurant owner sees it — never posted publicly.
 
 ---
 
-## Production Build (Docker / Coolify)
+## Restaurant Owner Dashboard
 
-### Standalone output
+After logging in, the owner manages everything from one place.
 
-`next.config.ts` enables standalone mode for minimal container images:
+### Overview
 
-```typescript
-const nextConfig = {
-  output: "standalone",
-};
-```
+- Total guest emails captured
+- Review email conversion rate
+- Count of private feedback submissions
+- Recent leads list
 
-### Build locally
+### Menu Manager
 
-```bash
-npm run build
-node .next/standalone/server.js
-```
+- Create menu categories (English + Thai names)
+- Add dishes with descriptions, prices, and photos
+- Show or hide categories and items on the public menu
 
-### Docker
+### Private Feedback
 
-```bash
-docker build -t menuhub .
-docker run -p 3000:3000 --env-file .env menuhub
-```
+- Read every “could be better” submission from guests
+- Star ratings and written comments
+- Sorted newest first — only for this restaurant
 
-The `Dockerfile` uses a four-stage build (`deps` → `prod-deps` → `builder` → `runner`):
+### Settings
 
-1. `npm ci` for full dependencies (builder)
-2. `npm install --omit=dev` for Prisma migrate/seed tooling only (runner merge)
-3. `prisma generate` + `next build --webpack` (webpack is more stable than Turbopack on low-CPU Coolify hosts)
-4. Copies `.next/standalone`, static assets, Prisma schema, and DB tooling into the runner image
-
-Container starts with `node server.js` on port `3000` (`HOSTNAME=0.0.0.0`).
-
-### Coolify build failures (exit 255 at “exporting layers”)
-
-If the build log shows **Compiled successfully** but fails at **exporting to image**, the app code is fine — the host ran out of time, disk, or memory while saving the image.
-
-1. **Free disk space** on the Coolify server (`docker system prune -af` if safe).
-2. **Increase build timeout** in Coolify (Settings → Advanced) — first builds can take 15–25+ minutes on 1 vCPU.
-3. **Redeploy** after this repo’s Dockerfile optimizations (webpack build, fewer runner layers, npm cache mounts).
-
-### Coolify deployment checklist
-
-1. Set all environment variables from `.env.example` (use your production domain for `NEXTAUTH_URL` and `NEXT_PUBLIC_APP_URL`).
-2. Set `AUTH_TRUST_HOST=true`.
-3. Deploy from the root `Dockerfile`.
-4. Expose port **3000**.
-5. Run migrations once in the container terminal:
-
-   ```bash
-   npm run db:migrate:deploy
-   ```
-
-6. Seed database (first deploy only):
-
-   ```bash
-   npm run db:seed
-   ```
-
-   Or paste `prisma/seed-manual.sql` into the PostgreSQL service console.
-
-7. Schedule cron for review emails (hourly recommended):
-
-   ```http
-   GET https://your-domain.com/api/cron/send-reviews
-   Authorization: Bearer YOUR_CRON_SECRET
-   ```
+- **Restaurant profile** — Name and public menu link
+- **Wi-Fi credentials** — Network name and password shown after email capture
+- **Google Review link** — Where happy guests go from the follow-up email
+- **Currency & language** — USD, THB, EUR, GBP and English or Thai defaults
+- **Print Station** — Download a QR code for table tents and signage
 
 ---
 
-## Project Structure
+## Super Admin Console
 
-```
-src/
-├── app/
-│   ├── page.tsx                    # Marketing landing page
-│   ├── (auth)/                     # Login & register
-│   ├── (dashboard)/dashboard/      # Tenant dashboard
-│   ├── admin/                      # Super admin dashboard
-│   ├── menu/[slug]/                # Public menu + Wi-Fi gate
-│   ├── review/[leadId]/            # Smart review router
-│   └── api/                        # REST endpoints + NextAuth + cron
-├── components/
-│   ├── landing/                    # Homepage sections
-│   ├── dashboard/                  # Tenant UI components
-│   ├── admin/                      # Admin UI components
-│   └── ui/                         # Shared design system primitives
-├── lib/
-│   ├── auth.ts                     # NextAuth configuration
-│   ├── prisma.ts                   # Prisma client singleton
-│   └── actions/                    # Server actions
-└── middleware.ts                   # Auth + role-based route guards
-prisma/
-├── schema.prisma                   # Database models
-├── seed.ts                         # Dev/prod seed script
-├── seed-manual.sql                 # Manual SQL seed fallback
-└── migrations/                     # Migration history
-```
+Platform-wide control for the MenuHub operator.
+
+### Global Overview
+
+- Total registered restaurants
+- Total platform users
+- Total guest emails collected across all venues
+- Total private feedback submissions
+- Top restaurants by lead volume
+
+### Restaurant Registry
+
+- List every tenant with owner email, lead count, and status
+- **Activate** — Restaurant is live; public menu and Wi-Fi work
+- **Deactivate** — Public menu goes offline; Wi-Fi capture stops; owner dashboard still accessible
+- **Delete** — Permanently removes the restaurant, all menus, leads, feedback, and the owner account
+
+### Customer Emails
+
+- Searchable table of all guest emails platform-wide
+- Shows restaurant, capture source, review email status, and date
+- **Export CSV** — Download all emails for marketing or CRM import
 
 ---
 
-## API Endpoints
+## Public Marketing Site
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| `POST` | `/api/lead/unlock-wifi` | Public | Save lead, return Wi-Fi credentials |
-| `POST` | `/api/feedback` | Public | Save internal negative feedback |
-| `GET/POST` | `/api/cron/send-reviews` | `Bearer CRON_SECRET` | 24-hour review email job |
-| `GET/POST` | `/api/auth/*` | NextAuth | Session management |
+The homepage at `/` explains the product to new restaurant owners:
+
+- Hero and value proposition
+- How it works (scan → email → review)
+- Feature highlights
+- Pricing section
+- Sign up and log in links
+
+---
+
+## Languages
+
+Guests and owners can switch between **English** and **Thai** using the flag toggle. Menu content supports both languages per item. Prices format correctly for the restaurant’s chosen currency.
+
+---
+
+## What Happens When a Restaurant Is Deactivated
+
+| Feature | Active | Deactivated |
+|---------|--------|-------------|
+| Public menu (`/menu/slug`) | Visible | Hidden (404) |
+| Wi-Fi email capture | Works | Blocked |
+| Follow-up review emails | Sent | Should stop (see code review notes) |
+| Owner dashboard | Full access | Full access |
+| Google review routing | Works | Review links may still work for old emails |
+
+---
+
+## Accounts & Access
+
+| Role | Can access | Cannot access |
+|------|------------|---------------|
+| Restaurant owner | Own dashboard, menu, settings, feedback | Other restaurants, super admin |
+| Super admin | Platform overview, all emails export, restaurant registry | Individual tenant dashboards |
+| Guest | Public menu, Wi-Fi gate, review forms | Any logged-in area |
+
+New restaurants can self-register from the homepage. Each registration creates one owner account linked to one restaurant.
+
+---
+
+## Automation Summary
+
+| Trigger | Action |
+|---------|--------|
+| Guest submits email on Wi-Fi gate | Email saved as a lead; Wi-Fi password shown |
+| Same guest email returns | No duplicate lead; Wi-Fi still shown |
+| Scheduled job runs (cron) | Review follow-up emails sent to eligible leads |
+| Guest clicks “Loved it” in email | Redirect to Google Reviews |
+| Guest clicks “Could be better” | Private feedback form for that restaurant |
+| Owner submits feedback form | Stored in tenant dashboard only |
+
+---
+
+## Documentation
+
+- **[CHANGELOG.md](./CHANGELOG.md)** — Full version history
+- **[docs/CODE_REVIEW.md](./docs/CODE_REVIEW.md)** — Deep security and quality audit (2026-06-23)
 
 ---
 
