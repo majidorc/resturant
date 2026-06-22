@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import {
+  DashboardMobileHeader,
+  DashboardSidebar,
+} from "@/components/dashboard/DashboardSidebar";
 
 export default async function DashboardLayout({
   children,
@@ -23,10 +26,17 @@ export default async function DashboardLayout({
     select: { name: true },
   });
 
+  const restaurantName = restaurant?.name ?? "My Restaurant";
+
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-0 lg:pl-64">
-      <DashboardSidebar restaurantName={restaurant?.name ?? "My Restaurant"} />
-      <div className="px-4 py-6 sm:px-6 lg:px-8">{children}</div>
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-50/50">
+      <DashboardSidebar restaurantName={restaurantName} />
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <DashboardMobileHeader restaurantName={restaurantName} />
+        <div className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 md:p-8">
+          {children}
+        </div>
+      </div>
     </div>
   );
 }

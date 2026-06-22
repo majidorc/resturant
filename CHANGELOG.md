@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- Refactored `/admin` layout shell to a rigid `flex h-screen` structure with independent main content scrolling and `w-64 shrink-0` desktop sidebar.
+- Rebuilt `AdminSidebar` with slate-based active states, Lucide icons, and a mobile overlay drawer (removed bottom nav that caused layout shift).
+- Standardized admin data tables with overflow-safe wrappers, uppercase slate headers, and consistent `px-6 py-4` row spacing.
+- Re-architected admin overview metrics grid (`sm:grid-cols-2 lg:grid-cols-4`) with explicit Tailwind color tokens.
+- Updated feedback rating badges to emerald (4–5), amber (3), and rose (1–2) tones.
+- Refactored tenant `/dashboard` layout shell to match admin flex structure with independent scrolling main viewport.
+- Rebuilt `DashboardSidebar` with Lucide icons, slate active states, and mobile overlay drawer (removed bottom nav).
+- Reconstructed `SettingsForm` into section cards with responsive `md:grid-cols-2` field grids, focus rings, and loading spinner on save.
+- Polished `MenuQrCode` with centered preview card, clipboard-style link utility, and responsive download button.
+
 ---
 
 ## [0.1.0] - 2025-06-22

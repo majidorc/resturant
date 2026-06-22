@@ -1,7 +1,26 @@
 import Link from "next/link";
+import { Building2, MessageSquareWarning, Store, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { Card, CardBody, CardHeader } from "@/components/ui/card";
-import { MetricCard } from "@/components/dashboard/MetricCard";
+
+type MetricProps = {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+};
+
+function AdminMetricCard({ label, value, icon }: MetricProps) {
+  return (
+    <div className="flex min-h-[140px] flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-sm font-medium text-slate-500">{label}</p>
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+          {icon}
+        </div>
+      </div>
+      <p className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900">{value}</p>
+    </div>
+  );
+}
 
 export default async function AdminOverviewPage() {
   const [restaurantCount, userCount, leadCount, feedbackCount, topRestaurants] =
@@ -23,61 +42,88 @@ export default async function AdminOverviewPage() {
     ]);
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-7xl space-y-8">
       <div>
-        <p className="text-xs font-medium uppercase tracking-[0.16em] text-indigo-500">Platform</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">Global Overview</h1>
-        <p className="mt-1 text-sm text-slate-500">System-wide analytics across all registered restaurants.</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Platform</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">
+          Global Overview
+        </h1>
+        <p className="mt-1 text-sm text-slate-500">
+          System-wide analytics across all registered restaurants.
+        </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard accent="admin" label="Registered Restaurants" value={String(restaurantCount)} />
-        <MetricCard accent="admin" label="Platform Users" value={String(userCount)} />
-        <MetricCard accent="admin" label="Global Leads Collected" value={String(leadCount)} />
-        <MetricCard accent="admin" label="Unhappy Feedbacks" value={String(feedbackCount)} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
+        <AdminMetricCard
+          icon={<Store className="h-4 w-4" />}
+          label="Registered Restaurants"
+          value={String(restaurantCount)}
+        />
+        <AdminMetricCard
+          icon={<Users className="h-4 w-4" />}
+          label="Platform Users"
+          value={String(userCount)}
+        />
+        <AdminMetricCard
+          icon={<Building2 className="h-4 w-4" />}
+          label="Global Leads Collected"
+          value={String(leadCount)}
+        />
+        <AdminMetricCard
+          icon={<MessageSquareWarning className="h-4 w-4" />}
+          label="Unhappy Feedbacks"
+          value={String(feedbackCount)}
+        />
       </div>
 
-      <Card>
-        <CardHeader>
-          <h2 className="text-lg font-semibold text-slate-900">Top Restaurants by Leads</h2>
-        </CardHeader>
+      <div className="w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 px-6 py-4">
+          <h2 className="text-lg font-semibold text-zinc-900">Top Restaurants by Leads</h2>
+          <p className="mt-0.5 text-sm text-slate-500">Highest lead volume across the platform.</p>
+        </div>
         {topRestaurants.length === 0 ? (
-          <CardBody>
-            <p className="text-sm text-slate-500">No restaurants registered yet.</p>
-          </CardBody>
+          <p className="px-6 py-10 text-center text-sm text-slate-500">
+            No restaurants registered yet.
+          </p>
         ) : (
-          <ul className="divide-y divide-slate-100/80">
+          <ul className="divide-y divide-slate-100">
             {topRestaurants.map((restaurant, index) => (
               <li
-                className="flex items-center justify-between gap-4 px-5 py-4 transition-all duration-200 hover:bg-indigo-50/30"
+                className="flex items-center justify-between gap-4 px-6 py-4 transition-colors duration-200 hover:bg-slate-50"
                 key={restaurant.id}
               >
-                <div className="flex items-center gap-4">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
+                <div className="flex min-w-0 items-center gap-4">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
                     {index + 1}
                   </span>
-                  <div>
-                    <p className="font-medium text-slate-900">{restaurant.name}</p>
-                    <p className="text-xs text-slate-400">/{restaurant.slug}</p>
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-zinc-900">{restaurant.name}</p>
+                    <p className="truncate text-xs text-slate-500">/{restaurant.slug}</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-slate-900">{restaurant._count.leads}</p>
-                  <p className="text-xs text-slate-400">leads</p>
+                <div className="shrink-0 text-right">
+                  <p className="text-sm font-semibold text-zinc-900">{restaurant._count.leads}</p>
+                  <p className="text-xs text-slate-500">leads</p>
                 </div>
               </li>
             ))}
           </ul>
         )}
-      </Card>
+      </div>
 
       <p className="text-sm text-slate-500">
         Manage tenants in{" "}
-        <Link className="font-medium text-indigo-600 transition-colors duration-200 hover:text-indigo-500" href="/admin/restaurants">
+        <Link
+          className="font-medium text-slate-900 underline-offset-2 transition-colors hover:underline"
+          href="/admin/restaurants"
+        >
           Restaurants
         </Link>{" "}
         or review complaints in{" "}
-        <Link className="font-medium text-indigo-600 transition-colors duration-200 hover:text-indigo-500" href="/admin/feedback">
+        <Link
+          className="font-medium text-slate-900 underline-offset-2 transition-colors hover:underline"
+          href="/admin/feedback"
+        >
           Global Feedback
         </Link>
         .

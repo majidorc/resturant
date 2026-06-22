@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminMobileHeader, AdminSidebar } from "@/components/admin/AdminSidebar";
 
 export default async function AdminLayout({
   children,
@@ -18,9 +18,12 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-0 lg:pl-64">
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-50/50">
       <AdminSidebar />
-      <div className="px-4 py-6 sm:px-6 lg:px-8">{children}</div>
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <AdminMobileHeader />
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">{children}</div>
+      </div>
     </div>
   );
 }

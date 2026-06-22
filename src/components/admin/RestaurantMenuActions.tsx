@@ -30,7 +30,7 @@ export function RestaurantMenuActions({ slug, publicMenuUrl }: RestaurantMenuAct
         {copied ? "Copied!" : "Copy Link"}
       </Button>
       <Link href={`/menu/${slug}`} rel="noopener noreferrer" target="_blank">
-        <Button size="sm" variant="admin">
+        <Button size="sm" variant="primary">
           Open Menu
         </Button>
       </Link>
