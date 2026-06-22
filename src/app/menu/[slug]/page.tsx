@@ -31,7 +31,7 @@ export default async function PublicMenuPage({ params }: PageProps) {
     },
   });
 
-  if (!restaurant) {
+  if (!restaurant || !restaurant.isActive) {
     notFound();
   }
 

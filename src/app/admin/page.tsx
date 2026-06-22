@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Building2, MessageSquareWarning, Store, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/get-dictionary";
@@ -110,6 +111,21 @@ export default async function AdminOverviewPage() {
             ))}
           </ul>
         )}
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Link
+          className="inline-flex items-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+          href="/admin/leads"
+        >
+          {a.exportLeadsCsv}
+        </Link>
+        <Link
+          className="inline-flex items-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+          href="/admin/restaurants"
+        >
+          {a.navRestaurants}
+        </Link>
       </div>
     </div>
   );

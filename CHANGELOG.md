@@ -21,9 +21,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Responsive menu item image rendering with loading skeleton and broken-image fallback in `MenuList`.
 - Prisma migration `20250622120000_add_restaurant_locale`.
 
+### Added
+
+- Super-admin `/admin/leads` page with customer email table and CSV export.
+- Super-admin `/admin/restaurants` registry with activate, deactivate, and permanent delete.
+- `Restaurant.isActive` flag — deactivated venues hide public menu and block Wi-Fi capture.
+
 ### Changed
 
-- Docker build uses webpack instead of Turbopack, npm/prod-deps layering, and BuildKit caches for more reliable Coolify deploys.
+- Re-enabled `/admin/restaurants` (previously redirected to overview).
 - Private guest feedback now lives on each tenant dashboard at `/dashboard/feedback` instead of super-admin routes.
 - Removed super-admin Restaurants and Feedback pages; old URLs redirect to `/admin`.
 - Review follow-up cron window temporarily set to **50–70 minutes** (~1 hour) for testing; override via `REVIEW_EMAIL_MIN_AGE_MINUTES` / `REVIEW_EMAIL_MAX_AGE_MINUTES` (production target was 23–25 hours).

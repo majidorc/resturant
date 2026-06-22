@@ -3,13 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, Menu, X } from "lucide-react";
+import { LayoutDashboard, Menu, Store, Users, X } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SignOutButton } from "@/components/dashboard/SignOutButton";
 import { useDictionary } from "@/components/LocaleProvider";
 import { cn } from "@/lib/utils";
 
-const navItems = [{ href: "/admin", key: "navOverview" as const, icon: LayoutDashboard }];
+const navItems = [
+  { href: "/admin", key: "navOverview" as const, icon: LayoutDashboard },
+  { href: "/admin/restaurants", key: "navRestaurants" as const, icon: Store },
+  { href: "/admin/leads", key: "navLeads" as const, icon: Users },
+];
 
 function isNavActive(currentPath: string, href: string) {
   return (

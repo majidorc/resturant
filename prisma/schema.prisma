@@ -33,10 +33,13 @@ model Restaurant {
   googleReviewUrl String?
   currency        String         @default("USD")
   language        String         @default("en")
+  isActive        Boolean        @default(true)
   menus           Menu[]
   leads           CustomerLead[]
   feedbacks       Feedback[]
   createdAt       DateTime       @default(now())
+
+  @@index([isActive])
 }
 
 model Menu {

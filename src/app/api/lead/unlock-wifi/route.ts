@@ -25,11 +25,16 @@ export async function POST(request: Request) {
       select: {
         wifiSsid: true,
         wifiPassword: true,
+        isActive: true,
       },
     });
 
     if (!restaurant) {
       return NextResponse.json({ error: "Restaurant not found." }, { status: 404 });
+    }
+
+    if (!restaurant.isActive) {
+      return NextResponse.json({ error: "This restaurant is currently unavailable." }, { status: 403 });
     }
 
     const existingLead = await prisma.customerLead.findFirst({
