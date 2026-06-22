@@ -10,15 +10,18 @@ export async function GET(request: Request) {
 
   try {
     const now = new Date();
-    const twentyThreeHoursAgo = new Date(now.getTime() - 23 * 60 * 60 * 1000);
-    const twentyFiveHoursAgo = new Date(now.getTime() - 25 * 60 * 60 * 1000);
+    // TEST: 1-hour follow-up window (leads created 50-70 minutes ago)
+    const minAgeMinutes = Number(process.env.REVIEW_EMAIL_MIN_AGE_MINUTES ?? "50");
+    const maxAgeMinutes = Number(process.env.REVIEW_EMAIL_MAX_AGE_MINUTES ?? "70");
+    const newestEligible = new Date(now.getTime() - minAgeMinutes * 60 * 1000);
+    const oldestEligible = new Date(now.getTime() - maxAgeMinutes * 60 * 1000);
 
     const pendingLeads = await prisma.customerLead.findMany({
       where: {
         emailSent: false,
         createdAt: {
-          gte: twentyFiveHoursAgo,
-          lte: twentyThreeHoursAgo,
+          gte: oldestEligible,
+          lte: newestEligible,
         },
       },
       include: {

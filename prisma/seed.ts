@@ -150,7 +150,7 @@ async function main() {
   });
 
   const leadSchedules = [
-    { emailIndex: 0, createdAt: hoursAgo(24), emailSent: false },
+    { emailIndex: 0, createdAt: hoursAgo(1), emailSent: false },
     { emailIndex: 1, createdAt: daysAgo(1, 9), emailSent: false },
     { emailIndex: 2, createdAt: daysAgo(2, 14), emailSent: false },
     { emailIndex: 3, createdAt: daysAgo(3, 11), emailSent: false },

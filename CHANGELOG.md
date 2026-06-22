@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Review follow-up cron window temporarily set to **50–70 minutes** (~1 hour) for testing; override via `REVIEW_EMAIL_MIN_AGE_MINUTES` / `REVIEW_EMAIL_MAX_AGE_MINUTES` (production target was 23–25 hours).
 - Replaced mock mailer with live Resend SDK delivery and a mobile-responsive HTML review template.
 - Cron review job now isolates per-lead send failures and only marks leads as emailed after successful delivery.
 - Wi-Fi locked banner uses inline reopen link copy aligned with skip-gate UX.
