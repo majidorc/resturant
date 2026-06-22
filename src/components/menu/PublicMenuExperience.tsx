@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { MenuList } from "@/components/MenuList";
 import { WifiGate } from "@/components/WifiGate";
-import { Button } from "@/components/ui/button";
 import { useDictionary } from "@/components/LocaleProvider";
 import type { Locale } from "@/types/dictionary";
 
@@ -35,11 +34,20 @@ function WifiLockedBanner({ onReopen }: { onReopen: () => void }) {
 
   return (
     <div className="border-b border-amber-200 bg-amber-50 px-4 py-3">
-      <div className="mx-auto flex max-w-2xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-amber-950">{dict.wifi.lockedBanner}</p>
-        <Button className="shrink-0 whitespace-nowrap" onClick={onReopen} size="sm" type="button">
-          {dict.wifi.reopenGate}
-        </Button>
+      <div className="mx-auto max-w-2xl text-center sm:text-left">
+        <p className="text-sm text-amber-950">
+          <span aria-hidden className="mr-1">
+            🔒
+          </span>
+          {dict.wifi.lockedBanner}{" "}
+          <button
+            className="font-semibold text-slate-900 underline underline-offset-2 transition-colors hover:text-slate-700"
+            onClick={onReopen}
+            type="button"
+          >
+            {dict.wifi.reopenGate}
+          </button>
+        </p>
       </div>
     </div>
   );

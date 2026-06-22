@@ -23,7 +23,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- Wired localization across landing, auth, public menu, Wi-Fi gate, tenant dashboard, admin panel, settings, and review flows.
+- Replaced mock mailer with live Resend SDK delivery and a mobile-responsive HTML review template.
+- Cron review job now isolates per-lead send failures and only marks leads as emailed after successful delivery.
+- Wi-Fi locked banner uses inline reopen link copy aligned with skip-gate UX.
 - `MenuManager` and menu server actions now capture and persist English and Thai menu content.
 - `MenuList` renders localized menu copy from cookie locale with dynamic currency formatting.
 - Wi-Fi unlock API skips duplicate `CustomerLead` creation when email is already registered for the same restaurant while still returning credentials.

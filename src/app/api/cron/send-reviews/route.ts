@@ -27,28 +27,42 @@ export async function GET(request: Request) {
     });
 
     let emailsProcessed = 0;
+    let emailsFailed = 0;
 
     for (const lead of pendingLeads) {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yourdomain.com";
-      const diagnosticReviewUrl = `${baseUrl}/review/${lead.id}`;
+      try {
+        const result = await sendReviewEmail({
+          to: lead.email,
+          restaurantName: lead.restaurant.name,
+          leadId: lead.id,
+        });
 
-      await sendReviewEmail({
-        to: lead.email,
-        restaurantName: lead.restaurant.name,
-        reviewUrl: diagnosticReviewUrl,
-      });
+        if (!result.success) {
+          emailsFailed++;
+          console.error(`[CRON] Email not sent for lead ${lead.id}: ${result.error ?? "unknown"}`);
+          continue;
+        }
 
-      await prisma.customerLead.update({
-        where: { id: lead.id },
-        data: { emailSent: true },
-      });
+        await prisma.customerLead.update({
+          where: { id: lead.id },
+          data: { emailSent: true },
+        });
 
-      emailsProcessed++;
+        emailsProcessed++;
+      } catch (error) {
+        emailsFailed++;
+        console.error(`[CRON] Failed processing lead ${lead.id}:`, error);
+      }
     }
 
-    return NextResponse.json({ success: true, processed: emailsProcessed });
+    return NextResponse.json({
+      success: true,
+      processed: emailsProcessed,
+      failed: emailsFailed,
+      queued: pendingLeads.length,
+    });
   } catch (error) {
-    console.error("Cron Error processing review routine:", error);
+    console.error("[CRON] Review routine error:", error);
     return NextResponse.json({ error: "Internal automation breakdown" }, { status: 500 });
   }
 }

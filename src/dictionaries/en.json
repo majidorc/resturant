@@ -142,8 +142,8 @@
     "password": "Password",
     "copyPassword": "Copy Password",
     "viewMenu": "View Menu",
-    "lockedBanner": "Wi-Fi password locked. Provide your email to unlock high-speed internet.",
-    "reopenGate": "Unlock Wi-Fi",
+    "lockedBanner": "Wi-Fi Password Locked. Enter email to unlock free high-speed internet.",
+    "reopenGate": "Enter email to unlock",
     "noPublicWifi": "No Public Wi-Fi"
   },
   "publicMenu": {
