@@ -11,6 +11,8 @@ const prisma = new PrismaClient({ adapter });
 
 const SEED_EMAIL = "bistro_owner@greenbistro.com";
 const SEED_PASSWORD = "bistro1234";
+const ADMIN_EMAIL = "admin@menuhub.com";
+const ADMIN_PASSWORD = "admin1234";
 
 function hoursAgo(hours: number) {
   return new Date(Date.now() - hours * 60 * 60 * 1000);
@@ -36,6 +38,16 @@ async function main() {
   console.log("Seeding Green Bistro Coffee tenant...");
 
   const hashedPassword = await bcrypt.hash(SEED_PASSWORD, 12);
+  const hashedAdminPassword = await bcrypt.hash(ADMIN_PASSWORD, 12);
+
+  await prisma.user.create({
+    data: {
+      name: "System Administrator",
+      email: ADMIN_EMAIL,
+      password: hashedAdminPassword,
+      role: "SUPERADMIN",
+    },
+  });
 
   const user = await prisma.user.create({
     data: {
@@ -168,7 +180,8 @@ async function main() {
   });
 
   console.log("Seed complete.");
-  console.log(`Login: ${SEED_EMAIL} / ${SEED_PASSWORD}`);
+  console.log(`Tenant login: ${SEED_EMAIL} / ${SEED_PASSWORD}`);
+  console.log(`Super admin login: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
   console.log(`Public menu: /menu/${restaurant.slug}`);
   console.log(`Menus created: ${specialtyCoffee.name}, ${artisanBakery.name}`);
 }

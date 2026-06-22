@@ -14,6 +14,10 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
+  if (session.user.role === "SUPERADMIN") {
+    redirect("/admin");
+  }
+
   const restaurant = await prisma.restaurant.findUnique({
     where: { userId: session.user.id },
     select: { name: true },
