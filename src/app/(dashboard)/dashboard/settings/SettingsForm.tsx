@@ -8,6 +8,8 @@ import type { ActionState } from "@/lib/actions/settings";
 import { Button } from "@/components/ui/button";
 import { FormAlert } from "@/components/ui/form-alert";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { CURRENCY_OPTIONS, LANGUAGE_OPTIONS } from "@/lib/locale";
 import { cn } from "@/lib/utils";
 
 type SettingsFormProps = {
@@ -16,6 +18,8 @@ type SettingsFormProps = {
     wifiPassword: string | null;
     googleReviewUrl: string | null;
     slug: string;
+    currency: string;
+    language: string;
   };
   publicMenuUrl: string;
 };
@@ -184,6 +188,53 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
               placeholder="https://g.page/r/your-review-link"
               type="url"
             />
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          description="Control how prices and menu copy are presented to guests."
+          title="Currency & Localization"
+        >
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <FieldLabel
+                hint="Used for all menu item prices on your public menu."
+                htmlFor="currency"
+                label="Operational Currency"
+              />
+              <Select
+                className={fieldInputClass}
+                defaultValue={restaurant.currency}
+                id="currency"
+                name="currency"
+              >
+                {CURRENCY_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+            </div>
+
+            <div>
+              <FieldLabel
+                hint="Default locale for currency formatting and menu presentation."
+                htmlFor="language"
+                label="Menu Language"
+              />
+              <Select
+                className={fieldInputClass}
+                defaultValue={restaurant.language}
+                id="language"
+                name="language"
+              >
+                {LANGUAGE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+            </div>
           </div>
         </SectionCard>
 

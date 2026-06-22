@@ -41,6 +41,8 @@ export default async function PublicMenuPage({ params }: PageProps) {
       </header>
 
       <PublicMenuExperience
+        currency={restaurant.currency}
+        language={restaurant.language}
         menus={restaurant.menus}
         restaurantId={restaurant.id}
         restaurantName={restaurant.name}

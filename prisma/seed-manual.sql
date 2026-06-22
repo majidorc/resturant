@@ -32,7 +32,7 @@ VALUES (
 );
 
 -- Restaurant
-INSERT INTO "Restaurant" ("id", "userId", "name", "slug", "wifiSsid", "wifiPassword", "googleReviewUrl", "createdAt")
+INSERT INTO "Restaurant" ("id", "userId", "name", "slug", "wifiSsid", "wifiPassword", "googleReviewUrl", "currency", "language", "createdAt")
 VALUES (
   'seed_restaurant_01',
   'seed_tenant_user_01',
@@ -41,6 +41,8 @@ VALUES (
   'GreenBistro-Guest',
   'Welcome2024!',
   'https://g.page/r/green-bistro-coffee/review',
+  'USD',
+  'en',
   NOW()
 );
 

@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Wi-Fi gate "Skip & View Menu" bypass with locked Wi-Fi banner and re-open trigger on the public menu.
+- `currency` and `language` fields on `Restaurant` model with tenant settings dropdowns (USD, THB, EUR, GBP / English, Thai).
+- `src/lib/locale.ts` utility for validated currency and language options plus dynamic price formatting.
+- Responsive menu item image rendering with loading skeleton and broken-image fallback in `MenuList`.
+- Prisma migration `20250622120000_add_restaurant_locale`.
+
 ### Changed
 
 - Refactored `/admin` layout shell to a rigid `flex h-screen` structure with independent main content scrolling and `w-64 shrink-0` desktop sidebar.

@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 type WifiGateProps = {
   restaurantId: string;
   restaurantName: string;
-  unlocked: boolean;
+  visible: boolean;
   onUnlock: () => void;
+  onSkip: () => void;
 };
 
 type WifiCredentials = {
@@ -17,7 +18,13 @@ type WifiCredentials = {
   wifiPassword: string;
 };
 
-export function WifiGate({ restaurantId, restaurantName, unlocked, onUnlock }: WifiGateProps) {
+export function WifiGate({
+  restaurantId,
+  restaurantName,
+  visible,
+  onUnlock,
+  onSkip,
+}: WifiGateProps) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -65,11 +72,16 @@ export function WifiGate({ restaurantId, restaurantName, unlocked, onUnlock }: W
     setTimeout(() => setCopied(false), 2000);
   }
 
+  function handleSkip() {
+    setError(null);
+    onSkip();
+  }
+
   if (wifi && !dismissed) {
     return (
       <div className="fixed inset-x-4 bottom-4 z-30 mx-auto max-w-md animate-fade-in-up">
-        <div className="overflow-hidden rounded-3xl border border-slate-100/80 bg-white/95 shadow-xl backdrop-blur-md">
-          <div className="border-b border-slate-100/80 bg-gradient-to-r from-slate-50 to-white px-5 py-4">
+        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
+          <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 transition-all duration-200">
                 {copied ? (
@@ -96,16 +108,18 @@ export function WifiGate({ restaurantId, restaurantName, unlocked, onUnlock }: W
 
           <dl className="space-y-4 px-5 py-4 text-sm">
             <div className="rounded-2xl bg-slate-50 px-4 py-3">
-              <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">Network</dt>
+              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">Network</dt>
               <dd className="mt-1 font-medium text-slate-900">{wifi.wifiSsid}</dd>
             </div>
             <div className="rounded-2xl bg-slate-50 px-4 py-3">
-              <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">Password</dt>
-              <dd className="mt-1 font-mono text-base font-medium text-slate-900">{wifi.wifiPassword || "—"}</dd>
+              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">Password</dt>
+              <dd className="mt-1 font-mono text-base font-medium text-slate-900">
+                {wifi.wifiPassword || "—"}
+              </dd>
             </div>
           </dl>
 
-          <div className="flex gap-2 border-t border-slate-100/80 p-4">
+          <div className="flex gap-2 border-t border-slate-200 p-4">
             <Button
               className={`flex-1 transition-all duration-200 ${copied ? "bg-emerald-600 hover:bg-emerald-600" : ""}`}
               onClick={copyPassword}
@@ -122,12 +136,12 @@ export function WifiGate({ restaurantId, restaurantName, unlocked, onUnlock }: W
     );
   }
 
-  if (unlocked) return null;
+  if (!visible) return null;
 
   return (
     <div className="fixed inset-0 z-20 flex items-end justify-center bg-slate-900/40 p-4 backdrop-blur-md sm:items-center">
-      <div className="w-full max-w-md animate-fade-in-up overflow-hidden rounded-3xl border border-white/20 bg-white/80 shadow-2xl backdrop-blur-xl">
-        <div className="border-b border-slate-100/80 bg-gradient-to-b from-white to-slate-50/80 px-6 py-5 text-center">
+      <div className="w-full max-w-md animate-fade-in-up overflow-hidden rounded-3xl border border-white/20 bg-white/95 shadow-2xl backdrop-blur-xl">
+        <div className="border-b border-slate-200 bg-gradient-to-b from-white to-slate-50 px-6 py-5 text-center">
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm">
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -183,9 +197,16 @@ export function WifiGate({ restaurantId, restaurantName, unlocked, onUnlock }: W
             {loading ? "Unlocking…" : "Unlock Wi-Fi"}
           </Button>
 
-          <Button className="w-full" disabled={loading} type="button" variant="secondary">
-            Continue with Google
-          </Button>
+          <div className="pt-1 text-center">
+            <button
+              className="text-sm font-medium text-slate-600 transition-colors duration-200 hover:text-slate-900"
+              disabled={loading}
+              onClick={handleSkip}
+              type="button"
+            >
+              Skip &amp; View Menu
+            </button>
+          </div>
         </form>
       </div>
     </div>

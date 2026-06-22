@@ -31,6 +31,8 @@ model Restaurant {
   wifiSsid        String?
   wifiPassword    String?
   googleReviewUrl String?
+  currency        String         @default("USD")
+  language        String         @default("en")
   menus           Menu[]
   leads           CustomerLead[]
   feedbacks       Feedback[]

@@ -17,6 +17,8 @@ export default async function SettingsPage() {
       wifiPassword: true,
       googleReviewUrl: true,
       slug: true,
+      currency: true,
+      language: true,
     },
   });
 
@@ -33,7 +35,7 @@ export default async function SettingsPage() {
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Configuration</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">Settings</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Update Wi-Fi credentials, your public menu link, and Google review destination.
+          Update Wi-Fi credentials, localization, your public menu link, and Google review destination.
         </p>
       </div>
 
