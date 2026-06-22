@@ -46,7 +46,13 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/src/generated ./src/generated
 
-RUN npm install prisma@7.8.0 tsx@4.19.3 bcryptjs@3.0.3 @prisma/adapter-pg@7.8.0 pg@8.22.0 dotenv@17.4.2 --omit=dev --no-package-lock \
+# tsx runner for seed script (explicit copy — npm .bin links are unreliable in standalone)
+COPY --from=deps /app/node_modules/tsx ./node_modules/tsx
+COPY --from=deps /app/node_modules/esbuild ./node_modules/esbuild
+COPY --from=deps /app/node_modules/get-tsconfig ./node_modules/get-tsconfig
+COPY --from=deps /app/node_modules/resolve-pkg-maps ./node_modules/resolve-pkg-maps
+
+RUN npm install prisma@7.8.0 bcryptjs@3.0.3 @prisma/adapter-pg@7.8.0 pg@8.22.0 dotenv@17.4.2 --omit=dev --no-package-lock \
   && chown -R nextjs:nodejs /app/node_modules /app/prisma /app/src/generated /app/package.json /app/prisma.config.ts
 
 USER nextjs
