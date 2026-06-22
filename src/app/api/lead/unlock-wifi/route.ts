@@ -13,8 +13,10 @@ export async function POST(request: Request) {
       );
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(normalizedEmail)) {
       return NextResponse.json({ error: "Invalid email format." }, { status: 400 });
     }
 
@@ -30,14 +32,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Restaurant not found." }, { status: 404 });
     }
 
-    await prisma.customerLead.create({
-      data: {
+    const existingLead = await prisma.customerLead.findFirst({
+      where: {
         restaurantId,
-        email: email.toLowerCase().trim(),
-        source: source || "WIFI_UNLOCK",
-        emailSent: false,
+        email: normalizedEmail,
       },
     });
+
+    if (existingLead) {
+      console.log("[WIFI_GATE] Email already registered for this venue. Skipping creation.");
+    } else {
+      await prisma.customerLead.create({
+        data: {
+          restaurantId,
+          email: normalizedEmail,
+          source: source || "WIFI_UNLOCK",
+          emailSent: false,
+        },
+      });
+    }
 
     return NextResponse.json({
       success: true,

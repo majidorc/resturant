@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Wi-Fi unlock API skips duplicate `CustomerLead` creation when email is already registered for the same restaurant while still returning credentials.
 - Refactored `/admin` layout shell to a rigid `flex h-screen` structure with independent main content scrolling and `w-64 shrink-0` desktop sidebar.
 - Rebuilt `AdminSidebar` with slate-based active states, Lucide icons, and a mobile overlay drawer (removed bottom nav that caused layout shift).
 - Standardized admin data tables with overflow-safe wrappers, uppercase slate headers, and consistent `px-6 py-4` row spacing.
