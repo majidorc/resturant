@@ -155,6 +155,7 @@
     "restaurantLabel": "ร้านอาหาร",
     "navOverview": "ภาพรวม",
     "navMenu": "เมนู",
+    "navFeedback": "ฟีดแบ็ก",
     "navSettings": "การตั้งค่า",
     "mobileNav": "เมนูนำทาง",
     "overviewTitle": "ภาพรวม",
@@ -172,7 +173,17 @@
     "menuSubtitle": "สร้างหมวดหมู่ เพิ่มเมนู และควบคุมการแสดงผลบนเมนูสาธารณะ",
     "settingsEyebrow": "การกำหนดค่า",
     "settingsTitle": "การตั้งค่า",
-    "settingsSubtitle": "อัปเดต Wi-Fi การแปลภาษา ลิงก์เมนูสาธารณะ และปลายทางรีวิว Google"
+    "settingsSubtitle": "อัปเดต Wi-Fi การแปลภาษา ลิงก์เมนูสาธารณะ และปลายทางรีวิว Google",
+    "feedbackEyebrow": "ฟีดแบ็กจากลูกค้า",
+    "feedbackTitle": "ฟีดแบ็กส่วนตัว",
+    "feedbackSubtitle": "ความคิดเห็นเชิงลบที่ลูกค้าส่งจากร้านของคุณ",
+    "feedbackOverviewHint": "ดูจำนวนลีดและอัตราแปลงได้ที่",
+    "colRating": "คะแนน",
+    "colComment": "ความคิดเห็น",
+    "colSubmitted": "ส่งเมื่อ",
+    "noComment": "ไม่มีความคิดเห็น",
+    "noFeedback": "ยังไม่มีฟีดแบ็กจากลูกค้า",
+    "stars": "ดาว"
   },
   "menuManager": {
     "categoriesTitle": "หมวดหมู่เมนู",

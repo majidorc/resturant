@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Building2, MessageSquareWarning, Store, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/get-dictionary";
@@ -112,24 +111,6 @@ export default async function AdminOverviewPage() {
           </ul>
         )}
       </div>
-
-      <p className="text-sm text-slate-500">
-        {a.manageTenants}{" "}
-        <Link
-          className="font-medium text-slate-900 underline-offset-2 transition-colors hover:underline"
-          href="/admin/restaurants"
-        >
-          {a.restaurantsLink}
-        </Link>{" "}
-        {a.orReview}{" "}
-        <Link
-          className="font-medium text-slate-900 underline-offset-2 transition-colors hover:underline"
-          href="/admin/feedback"
-        >
-          {a.feedbackLink}
-        </Link>
-        .
-      </p>
     </div>
   );
 }

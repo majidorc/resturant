@@ -155,6 +155,7 @@
     "restaurantLabel": "Restaurant",
     "navOverview": "Overview",
     "navMenu": "Menu",
+    "navFeedback": "Feedback",
     "navSettings": "Settings",
     "mobileNav": "Navigation",
     "overviewTitle": "Overview",
@@ -172,7 +173,17 @@
     "menuSubtitle": "Create categories, add dishes, and control visibility on your public menu.",
     "settingsEyebrow": "Configuration",
     "settingsTitle": "Settings",
-    "settingsSubtitle": "Update Wi-Fi credentials, localization, your public menu link, and Google review destination."
+    "settingsSubtitle": "Update Wi-Fi credentials, localization, your public menu link, and Google review destination.",
+    "feedbackEyebrow": "Guest Feedback",
+    "feedbackTitle": "Private Feedback",
+    "feedbackSubtitle": "Negative review responses submitted by guests at your restaurant.",
+    "feedbackOverviewHint": "See lead counts and conversion on",
+    "colRating": "Rating",
+    "colComment": "Comment",
+    "colSubmitted": "Submitted",
+    "noComment": "No comment provided.",
+    "noFeedback": "No customer feedback recorded yet.",
+    "stars": "stars"
   },
   "menuManager": {
     "categoriesTitle": "Menu Categories",
