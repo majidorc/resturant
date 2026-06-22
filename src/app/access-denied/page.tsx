@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { getDictionary } from "@/lib/get-dictionary";
+import { getLocale } from "@/lib/i18n-server";
 
-export default function AccessDeniedPage() {
+export default async function AccessDeniedPage() {
+  const locale = await getLocale();
+  const t = getDictionary(locale).accessDenied;
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 via-white to-slate-200 p-6">
-      <div className="w-full max-w-md animate-fade-in-up rounded-3xl border border-slate-100/80 bg-white p-8 text-center shadow-xl">
+      <div className="w-full max-w-md animate-fade-in-up rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-xl">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-red-600">
           <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -15,19 +20,19 @@ export default function AccessDeniedPage() {
             />
           </svg>
         </div>
-        <h1 className="text-2xl font-semibold text-slate-900">Access Denied</h1>
+        <h1 className="text-2xl font-semibold text-zinc-900">{t.title}</h1>
         <p className="mt-2 text-sm text-slate-500">
-          You do not have permission to view this page. Super admin access is required.
+          {t.message} {t.superAdminRequired}
         </p>
         <div className="mt-6 flex flex-col gap-3">
           <Link href="/dashboard">
             <Button className="w-full" type="button">
-              Go to Dashboard
+              {t.goToDashboard}
             </Button>
           </Link>
           <Link href="/login">
             <Button className="w-full" type="button" variant="secondary">
-              Sign in with another account
+              {t.signInAnother}
             </Button>
           </Link>
         </div>

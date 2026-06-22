@@ -4,14 +4,19 @@ import { useState } from "react";
 import { MenuList } from "@/components/MenuList";
 import { WifiGate } from "@/components/WifiGate";
 import { Button } from "@/components/ui/button";
+import { useDictionary } from "@/components/LocaleProvider";
+import type { Locale } from "@/types/dictionary";
 
 type MenuData = {
   id: string;
-  name: string;
+  nameEn: string;
+  nameTh: string;
   items: {
     id: string;
-    name: string;
-    description: string | null;
+    nameEn: string;
+    nameTh: string;
+    descriptionEn: string | null;
+    descriptionTh: string | null;
     price: number;
     imageUrl: string | null;
   }[];
@@ -22,18 +27,18 @@ type PublicMenuExperienceProps = {
   restaurantName: string;
   menus: MenuData[];
   currency: string;
-  language: string;
+  locale: Locale;
 };
 
 function WifiLockedBanner({ onReopen }: { onReopen: () => void }) {
+  const dict = useDictionary();
+
   return (
     <div className="border-b border-amber-200 bg-amber-50 px-4 py-3">
       <div className="mx-auto flex max-w-2xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-amber-950">
-          Wi-Fi password locked. Provide your email to unlock high-speed internet.
-        </p>
+        <p className="text-sm text-amber-950">{dict.wifi.lockedBanner}</p>
         <Button className="shrink-0 whitespace-nowrap" onClick={onReopen} size="sm" type="button">
-          Unlock Wi-Fi
+          {dict.wifi.reopenGate}
         </Button>
       </div>
     </div>
@@ -45,7 +50,7 @@ export function PublicMenuExperience({
   restaurantName,
   menus,
   currency,
-  language,
+  locale,
 }: PublicMenuExperienceProps) {
   const [gateOpen, setGateOpen] = useState(true);
   const [wifiUnlocked, setWifiUnlocked] = useState(false);
@@ -64,7 +69,7 @@ export function PublicMenuExperience({
             : "opacity-100 blur-0"
         }`}
       >
-        <MenuList currency={currency} language={language} menus={menus} />
+        <MenuList currency={currency} locale={locale} menus={menus} />
       </div>
 
       <WifiGate

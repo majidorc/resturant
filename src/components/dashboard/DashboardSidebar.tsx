@@ -4,13 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { LayoutDashboard, Menu, PanelLeft, Settings, X } from "lucide-react";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SignOutButton } from "@/components/dashboard/SignOutButton";
+import { useDictionary } from "@/components/LocaleProvider";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/menu", label: "Menu", icon: Menu },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard", key: "navOverview" as const, icon: LayoutDashboard },
+  { href: "/dashboard/menu", key: "navMenu" as const, icon: Menu },
+  { href: "/dashboard/settings", key: "navSettings" as const, icon: Settings },
 ];
 
 type DashboardSidebarProps = {
@@ -32,11 +34,14 @@ function SidebarContent({
   currentPath: string;
   onNavigate?: () => void;
 }) {
+  const dict = useDictionary();
+  const d = dict.dashboard;
+
   return (
     <>
       <div className="border-b border-slate-200 px-6 py-5">
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-          Restaurant
+          {d.restaurantLabel}
         </p>
         <h2 className="mt-1 truncate text-lg font-semibold text-zinc-900">{restaurantName}</h2>
       </div>
@@ -59,13 +64,14 @@ function SidebarContent({
               onClick={onNavigate}
             >
               <Icon className="h-4 w-4 shrink-0" strokeWidth={1.8} />
-              {item.label}
+              {d[item.key]}
             </Link>
           );
         })}
       </nav>
 
-      <div className="border-t border-slate-200 p-4">
+      <div className="border-t border-slate-200 p-4 space-y-3">
+        <LanguageSwitcher className="w-full justify-center" />
         <SignOutButton />
       </div>
     </>
@@ -85,13 +91,15 @@ export function DashboardSidebar({ restaurantName }: DashboardSidebarProps) {
 export function DashboardMobileHeader({ restaurantName }: DashboardSidebarProps) {
   const currentPath = usePathname();
   const [open, setOpen] = useState(false);
+  const dict = useDictionary();
+  const d = dict.dashboard;
 
   return (
     <>
       <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 py-3 lg:hidden">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Dashboard
+            {d.restaurantLabel}
           </p>
           <p className="truncate text-sm font-semibold text-zinc-900">{restaurantName}</p>
         </div>
@@ -118,7 +126,7 @@ export function DashboardMobileHeader({ restaurantName }: DashboardSidebarProps)
               <div className="flex items-center justify-between border-b border-slate-200 px-4 py-4">
                 <div className="min-w-0">
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Navigation
+                    {d.mobileNav}
                   </p>
                   <p className="truncate text-sm font-semibold text-zinc-900">{restaurantName}</p>
                 </div>

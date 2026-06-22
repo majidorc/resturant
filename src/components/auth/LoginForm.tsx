@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useDictionary } from "@/components/LocaleProvider";
 import { Button } from "@/components/ui/button";
 import { FormAlert } from "@/components/ui/form-alert";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,9 @@ function FieldIcon({ path }: { path: string }) {
 }
 
 export function LoginForm() {
+  const dict = useDictionary();
+  const t = dict.auth;
+  const c = dict.common;
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
@@ -39,14 +43,14 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        setError("Invalid email or password.");
+        setError(t.invalidCredentials);
         return;
       }
 
       router.push(callbackUrl);
       router.refresh();
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t.genericError);
     } finally {
       setLoading(false);
     }
@@ -56,7 +60,7 @@ export function LoginForm() {
     <form className="space-y-4" onSubmit={handleSubmit}>
       <div>
         <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="email">
-          Email
+          {c.email}
         </label>
         <div className="relative">
           <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
@@ -78,7 +82,7 @@ export function LoginForm() {
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="password">
-          Password
+          {c.password}
         </label>
         <div className="relative">
           <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
@@ -100,13 +104,13 @@ export function LoginForm() {
       <FormAlert message={error} />
 
       <Button className="w-full" disabled={loading} size="lg" type="submit">
-        {loading ? "Signing in…" : "Sign in"}
+        {loading ? t.signingIn : c.signIn}
       </Button>
 
       <p className="text-center text-sm text-slate-500">
-        No account?{" "}
+        {t.noAccount}{" "}
         <Link className="font-medium text-slate-900 transition-colors duration-200 hover:text-slate-600" href="/register">
-          Register your restaurant
+          {t.registerLink}
         </Link>
       </p>
     </form>

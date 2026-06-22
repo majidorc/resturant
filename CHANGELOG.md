@@ -10,6 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Cookie-based bilingual i18n (`NEXT_LOCALE` cookie) with `en` and `th` dictionaries under `src/dictionaries/`.
+- `LanguageSwitcher` floating flag toggle (🇺🇸 EN / 🇹🇭 TH) with `router.refresh()` for instant server re-render.
+- `LocaleProvider`, `getDictionary()`, and typed `Dictionary` helpers for server and client localization.
+- Bilingual `Menu` and `MenuItem` schema fields (`nameEn`/`nameTh`, `descriptionEn`/`descriptionTh`).
+- Prisma migration `20250622140000_bilingual_menu_fields`.
 - Wi-Fi gate "Skip & View Menu" bypass with locked Wi-Fi banner and re-open trigger on the public menu.
 - `currency` and `language` fields on `Restaurant` model with tenant settings dropdowns (USD, THB, EUR, GBP / English, Thai).
 - `src/lib/locale.ts` utility for validated currency and language options plus dynamic price formatting.
@@ -18,6 +23,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Wired localization across landing, auth, public menu, Wi-Fi gate, tenant dashboard, admin panel, settings, and review flows.
+- `MenuManager` and menu server actions now capture and persist English and Thai menu content.
+- `MenuList` renders localized menu copy from cookie locale with dynamic currency formatting.
 - Wi-Fi unlock API skips duplicate `CustomerLead` creation when email is already registered for the same restaurant while still returning credentials.
 - Refactored `/admin` layout shell to a rigid `flex h-screen` structure with independent main content scrolling and `w-64 shrink-0` desktop sidebar.
 - Rebuilt `AdminSidebar` with slate-based active states, Lucide icons, and a mobile overlay drawer (removed bottom nav that caused layout shift).

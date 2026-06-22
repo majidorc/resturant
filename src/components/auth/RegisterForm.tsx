@@ -4,6 +4,7 @@ import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { useDictionary } from "@/components/LocaleProvider";
 import { registerTenant, type RegisterState } from "@/lib/actions/auth";
 import { Button } from "@/components/ui/button";
 import { FormAlert } from "@/components/ui/form-alert";
@@ -20,6 +21,9 @@ function FieldIcon({ path }: { path: string }) {
 }
 
 export function RegisterForm() {
+  const dict = useDictionary();
+  const t = dict.auth;
+  const c = dict.common;
   const router = useRouter();
   const [state, formAction, pending] = useActionState(registerTenant, initialState);
 
@@ -46,7 +50,7 @@ export function RegisterForm() {
     <form action={formAction} className="space-y-4" id="register-form">
       <div>
         <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="name">
-          Your name
+          {t.yourName}
         </label>
         <div className="relative">
           <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
@@ -58,7 +62,7 @@ export function RegisterForm() {
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="email">
-          Email
+          {c.email}
         </label>
         <div className="relative">
           <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
@@ -79,7 +83,7 @@ export function RegisterForm() {
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="password">
-          Password
+          {c.password}
         </label>
         <div className="relative">
           <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
@@ -100,7 +104,7 @@ export function RegisterForm() {
 
       <div>
         <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="restaurantName">
-          Restaurant name
+          {t.restaurantName}
         </label>
         <div className="relative">
           <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
@@ -118,16 +122,16 @@ export function RegisterForm() {
       </div>
 
       <FormAlert message={state.error} />
-      <FormAlert message={state.success ? "Account created. Signing you in…" : null} variant="success" />
+      <FormAlert message={state.success ? t.accountCreated : null} variant="success" />
 
       <Button className="w-full" disabled={pending} size="lg" type="submit">
-        {pending ? "Creating account…" : "Create account"}
+        {pending ? t.creatingAccount : t.createAccount}
       </Button>
 
       <p className="text-center text-sm text-slate-500">
-        Already have an account?{" "}
+        {t.hasAccount}{" "}
         <Link className="font-medium text-slate-900 transition-colors duration-200 hover:text-slate-600" href="/login">
-          Sign in
+          {t.loginLink}
         </Link>
       </p>
     </form>

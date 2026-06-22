@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { LocaleProvider } from "@/components/LocaleProvider";
+import { getDictionary } from "@/lib/get-dictionary";
+import { getLocale } from "@/lib/i18n-server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,17 +21,24 @@ export const metadata: Metadata = {
     "Turn your restaurant menu into a review-generating engine with QR menus, Wi-Fi lead capture, and smart Google review routing.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <LocaleProvider dict={dict} locale={locale}>
+          {children}
+        </LocaleProvider>
+      </body>
     </html>
   );
 }

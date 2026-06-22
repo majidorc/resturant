@@ -73,25 +73,32 @@ async function main() {
   const specialtyCoffee = await prisma.menu.create({
     data: {
       restaurantId: restaurant.id,
-      name: "Specialty Coffee",
+      nameEn: "Specialty Coffee",
+      nameTh: "กาแฟพิเศษ",
       isActive: true,
       items: {
         create: [
           {
-            name: "House Espresso",
-            description: "Rich double shot pulled from single-origin beans.",
+            nameEn: "House Espresso",
+            nameTh: "เอสเปรสโซ่สูตรเฮาส์",
+            descriptionEn: "Rich double shot pulled from single-origin beans.",
+            descriptionTh: "เอสเปรสโซ่ดับเบิลช็อตจากเมล็ดกาแฟคั่วคุณภาพ",
             price: 3.5,
             imageUrl: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=200&h=200&fit=crop",
           },
           {
-            name: "Vanilla Latte",
-            description: "Steamed milk with Madagascar vanilla syrup.",
+            nameEn: "Vanilla Latte",
+            nameTh: "วานิลลาลาเต้",
+            descriptionEn: "Steamed milk with Madagascar vanilla syrup.",
+            descriptionTh: "นมสตีมผสมไซรัปวานิลลามาดากัสการ์",
             price: 5.25,
             imageUrl: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=200&h=200&fit=crop",
           },
           {
-            name: "Cold Brew Tonic",
-            description: "Slow-steeped cold brew topped with citrus tonic.",
+            nameEn: "Cold Brew Tonic",
+            nameTh: "โคลด์บริวโทนิค",
+            descriptionEn: "Slow-steeped cold brew topped with citrus tonic.",
+            descriptionTh: "โคลด์บริวแช่นานท็อปด้วยโทนิกรสซิตรัส",
             price: 4.75,
             imageUrl: "https://images.unsplash.com/photo-1517701603779-8ce32db8941d?w=200&h=200&fit=crop",
           },
@@ -103,25 +110,32 @@ async function main() {
   const artisanBakery = await prisma.menu.create({
     data: {
       restaurantId: restaurant.id,
-      name: "Artisan Bakery",
+      nameEn: "Artisan Bakery",
+      nameTh: "เบเกอรี่อาร์ติซาน",
       isActive: true,
       items: {
         create: [
           {
-            name: "Butter Croissant",
-            description: "Classic flaky French pastry baked every morning.",
+            nameEn: "Butter Croissant",
+            nameTh: "ครัวซองต์เนย",
+            descriptionEn: "Classic flaky French pastry baked every morning.",
+            descriptionTh: "เบเกอรี่ฝรั่งเศสสไตล์คลาสสิก อบสดใหม่ทุกเช้า",
             price: 3.95,
             imageUrl: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=200&h=200&fit=crop",
           },
           {
-            name: "Sourdough Avocado Toast",
-            description: "Thick-cut sourdough with smashed avocado and sea salt.",
+            nameEn: "Sourdough Avocado Toast",
+            nameTh: "ขนมปังซาวโดว์ท็อปอะโวคาโด",
+            descriptionEn: "Thick-cut sourdough with smashed avocado and sea salt.",
+            descriptionTh: "ขนมปังซาวโดว์หนา ท็อปอะโวคาโดบดและเกลือทะเล",
             price: 8.5,
             imageUrl: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=200&h=200&fit=crop",
           },
           {
-            name: "Blueberry Muffin",
-            description: "Oven-fresh muffin with wild blueberries.",
+            nameEn: "Blueberry Muffin",
+            nameTh: "มัฟฟินบลูเบอร์รี่",
+            descriptionEn: "Oven-fresh muffin with wild blueberries.",
+            descriptionTh: "มัฟฟินอบสดใหม่พร้อมบลูเบอร์รี่",
             price: 4.25,
             imageUrl: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=200&h=200&fit=crop",
           },
@@ -189,7 +203,7 @@ async function main() {
   console.log(`Tenant login: ${SEED_EMAIL} / ${SEED_PASSWORD}`);
   console.log(`Super admin login: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
   console.log(`Public menu: /menu/${restaurant.slug}`);
-  console.log(`Menus created: ${specialtyCoffee.name}, ${artisanBakery.name}`);
+  console.log(`Menus created: ${specialtyCoffee.nameEn}, ${artisanBakery.nameEn}`);
 }
 
 main()

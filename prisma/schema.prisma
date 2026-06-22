@@ -43,7 +43,8 @@ model Menu {
   id           String     @id @default(cuid())
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  name         String
+  nameEn       String
+  nameTh       String
   isActive     Boolean    @default(true)
   items        MenuItem[]
 
@@ -51,14 +52,16 @@ model Menu {
 }
 
 model MenuItem {
-  id          String  @id @default(cuid())
-  menuId      String
-  menu        Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
-  name        String
-  description String?
-  price       Float
-  imageUrl    String?
-  isAvailable Boolean @default(true)
+  id            String  @id @default(cuid())
+  menuId        String
+  menu          Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  nameEn        String
+  nameTh        String
+  descriptionEn String?
+  descriptionTh String?
+  price         Float
+  imageUrl      String?
+  isAvailable   Boolean @default(true)
 
   @@index([menuId])
 }

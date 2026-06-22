@@ -8,17 +8,22 @@ import {
   updateMenuItem,
 } from "@/lib/actions/menu";
 import type { ActionState } from "@/lib/actions/settings";
+import { useDictionary } from "@/components/LocaleProvider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { FormAlert } from "@/components/ui/form-alert";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { formatMenuPrice } from "@/lib/locale";
+import { useLocale } from "@/components/LocaleProvider";
 
 type MenuItemData = {
   id: string;
-  name: string;
-  description: string | null;
+  nameEn: string;
+  nameTh: string;
+  descriptionEn: string | null;
+  descriptionTh: string | null;
   price: number;
   imageUrl: string | null;
   isAvailable: boolean;
@@ -26,22 +31,25 @@ type MenuItemData = {
 
 type MenuData = {
   id: string;
-  name: string;
+  nameEn: string;
+  nameTh: string;
   isActive: boolean;
   items: MenuItemData[];
 };
 
 type MenuManagerProps = {
   menus: MenuData[];
+  currency: string;
 };
 
 const initialState: ActionState = {};
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
-}
+export function MenuManager({ menus, currency }: MenuManagerProps) {
+  const dict = useDictionary();
+  const t = dict.menuManager;
+  const c = dict.common;
+  const { locale } = useLocale();
 
-export function MenuManager({ menus }: MenuManagerProps) {
   const [menuState, createMenuAction, creatingMenu] = useActionState(createMenu, initialState);
   const [showNewMenu, setShowNewMenu] = useState(false);
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
@@ -53,41 +61,44 @@ export function MenuManager({ menus }: MenuManagerProps) {
         <CardBody>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">Menu Categories</h2>
-              <p className="text-sm text-slate-500">Organize items into sections like Main Course or Beverages.</p>
+              <h2 className="text-lg font-semibold text-slate-900">{t.categoriesTitle}</h2>
+              <p className="text-sm text-slate-500">{t.categoriesSubtitle}</p>
             </div>
             <Button onClick={() => setShowNewMenu((value) => !value)} type="button" variant="secondary">
-              {showNewMenu ? "Cancel" : "Add Category"}
+              {showNewMenu ? c.cancel : t.addCategory}
             </Button>
           </div>
 
           {showNewMenu && (
-            <form action={createMenuAction} className="mt-5 flex flex-col gap-3 rounded-2xl border border-slate-100/80 bg-slate-50 p-4 sm:flex-row">
-              <Input name="name" placeholder="e.g. Main Course" required />
+            <form action={createMenuAction} className="mt-5 space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Input name="nameEn" placeholder={t.categoryPlaceholderEn} required />
+                <Input name="nameTh" placeholder={t.categoryPlaceholderTh} required />
+              </div>
               <Button disabled={creatingMenu} type="submit">
-                {creatingMenu ? "Saving…" : "Create"}
+                {creatingMenu ? c.saving : c.create}
               </Button>
             </form>
           )}
 
           <div className="mt-3">
             <FormAlert message={menuState.error} />
-            <FormAlert message={menuState.success ? "Menu category saved." : null} variant="success" />
+            <FormAlert message={menuState.success ? t.categorySaved : null} variant="success" />
           </div>
         </CardBody>
       </Card>
 
       {menus.length === 0 ? (
         <Card>
-          <CardBody className="py-12 text-center text-sm text-slate-500">
-            No menus yet. Add your first category above.
-          </CardBody>
+          <CardBody className="py-12 text-center text-sm text-slate-500">{t.noCategories}</CardBody>
         </Card>
       ) : (
         menus.map((menu) => (
           <MenuSection
+            currency={currency}
             expandedItemId={expandedItemId}
             key={menu.id}
+            locale={locale}
             menu={menu}
             onToggleActive={(menuId, isActive) => {
               startToggle(async () => {
@@ -109,13 +120,21 @@ function MenuSection({
   setExpandedItemId,
   onToggleActive,
   pendingMenuId,
+  currency,
+  locale,
 }: {
   menu: MenuData;
   expandedItemId: string | null;
   setExpandedItemId: (id: string | null) => void;
   onToggleActive: (menuId: string, isActive: boolean) => void;
   pendingMenuId: boolean;
+  currency: string;
+  locale: string;
 }) {
+  const dict = useDictionary();
+  const t = dict.menuManager;
+  const c = dict.common;
+
   const [itemState, createItemAction, creatingItem] = useActionState(createMenuItem, initialState);
   const [showAddItem, setShowAddItem] = useState(false);
 
@@ -124,12 +143,16 @@ function MenuSection({
       <CardHeader>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-lg font-semibold text-slate-900">{menu.name}</h3>
-            <p className="text-xs text-slate-400">{menu.items.length} items</p>
+            <h3 className="text-lg font-semibold text-slate-900">
+              {menu.nameEn} <span className="text-slate-400">/</span> {menu.nameTh}
+            </h3>
+            <p className="text-xs text-slate-500">
+              {menu.items.length} {c.items}
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant={menu.isActive ? "success" : "warning"}>
-              {menu.isActive ? "Active" : "Hidden"}
+              {menu.isActive ? c.active : c.hidden}
             </Badge>
             <Button
               disabled={pendingMenuId}
@@ -138,27 +161,33 @@ function MenuSection({
               type="button"
               variant="secondary"
             >
-              {menu.isActive ? "Hide" : "Show"}
+              {menu.isActive ? t.hide : t.show}
             </Button>
             <Button onClick={() => setShowAddItem((value) => !value)} size="sm" type="button">
-              {showAddItem ? "Cancel" : "Add Item"}
+              {showAddItem ? c.cancel : t.addItem}
             </Button>
           </div>
         </div>
       </CardHeader>
 
       {showAddItem && (
-        <div className="border-b border-slate-100/80 bg-slate-50/80 px-5 py-5">
+        <div className="border-b border-slate-200 bg-slate-50 px-5 py-5">
           <form action={createItemAction} className="space-y-3">
             <input name="menuId" type="hidden" value={menu.id} />
             <div className="grid gap-3 sm:grid-cols-2">
-              <Input name="name" placeholder="Item name" required />
-              <Input min="0.01" name="price" placeholder="Price" required step="0.01" type="number" />
+              <Input name="nameEn" placeholder={t.itemNameEn} required />
+              <Input name="nameTh" placeholder={t.itemNameTh} required />
             </div>
-            <Textarea name="description" placeholder="Description (optional)" rows={2} />
-            <Input name="imageUrl" placeholder="Image URL (optional)" type="url" />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Input min="0.01" name="price" placeholder={t.price} required step="0.01" type="number" />
+              <Input name="imageUrl" placeholder={t.imageUrl} type="url" />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Textarea name="descriptionEn" placeholder={t.descriptionEn} rows={2} />
+              <Textarea name="descriptionTh" placeholder={t.descriptionTh} rows={2} />
+            </div>
             <Button disabled={creatingItem} type="submit">
-              {creatingItem ? "Adding…" : "Add Item"}
+              {creatingItem ? t.adding : t.addItem}
             </Button>
             <FormAlert message={itemState.error} />
           </form>
@@ -167,23 +196,29 @@ function MenuSection({
 
       {menu.items.length === 0 ? (
         <CardBody>
-          <p className="text-sm text-slate-500">No items in this category.</p>
+          <p className="text-sm text-slate-500">{dict.publicMenu.noItemsCategory}</p>
         </CardBody>
       ) : (
-        <ul className="divide-y divide-slate-100/80">
+        <ul className="divide-y divide-slate-100">
           {menu.items.map((item) => (
-            <li className="px-5 py-4 transition-all duration-200 hover:bg-slate-50/50" key={item.id}>
+            <li className="px-5 py-4 transition-all duration-200 hover:bg-slate-50" key={item.id}>
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-medium text-slate-900">{item.name}</p>
-                    {!item.isAvailable && <Badge variant="warning">Unavailable</Badge>}
+                    <p className="font-medium text-slate-900">
+                      {item.nameEn} <span className="text-slate-400">/</span> {item.nameTh}
+                    </p>
+                    {!item.isAvailable && <Badge variant="warning">{c.unavailable}</Badge>}
                   </div>
-                  {item.description && (
-                    <p className="mt-1 text-sm text-slate-500">{item.description}</p>
+                  {(item.descriptionEn || item.descriptionTh) && (
+                    <p className="mt-1 text-sm text-slate-500">
+                      {item.descriptionEn}
+                      {item.descriptionEn && item.descriptionTh ? " / " : ""}
+                      {item.descriptionTh}
+                    </p>
                   )}
                   <p className="mt-2 text-sm font-semibold tabular-nums text-slate-900">
-                    {formatPrice(item.price)}
+                    {formatMenuPrice(item.price, currency, locale)}
                   </p>
                 </div>
                 <Button
@@ -192,7 +227,7 @@ function MenuSection({
                   type="button"
                   variant="secondary"
                 >
-                  {expandedItemId === item.id ? "Close" : "Edit"}
+                  {expandedItemId === item.id ? c.close : c.edit}
                 </Button>
               </div>
 
@@ -206,28 +241,47 @@ function MenuSection({
 }
 
 function EditItemForm({ item }: { item: MenuItemData }) {
+  const dict = useDictionary();
+  const t = dict.menuManager;
+  const c = dict.common;
   const [state, formAction, pending] = useActionState(updateMenuItem, initialState);
 
   return (
     <form
       action={formAction}
-      className="mt-4 space-y-3 rounded-2xl border border-slate-100/80 bg-slate-50 p-4 transition-all duration-200"
+      className="mt-4 space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 transition-all duration-200"
     >
       <input name="itemId" type="hidden" value={item.id} />
       <div className="grid gap-3 sm:grid-cols-2">
-        <Input defaultValue={item.name} name="name" placeholder="Item name" required />
+        <Input defaultValue={item.nameEn} name="nameEn" placeholder={t.itemNameEn} required />
+        <Input defaultValue={item.nameTh} name="nameTh" placeholder={t.itemNameTh} required />
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
         <Input
           defaultValue={item.price}
           min="0.01"
           name="price"
-          placeholder="Price"
+          placeholder={t.price}
           required
           step="0.01"
           type="number"
         />
+        <Input defaultValue={item.imageUrl ?? ""} name="imageUrl" placeholder={t.imageUrl} type="url" />
       </div>
-      <Textarea defaultValue={item.description ?? ""} name="description" placeholder="Description" rows={2} />
-      <Input defaultValue={item.imageUrl ?? ""} name="imageUrl" placeholder="Image URL" type="url" />
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Textarea
+          defaultValue={item.descriptionEn ?? ""}
+          name="descriptionEn"
+          placeholder={t.descriptionEn}
+          rows={2}
+        />
+        <Textarea
+          defaultValue={item.descriptionTh ?? ""}
+          name="descriptionTh"
+          placeholder={t.descriptionTh}
+          rows={2}
+        />
+      </div>
       <label className="flex items-center gap-2 text-sm text-slate-700">
         <input
           className="h-4 w-4 rounded border-slate-300"
@@ -236,13 +290,13 @@ function EditItemForm({ item }: { item: MenuItemData }) {
           type="checkbox"
           value="true"
         />
-        Available on menu
+        {t.availableOnMenu}
       </label>
       <Button disabled={pending} type="submit">
-        {pending ? "Saving…" : "Save Changes"}
+        {pending ? c.saving : c.saveChanges}
       </Button>
       <FormAlert message={state.error} />
-      <FormAlert message={state.success ? "Item updated." : null} variant="success" />
+      <FormAlert message={state.success ? t.itemUpdated : null} variant="success" />
     </form>
   );
 }

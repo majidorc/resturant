@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Building2, MessageSquareWarning, Store, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { getDictionary } from "@/lib/get-dictionary";
+import { getLocale } from "@/lib/i18n-server";
 
 type MetricProps = {
   label: string;
@@ -23,6 +25,10 @@ function AdminMetricCard({ label, value, icon }: MetricProps) {
 }
 
 export default async function AdminOverviewPage() {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const a = dict.admin;
+
   const [restaurantCount, userCount, leadCount, feedbackCount, topRestaurants] =
     await Promise.all([
       prisma.restaurant.count(),
@@ -44,46 +50,42 @@ export default async function AdminOverviewPage() {
   return (
     <div className="mx-auto w-full max-w-7xl space-y-8">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Platform</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">
-          Global Overview
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          System-wide analytics across all registered restaurants.
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{a.overviewEyebrow}</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">{a.overviewTitle}</h1>
+        <p className="mt-1 text-sm text-slate-500">{a.overviewSubtitle}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-6">
         <AdminMetricCard
           icon={<Store className="h-4 w-4" />}
-          label="Registered Restaurants"
+          label={a.registeredRestaurants}
           value={String(restaurantCount)}
         />
         <AdminMetricCard
           icon={<Users className="h-4 w-4" />}
-          label="Platform Users"
+          label={a.platformUsers}
           value={String(userCount)}
         />
         <AdminMetricCard
           icon={<Building2 className="h-4 w-4" />}
-          label="Global Leads Collected"
+          label={a.globalLeads}
           value={String(leadCount)}
         />
         <AdminMetricCard
           icon={<MessageSquareWarning className="h-4 w-4" />}
-          label="Unhappy Feedbacks"
+          label={a.unhappyFeedbacks}
           value={String(feedbackCount)}
         />
       </div>
 
       <div className="w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 px-6 py-4">
-          <h2 className="text-lg font-semibold text-zinc-900">Top Restaurants by Leads</h2>
-          <p className="mt-0.5 text-sm text-slate-500">Highest lead volume across the platform.</p>
+          <h2 className="text-lg font-semibold text-zinc-900">{a.topRestaurants}</h2>
+          <p className="mt-0.5 text-sm text-slate-500">{a.topRestaurantsSubtitle}</p>
         </div>
         {topRestaurants.length === 0 ? (
           <p className="px-6 py-10 text-center text-sm text-slate-500">
-            No restaurants registered yet.
+            {a.noRestaurants}
           </p>
         ) : (
           <ul className="divide-y divide-slate-100">
@@ -103,7 +105,7 @@ export default async function AdminOverviewPage() {
                 </div>
                 <div className="shrink-0 text-right">
                   <p className="text-sm font-semibold text-zinc-900">{restaurant._count.leads}</p>
-                  <p className="text-xs text-slate-500">leads</p>
+                  <p className="text-xs text-slate-500">{a.leads}</p>
                 </div>
               </li>
             ))}
@@ -112,19 +114,19 @@ export default async function AdminOverviewPage() {
       </div>
 
       <p className="text-sm text-slate-500">
-        Manage tenants in{" "}
+        {a.manageTenants}{" "}
         <Link
           className="font-medium text-slate-900 underline-offset-2 transition-colors hover:underline"
           href="/admin/restaurants"
         >
-          Restaurants
+          {a.restaurantsLink}
         </Link>{" "}
-        or review complaints in{" "}
+        {a.orReview}{" "}
         <Link
           className="font-medium text-slate-900 underline-offset-2 transition-colors hover:underline"
           href="/admin/feedback"
         >
-          Global Feedback
+          {a.feedbackLink}
         </Link>
         .
       </p>

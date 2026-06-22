@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Download, QrCode } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
+import { useDictionary } from "@/components/LocaleProvider";
 import { Button } from "@/components/ui/button";
 
 type MenuQrCodeProps = {
@@ -11,6 +12,8 @@ type MenuQrCodeProps = {
 };
 
 export function MenuQrCode({ publicMenuUrl, restaurantSlug }: MenuQrCodeProps) {
+  const dict = useDictionary();
+  const s = dict.settings;
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   function downloadQrCode() {
@@ -31,10 +34,8 @@ export function MenuQrCode({ publicMenuUrl, restaurantSlug }: MenuQrCodeProps) {
           <QrCode className="h-5 w-5" />
         </div>
         <div>
-          <h3 className="text-base font-semibold text-zinc-900">Print Station</h3>
-          <p className="mt-0.5 text-sm text-slate-500">
-            Download and print this QR code for table signage and guest scans.
-          </p>
+          <h3 className="text-base font-semibold text-zinc-900">{s.printStation}</h3>
+          <p className="mt-0.5 text-sm text-slate-500">{s.printStationSubtitle}</p>
         </div>
       </div>
 
@@ -52,7 +53,7 @@ export function MenuQrCode({ publicMenuUrl, restaurantSlug }: MenuQrCodeProps) {
           type="button"
         >
           <Download className="h-4 w-4 shrink-0" />
-          Download QR Code
+          {s.downloadQr}
         </Button>
       </div>
     </div>

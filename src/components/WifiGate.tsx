@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FormAlert } from "@/components/ui/form-alert";
 import { Input } from "@/components/ui/input";
+import { useDictionary } from "@/components/LocaleProvider";
+import { interpolate } from "@/lib/get-dictionary";
 
 type WifiGateProps = {
   restaurantId: string;
@@ -25,6 +27,9 @@ export function WifiGate({
   onUnlock,
   onSkip,
 }: WifiGateProps) {
+  const dict = useDictionary();
+  const t = dict.wifi;
+
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -47,7 +52,7 @@ export function WifiGate({
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error ?? "Could not unlock Wi-Fi.");
+        setError(data.error ?? t.unlockError);
         return;
       }
 
@@ -59,7 +64,7 @@ export function WifiGate({
         onUnlock();
       }
     } catch {
-      setError("Network error. Please try again.");
+      setError(t.networkError);
     } finally {
       setLoading(false);
     }
@@ -100,19 +105,19 @@ export function WifiGate({
                 )}
               </div>
               <div>
-                <h2 className="font-semibold text-slate-900">You are connected</h2>
-                <p className="text-xs text-slate-500">Wi-Fi credentials ready</p>
+                <h2 className="font-semibold text-slate-900">{t.connectedTitle}</h2>
+                <p className="text-xs text-slate-500">{t.connectedSubtitle}</p>
               </div>
             </div>
           </div>
 
           <dl className="space-y-4 px-5 py-4 text-sm">
             <div className="rounded-2xl bg-slate-50 px-4 py-3">
-              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">Network</dt>
+              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{t.network}</dt>
               <dd className="mt-1 font-medium text-slate-900">{wifi.wifiSsid}</dd>
             </div>
             <div className="rounded-2xl bg-slate-50 px-4 py-3">
-              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">Password</dt>
+              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{t.password}</dt>
               <dd className="mt-1 font-mono text-base font-medium text-slate-900">
                 {wifi.wifiPassword || "—"}
               </dd>
@@ -125,10 +130,10 @@ export function WifiGate({
               onClick={copyPassword}
               type="button"
             >
-              {copied ? "Copied!" : "Copy Password"}
+              {copied ? dict.common.copied : t.copyPassword}
             </Button>
             <Button className="flex-1" onClick={() => setDismissed(true)} type="button" variant="secondary">
-              View Menu
+              {t.viewMenu}
             </Button>
           </div>
         </div>
@@ -152,16 +157,16 @@ export function WifiGate({
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">Connect to Wi-Fi</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900">{t.connectTitle}</h2>
           <p className="mt-1 text-sm text-slate-500">
-            Enter your email to unlock the guest network at {restaurantName}.
+            {interpolate(t.connectSubtitle, { restaurantName })}
           </p>
         </div>
 
         <form className="space-y-4 px-6 py-5" onSubmit={handleSubmit}>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="wifi-email">
-              Email address
+              {t.emailLabel}
             </label>
             <div className="relative">
               <svg
@@ -183,7 +188,7 @@ export function WifiGate({
                 disabled={loading}
                 id="wifi-email"
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="you@example.com"
+                placeholder={t.emailPlaceholder}
                 required
                 type="email"
                 value={email}
@@ -194,7 +199,7 @@ export function WifiGate({
           <FormAlert message={error} />
 
           <Button className="w-full" disabled={loading} size="lg" type="submit">
-            {loading ? "Unlocking…" : "Unlock Wi-Fi"}
+            {loading ? t.unlocking : t.unlockWifi}
           </Button>
 
           <div className="pt-1 text-center">
@@ -204,7 +209,7 @@ export function WifiGate({
               onClick={handleSkip}
               type="button"
             >
-              Skip &amp; View Menu
+              {t.skipViewMenu}
             </button>
           </div>
         </form>

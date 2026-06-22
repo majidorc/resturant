@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { CURRENCY_OPTIONS, LANGUAGE_OPTIONS } from "@/lib/locale";
 import { cn } from "@/lib/utils";
+import { useDictionary } from "@/components/LocaleProvider";
 
 type SettingsFormProps = {
   restaurant: {
@@ -69,6 +70,9 @@ function FieldLabel({
 }
 
 export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
+  const dict = useDictionary();
+  const s = dict.settings;
+  const c = dict.common;
   const [state, formAction, pending] = useActionState(updateRestaurantSettings, initialState);
   const [copied, setCopied] = useState(false);
 
@@ -80,26 +84,19 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
-      <SectionCard
-        description="Your public menu identity and shareable guest link."
-        title="Restaurant Profile"
-      >
+      <SectionCard description={s.profileSubtitle} title={s.profileTitle}>
         <div className="space-y-4">
           <div>
-            <p className="text-sm font-medium text-zinc-900">Menu Slug</p>
-            <p className="mt-0.5 text-xs text-slate-500">
-              Unique path segment used in your public menu URL.
-            </p>
+            <p className="text-sm font-medium text-zinc-900">{s.menuSlug}</p>
+            <p className="mt-0.5 text-xs text-slate-500">{s.menuSlugHint}</p>
             <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-700">
               /{restaurant.slug}
             </div>
           </div>
 
           <div>
-            <p className="text-sm font-medium text-zinc-900">Public Menu Link</p>
-            <p className="mt-0.5 text-xs text-slate-500">
-              Share this URL on table QR codes, social posts, and signage.
-            </p>
+            <p className="text-sm font-medium text-zinc-900">{s.publicMenuLink}</p>
+            <p className="mt-0.5 text-xs text-slate-500">{s.publicMenuLinkHint}</p>
             <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-stretch">
               <div className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-700">
                 <span className="block truncate">{publicMenuUrl}</span>
@@ -116,12 +113,12 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
                 {copied ? (
                   <>
                     <Check className="h-4 w-4 shrink-0" />
-                    Copied
+                    {c.copied}
                   </>
                 ) : (
                   <>
                     <Copy className="h-4 w-4 shrink-0" />
-                    Copy Link
+                    {c.copyLink}
                   </>
                 )}
               </Button>
@@ -133,17 +130,10 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
       <MenuQrCode publicMenuUrl={publicMenuUrl} restaurantSlug={restaurant.slug} />
 
       <form action={formAction} className="space-y-6">
-        <SectionCard
-          description="Credentials shown to guests after they unlock Wi-Fi on your menu page."
-          title="Wi-Fi Access Credentials"
-        >
+        <SectionCard description={s.wifiSubtitle} title={s.wifiTitle}>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <FieldLabel
-                hint="Network name guests will connect to."
-                htmlFor="wifiSsid"
-                label="Wi-Fi SSID"
-              />
+              <FieldLabel hint={s.wifiSsidHint} htmlFor="wifiSsid" label={s.wifiSsid} />
               <Input
                 className={fieldInputClass}
                 defaultValue={restaurant.wifiSsid ?? ""}
@@ -154,11 +144,7 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
             </div>
 
             <div>
-              <FieldLabel
-                hint="Password revealed after email capture."
-                htmlFor="wifiPassword"
-                label="Wi-Fi Password"
-              />
+              <FieldLabel hint={s.wifiPasswordHint} htmlFor="wifiPassword" label={s.wifiPassword} />
               <Input
                 className={fieldInputClass}
                 defaultValue={restaurant.wifiPassword ?? ""}
@@ -170,16 +156,9 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
           </div>
         </SectionCard>
 
-        <SectionCard
-          description="Satisfied customers are redirected here from the review follow-up email."
-          title="Google Review Link"
-        >
+        <SectionCard description={s.reviewSubtitle} title={s.reviewTitle}>
           <div>
-            <FieldLabel
-              hint="Must be a full URL starting with http:// or https://."
-              htmlFor="googleReviewUrl"
-              label="Google Review URL"
-            />
+            <FieldLabel hint={s.reviewUrlHint} htmlFor="googleReviewUrl" label={s.reviewUrl} />
             <Input
               className={fieldInputClass}
               defaultValue={restaurant.googleReviewUrl ?? ""}
@@ -191,17 +170,10 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
           </div>
         </SectionCard>
 
-        <SectionCard
-          description="Control how prices and menu copy are presented to guests."
-          title="Currency & Localization"
-        >
+        <SectionCard description={s.localeSubtitle} title={s.localeTitle}>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <FieldLabel
-                hint="Used for all menu item prices on your public menu."
-                htmlFor="currency"
-                label="Operational Currency"
-              />
+              <FieldLabel hint={s.currencyHint} htmlFor="currency" label={s.currency} />
               <Select
                 className={fieldInputClass}
                 defaultValue={restaurant.currency}
@@ -217,11 +189,7 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
             </div>
 
             <div>
-              <FieldLabel
-                hint="Default locale for currency formatting and menu presentation."
-                htmlFor="language"
-                label="Menu Language"
-              />
+              <FieldLabel hint={s.languageHint} htmlFor="language" label={s.language} />
               <Select
                 className={fieldInputClass}
                 defaultValue={restaurant.language}
@@ -239,7 +207,7 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
         </SectionCard>
 
         <FormAlert message={state.error} />
-        <FormAlert message={state.success ? "Settings saved successfully." : null} variant="success" />
+        <FormAlert message={state.success ? s.savedSuccess : null} variant="success" />
 
         <div className="flex justify-end border-t border-slate-200 pt-6">
           <Button
@@ -250,10 +218,10 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
             {pending ? (
               <>
                 <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
-                Saving…
+                {c.saving}
               </>
             ) : (
-              "Save Changes"
+              c.saveChanges
             )}
           </Button>
         </div>

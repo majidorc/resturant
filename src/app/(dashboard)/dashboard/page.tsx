@@ -4,9 +4,15 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { MetricCard } from "@/components/dashboard/MetricCard";
+import { getDictionary } from "@/lib/get-dictionary";
+import { getLocale } from "@/lib/i18n-server";
+import { interpolate } from "@/lib/get-dictionary";
 
 export default async function DashboardPage() {
   const session = await auth();
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const d = dict.dashboard;
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -21,7 +27,7 @@ export default async function DashboardPage() {
     return (
       <Card>
         <CardBody>
-          <p className="text-sm text-amber-800">No restaurant is linked to this account yet.</p>
+          <p className="text-sm text-amber-800">{d.noRestaurant}</p>
         </CardBody>
       </Card>
     );
@@ -45,59 +51,52 @@ export default async function DashboardPage() {
     totalLeads === 0 ? 0 : Math.round((emailedLeads / totalLeads) * 100);
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-7xl space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Overview</h1>
-        <p className="mt-1 text-sm text-slate-500">Performance snapshot for {restaurant.name}.</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{d.overviewTitle}</h1>
+        <p className="mt-1 text-sm text-slate-500">
+          {interpolate(d.overviewSubtitle, { restaurantName: restaurant.name })}
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <MetricCard
-          hint="Captured through Wi-Fi unlock"
-          icon={
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeWidth={1.8} />
-            </svg>
-          }
-          label="Total Leads Collected"
+          hint={d.totalLeadsHint}
+          label={d.totalLeads}
           value={String(totalLeads)}
         />
         <MetricCard
-          hint={`${emailedLeads} leads received review emails`}
-          label="Review Conversion"
+          hint={interpolate(d.reviewConversionHint, { count: emailedLeads })}
+          label={d.reviewConversion}
           trend={conversionRate > 0 ? `${conversionRate}%` : undefined}
           value={`${conversionRate}%`}
         />
-        <MetricCard
-          hint="Private feedback submissions"
-          label="Internal Feedback"
-          value={String(feedbackCount)}
-        />
+        <MetricCard hint={d.internalFeedbackHint} label={d.internalFeedback} value={String(feedbackCount)} />
       </div>
 
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold text-slate-900">Recent Leads</h2>
+          <h2 className="text-lg font-semibold text-zinc-900">{d.recentLeads}</h2>
         </CardHeader>
         {recentLeads.length === 0 ? (
           <CardBody>
-            <p className="text-sm text-slate-500">No leads captured yet.</p>
+            <p className="text-sm text-slate-500">{d.noLeads}</p>
           </CardBody>
         ) : (
-          <ul className="divide-y divide-slate-100/80">
+          <ul className="divide-y divide-slate-100">
             {recentLeads.map((lead) => (
               <li
-                className="flex items-center justify-between gap-4 px-5 py-4 transition-all duration-200 hover:bg-slate-50/50"
+                className="flex items-center justify-between gap-4 px-5 py-4 transition-colors duration-200 hover:bg-slate-50"
                 key={lead.id}
               >
                 <div>
-                  <p className="font-medium text-slate-900">{lead.email}</p>
+                  <p className="font-medium text-zinc-900">{lead.email}</p>
                   <div className="mt-1">
                     <Badge>{lead.source}</Badge>
                   </div>
                 </div>
-                <time className="text-xs text-slate-400">
-                  {lead.createdAt.toLocaleDateString("en-US", {
+                <time className="text-xs text-slate-500">
+                  {lead.createdAt.toLocaleDateString(locale === "th" ? "th-TH" : "en-US", {
                     month: "short",
                     day: "numeric",
                     year: "numeric",

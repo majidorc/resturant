@@ -2,9 +2,13 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SettingsForm } from "./SettingsForm";
+import { getDictionary } from "@/lib/get-dictionary";
+import { getLocale } from "@/lib/i18n-server";
 
 export default async function SettingsPage() {
   const session = await auth();
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -32,11 +36,13 @@ export default async function SettingsPage() {
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Configuration</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">Settings</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Update Wi-Fi credentials, localization, your public menu link, and Google review destination.
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          {dict.dashboard.settingsEyebrow}
         </p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">
+          {dict.dashboard.settingsTitle}
+        </h1>
+        <p className="mt-1 text-sm text-slate-500">{dict.dashboard.settingsSubtitle}</p>
       </div>
 
       <SettingsForm publicMenuUrl={publicMenuUrl} restaurant={restaurant} />

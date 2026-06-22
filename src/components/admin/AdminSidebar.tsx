@@ -4,13 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { LayoutDashboard, Menu, MessageSquareWarning, Store, X } from "lucide-react";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SignOutButton } from "@/components/dashboard/SignOutButton";
+import { useDictionary } from "@/components/LocaleProvider";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/restaurants", label: "Restaurants", icon: Store },
-  { href: "/admin/feedback", label: "Feedback", icon: MessageSquareWarning },
+  { href: "/admin", key: "navOverview" as const, icon: LayoutDashboard },
+  { href: "/admin/restaurants", key: "navRestaurants" as const, icon: Store },
+  { href: "/admin/feedback", key: "navFeedback" as const, icon: MessageSquareWarning },
 ];
 
 function isNavActive(currentPath: string, href: string) {
@@ -26,13 +28,16 @@ function SidebarContent({
   currentPath: string;
   onNavigate?: () => void;
 }) {
+  const dict = useDictionary();
+  const a = dict.admin;
+
   return (
     <>
       <div className="border-b border-slate-200 px-6 py-5">
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-          Platform Control
+          {a.platformLabel}
         </p>
-        <h2 className="mt-1 text-lg font-semibold text-zinc-900">Super Admin</h2>
+        <h2 className="mt-1 text-lg font-semibold text-zinc-900">{a.superAdmin}</h2>
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
@@ -53,13 +58,14 @@ function SidebarContent({
               onClick={onNavigate}
             >
               <Icon className="h-4 w-4 shrink-0" strokeWidth={1.8} />
-              {item.label}
+              {a[item.key]}
             </Link>
           );
         })}
       </nav>
 
-      <div className="border-t border-slate-200 p-4">
+      <div className="space-y-3 border-t border-slate-200 p-4">
+        <LanguageSwitcher className="w-full justify-center" />
         <SignOutButton />
       </div>
     </>
@@ -79,15 +85,17 @@ export function AdminSidebar() {
 export function AdminMobileHeader() {
   const currentPath = usePathname();
   const [open, setOpen] = useState(false);
+  const dict = useDictionary();
+  const a = dict.admin;
 
   return (
     <>
       <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 py-3 lg:hidden">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Super Admin
+            {a.superAdmin}
           </p>
-          <p className="truncate text-sm font-semibold text-zinc-900">Platform Console</p>
+          <p className="truncate text-sm font-semibold text-zinc-900">{a.mobileConsole}</p>
         </div>
         <button
           aria-label="Open admin navigation"
@@ -112,9 +120,9 @@ export function AdminMobileHeader() {
               <div className="flex items-center justify-between border-b border-slate-200 px-4 py-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Navigation
+                    {a.mobileNav}
                   </p>
-                  <p className="text-sm font-semibold text-zinc-900">MenuHub Admin</p>
+                  <p className="text-sm font-semibold text-zinc-900">{a.menuHubAdmin}</p>
                 </div>
                 <button
                   aria-label="Close menu"
