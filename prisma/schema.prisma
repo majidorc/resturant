@@ -1,0 +1,86 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+enum Role {
+  SUPERADMIN
+  TENANT
+}
+
+model User {
+  id        String      @id @default(cuid())
+  name      String?
+  email     String      @unique
+  password  String?
+  role      Role        @default(TENANT)
+  restaurant Restaurant?
+  createdAt DateTime    @default(now())
+}
+
+model Restaurant {
+  id              String         @id @default(cuid())
+  userId          String         @unique
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  slug            String         @unique
+  wifiSsid        String?
+  wifiPassword    String?
+  googleReviewUrl String?
+  menus           Menu[]
+  leads           CustomerLead[]
+  feedbacks       Feedback[]
+  createdAt       DateTime       @default(now())
+}
+
+model Menu {
+  id           String     @id @default(cuid())
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  name         String
+  isActive     Boolean    @default(true)
+  items        MenuItem[]
+
+  @@index([restaurantId])
+}
+
+model MenuItem {
+  id          String  @id @default(cuid())
+  menuId      String
+  menu        Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  isAvailable Boolean @default(true)
+
+  @@index([menuId])
+}
+
+model CustomerLead {
+  id           String     @id @default(cuid())
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  email        String
+  source       String     @default("WIFI_UNLOCK")
+  emailSent    Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+
+  @@index([restaurantId])
+  @@index([emailSent, createdAt])
+}
+
+model Feedback {
+  id           String     @id @default(cuid())
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  rating       Int
+  comment      String?
+  createdAt    DateTime   @default(now())
+
+  @@index([restaurantId])
+}
