@@ -1,0 +1,70 @@
+# Changelog
+
+All notable changes to this project are documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+---
+
+## [Unreleased]
+
+---
+
+## [0.1.0] - 2025-06-22
+
+### Added
+
+- Initial Next.js 16 App Router project with TypeScript and Tailwind CSS 4.
+- Prisma 7 schema: `User`, `Restaurant`, `Menu`, `MenuItem`, `CustomerLead`, `Feedback` with `SUPERADMIN` / `TENANT` roles.
+- Prisma client singleton with `@prisma/adapter-pg` for PostgreSQL.
+- Public menu page at `/menu/[slug]` with blurred menu preview and Wi-Fi gate overlay.
+- Wi-Fi unlock API at `POST /api/lead/unlock-wifi` (email validation, lead capture, credential response).
+- Smart review router at `/review/[leadId]` with Google redirect and internal feedback form.
+- Review cron endpoint at `/api/cron/send-reviews` (23–25 hour lead window, `CRON_SECRET` protection).
+- Feedback API at `POST /api/feedback`.
+- NextAuth.js v5 credentials authentication with JWT sessions and role in session token.
+- Tenant registration server action (creates user + restaurant with auto slug).
+- Tenant dashboard: overview metrics, menu management, settings with QR code generator.
+- Super admin dashboard at `/admin` with platform overview, restaurant registry, and global feedback monitor.
+- Middleware role guards for `/dashboard/*` and `/admin/*` routes.
+- Database seed script (`prisma/seed.ts`) with Green Bistro Coffee sample tenant and super admin user.
+- Manual SQL seed fallback (`prisma/seed-manual.sql`) for Coolify PostgreSQL console.
+- Initial Prisma migration (`20250622000000_init`).
+- Multi-stage production `Dockerfile` with Next.js `output: "standalone"`.
+- `.dockerignore` and `.env.example` for deployment configuration.
+- Marketing landing page at `/` with hero, how-it-works, features, pricing, and footer sections.
+- `lucide-react` icon integration across landing and dashboard surfaces.
+- Shared UI primitives: `Button`, `Input`, `Textarea`, `Badge`, `Card`, `FormAlert`.
+- `PublicMenuExperience` client wrapper to unlock menu after Wi-Fi submission.
+- Sticky horizontal category navigation with scroll spy on public menu.
+- Mobile-responsive tenant and super admin navigation (drawer + bottom bar).
+- QR code download component for tenant settings ("Print Station").
+- `CHANGELOG.md` and comprehensive `README.md` project documentation.
+
+### Changed
+
+- Replaced default Next.js skeleton homepage with premium MenuHub marketing landing page.
+- Global UI refactor: slate/zinc design system, micro-shadows, `transition-all duration-200` interactions.
+- Wi-Fi gate upgraded to frosted-glass overlay with iOS-style credential card and copy success animation.
+- Menu list redesigned as card grid with fade-in animations and availability badges.
+- Auth pages updated with gradient backgrounds, icon inputs, and fixed-height error alerts.
+- Metric cards redesigned with icon placeholders and uniform height alignment.
+- Super admin zone styled with indigo accent to distinguish from tenant dashboard.
+- Admin tables enhanced with hover rows, star rating badges, and improved column layout.
+- Review feedback form upgraded with interactive star buttons and mobile-friendly textarea.
+- `db:seed` script updated to invoke `tsx` via explicit Node path for container compatibility.
+- Docker runner stage copies `tsx` and Prisma tooling for in-container migrate/seed operations.
+- Root layout metadata updated to MenuHub branding.
+- `globals.css` updated with premium light theme, fade-in animation, and Geist font stack.
+
+### Fixed
+
+- Prisma 7 client initialization requiring explicit PostgreSQL driver adapter.
+- NextAuth session types extended with `userId`, `restaurantId`, and `role` fields.
+- Sign-out button server action isolated to prevent Prisma bundling into client components.
+- Super admin users redirected away from tenant dashboard; tenants blocked from `/admin`.
+- Menu blur state now clears after successful Wi-Fi unlock.
+- Production container `prisma: not found` and `tsx: not found` errors during seed (Docker tooling + manual SQL fallback documented).
+
+[Unreleased]: https://github.com/majidorc/resturant/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/majidorc/resturant/releases/tag/v0.1.0

@@ -1,0 +1,34 @@
+---
+description: Maintain README and CHANGELOG on every meaningful change
+alwaysApply: true
+---
+
+# System Documentation & Changelog Management
+
+## System Context
+
+Multi-tenant QR Menu & Google Review SaaS (MenuHub):
+- Next.js App Router, TypeScript, Tailwind CSS
+- Prisma ORM, PostgreSQL
+- NextAuth.js (`SUPERADMIN`, `TENANT` roles)
+- Docker standalone build for Coolify
+- **100% English only** across codebase, UI, logs, seeds, and docs
+
+## Mandatory README Maintenance
+
+After completing a task, feature, or config refactor, inspect root `README.md`. Update or keep complete:
+- Functional architecture (Landing, Public Menu/Wi-Fi Gate, Tenant Dashboard, Super Admin, Cron Runner)
+- Local setup with environment variable specifications
+- Build and Docker standalone flags for production
+
+## Incremental CHANGELOG Updates
+
+Maintain root `CHANGELOG.md` using [Keep a Changelog](https://keepachangelog.com/) format:
+- Append or update on every file change, script, schema update, or structural UI change
+- Group under dated sections: `### Added`, `### Changed`, `### Fixed`
+
+## Pre-Finish Checklist
+
+Before finishing any user request:
+1. Did architecture change? Update relevant `README.md` sections.
+2. Did code change? Log micro-changes under today's date in `CHANGELOG.md`.
