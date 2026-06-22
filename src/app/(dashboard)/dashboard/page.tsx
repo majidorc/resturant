@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 
 export default async function DashboardPage() {
@@ -17,9 +19,11 @@ export default async function DashboardPage() {
 
   if (!restaurant) {
     return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-900">
-        No restaurant is linked to this account yet.
-      </div>
+      <Card>
+        <CardBody>
+          <p className="text-sm text-amber-800">No restaurant is linked to this account yet.</p>
+        </CardBody>
+      </Card>
     );
   }
 
@@ -43,38 +47,56 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold text-zinc-900">Overview</h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          Performance snapshot for {restaurant.name}.
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Overview</h1>
+        <p className="mt-1 text-sm text-slate-500">Performance snapshot for {restaurant.name}.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <MetricCard label="Total Leads Collected" value={String(totalLeads)} />
+        <MetricCard
+          hint="Captured through Wi-Fi unlock"
+          icon={
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeWidth={1.8} />
+            </svg>
+          }
+          label="Total Leads Collected"
+          value={String(totalLeads)}
+        />
         <MetricCard
           hint={`${emailedLeads} leads received review emails`}
           label="Review Conversion"
+          trend={conversionRate > 0 ? `${conversionRate}%` : undefined}
           value={`${conversionRate}%`}
         />
-        <MetricCard label="Internal Feedback" value={String(feedbackCount)} />
+        <MetricCard
+          hint="Private feedback submissions"
+          label="Internal Feedback"
+          value={String(feedbackCount)}
+        />
       </div>
 
-      <section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-        <div className="border-b border-zinc-200 px-5 py-4">
-          <h2 className="text-lg font-semibold text-zinc-900">Recent Leads</h2>
-        </div>
-
+      <Card>
+        <CardHeader>
+          <h2 className="text-lg font-semibold text-slate-900">Recent Leads</h2>
+        </CardHeader>
         {recentLeads.length === 0 ? (
-          <p className="px-5 py-8 text-sm text-zinc-500">No leads captured yet.</p>
+          <CardBody>
+            <p className="text-sm text-slate-500">No leads captured yet.</p>
+          </CardBody>
         ) : (
-          <ul className="divide-y divide-zinc-200">
+          <ul className="divide-y divide-slate-100/80">
             {recentLeads.map((lead) => (
-              <li className="flex items-center justify-between gap-4 px-5 py-4" key={lead.id}>
+              <li
+                className="flex items-center justify-between gap-4 px-5 py-4 transition-all duration-200 hover:bg-slate-50/50"
+                key={lead.id}
+              >
                 <div>
-                  <p className="font-medium text-zinc-900">{lead.email}</p>
-                  <p className="text-xs text-zinc-500">Source: {lead.source}</p>
+                  <p className="font-medium text-slate-900">{lead.email}</p>
+                  <div className="mt-1">
+                    <Badge>{lead.source}</Badge>
+                  </div>
                 </div>
-                <time className="text-xs text-zinc-500">
+                <time className="text-xs text-slate-400">
                   {lead.createdAt.toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -85,7 +107,7 @@ export default async function DashboardPage() {
             ))}
           </ul>
         )}
-      </section>
+      </Card>
     </div>
   );
 }

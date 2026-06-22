@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { MenuList } from "@/components/MenuList";
-import { WifiGate } from "@/components/WifiGate";
+import { PublicMenuExperience } from "@/components/menu/PublicMenuExperience";
 import { prisma } from "@/lib/prisma";
 
 type PageProps = {
@@ -31,17 +30,21 @@ export default async function PublicMenuPage({ params }: PageProps) {
   }
 
   return (
-    <main className="relative min-h-screen bg-zinc-50 pb-24">
-      <header className="border-b border-zinc-200 bg-white px-4 py-6">
-        <h1 className="text-center text-2xl font-semibold">{restaurant.name}</h1>
+    <main className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white pb-28">
+      <header className="border-b border-slate-100/80 bg-white px-4 py-5">
+        <p className="text-center text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
+          Digital Menu
+        </p>
+        <h1 className="mt-1 text-center text-2xl font-semibold tracking-tight text-slate-900">
+          {restaurant.name}
+        </h1>
       </header>
 
-      <div className="relative">
-        <div className="pointer-events-none select-none blur-sm">
-          <MenuList menus={restaurant.menus} />
-        </div>
-        <WifiGate restaurantId={restaurant.id} restaurantName={restaurant.name} />
-      </div>
+      <PublicMenuExperience
+        menus={restaurant.menus}
+        restaurantId={restaurant.id}
+        restaurantName={restaurant.name}
+      />
     </main>
   );
 }

@@ -24,7 +24,7 @@ export default async function DashboardLayout({
   });
 
   return (
-    <div className="min-h-screen bg-zinc-50 lg:pl-64">
+    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-0 lg:pl-64">
       <DashboardSidebar restaurantName={restaurant?.name ?? "My Restaurant"} />
       <div className="px-4 py-6 sm:px-6 lg:px-8">{children}</div>
     </div>

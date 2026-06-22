@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "QR Menu",
-  description: "Digital QR menus, Wi-Fi lead capture, and smart review routing for restaurants.",
+  title: "MenuHub | QR Menus, Wi-Fi Lead Capture & Review Automation",
+  description:
+    "Turn your restaurant menu into a review-generating engine with QR menus, Wi-Fi lead capture, and smart Google review routing.",
 };
 
 export default function RootLayout({

@@ -25,19 +25,31 @@ export default async function ReviewRouterPage({ params, searchParams }: ReviewP
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-md space-y-6 rounded-xl border border-gray-100 bg-white p-8 shadow-sm">
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 via-white to-slate-200 px-4 py-12">
+      <div className="w-full max-w-md animate-fade-in-up overflow-hidden rounded-3xl border border-slate-100/80 bg-white/95 p-8 shadow-xl backdrop-blur-sm">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900">We appreciate your honesty</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm">
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-4l-4 4z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.8}
+              />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-semibold tracking-tight text-slate-900">We appreciate your honesty</h2>
+          <p className="mt-2 text-sm leading-relaxed text-slate-500">
             We are sorry your experience at{" "}
-            <span className="font-semibold">{lead.restaurant.name}</span> didn&apos;t meet
-            expectations. Please let management know what we can fix.
+            <span className="font-semibold text-slate-800">{lead.restaurant.name}</span> did not meet
+            expectations. Please let management know what we can improve.
           </p>
         </div>
 
-        <FeedbackForm restaurantId={lead.restaurant.id} />
+        <div className="mt-8">
+          <FeedbackForm restaurantId={lead.restaurant.id} />
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

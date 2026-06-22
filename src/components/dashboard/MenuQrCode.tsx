@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { Button } from "@/components/ui/button";
+import { Card, CardBody } from "@/components/ui/card";
 
 type MenuQrCodeProps = {
   publicMenuUrl: string;
@@ -24,23 +25,30 @@ export function MenuQrCode({ publicMenuUrl, restaurantSlug }: MenuQrCodeProps) {
   }
 
   return (
-    <div className="mt-6 flex flex-col items-center gap-4 rounded-xl border border-zinc-200 bg-zinc-50 p-6">
-      <p className="text-sm font-medium text-zinc-700">QR Code Preview</p>
-      <div className="rounded-lg bg-white p-4 shadow-sm">
-        <QRCodeCanvas
-          includeMargin
-          level="H"
-          ref={canvasRef}
-          size={220}
-          value={publicMenuUrl}
-        />
-      </div>
-      <p className="max-w-xs text-center text-xs text-zinc-500">
-        Scan to open your public menu. Print and place on tables.
-      </p>
-      <Button onClick={downloadQrCode} type="button" variant="secondary">
-        Download QR Code
-      </Button>
-    </div>
+    <Card className="mt-6 overflow-hidden">
+      <CardBody className="bg-gradient-to-b from-slate-50 to-white">
+        <div className="text-center">
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-400">Print Station</p>
+          <h3 className="mt-1 text-lg font-semibold text-slate-900">Table QR Code</h3>
+          <p className="mt-1 text-sm text-slate-500">Download and print for guest table scans.</p>
+        </div>
+
+        <div className="mx-auto mt-6 max-w-[260px] rounded-3xl border border-slate-100/80 bg-white p-5 shadow-sm">
+          <div className="rounded-2xl bg-white p-3 shadow-inner">
+            <QRCodeCanvas includeMargin level="H" ref={canvasRef} size={200} value={publicMenuUrl} />
+          </div>
+          <p className="mt-4 break-all text-center text-xs text-slate-400">{publicMenuUrl}</p>
+        </div>
+
+        <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+          <Button className="flex-1" onClick={downloadQrCode} type="button">
+            Download QR Code
+          </Button>
+          <Button className="flex-1" onClick={downloadQrCode} type="button" variant="secondary">
+            Save for Print
+          </Button>
+        </div>
+      </CardBody>
+    </Card>
   );
 }

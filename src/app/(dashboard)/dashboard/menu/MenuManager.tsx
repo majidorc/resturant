@@ -8,8 +8,12 @@ import {
   updateMenuItem,
 } from "@/lib/actions/menu";
 import type { ActionState } from "@/lib/actions/settings";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardBody, CardHeader } from "@/components/ui/card";
+import { FormAlert } from "@/components/ui/form-alert";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 type MenuItemData = {
   id: string;
@@ -44,35 +48,41 @@ export function MenuManager({ menus }: MenuManagerProps) {
   const [pendingMenuId, startToggle] = useTransition();
 
   return (
-    <div className="space-y-8">
-      <section className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold text-zinc-900">Menu Categories</h2>
-            <p className="text-sm text-zinc-600">Organize items into sections like Main Course or Beverages.</p>
-          </div>
-          <Button onClick={() => setShowNewMenu((value) => !value)} type="button" variant="secondary">
-            {showNewMenu ? "Cancel" : "Add Category"}
-          </Button>
-        </div>
-
-        {showNewMenu && (
-          <form action={createMenuAction} className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <Input name="name" placeholder="e.g. Main Course" required />
-            <Button disabled={creatingMenu} type="submit">
-              {creatingMenu ? "Saving…" : "Create"}
+    <div className="space-y-6">
+      <Card>
+        <CardBody>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">Menu Categories</h2>
+              <p className="text-sm text-slate-500">Organize items into sections like Main Course or Beverages.</p>
+            </div>
+            <Button onClick={() => setShowNewMenu((value) => !value)} type="button" variant="secondary">
+              {showNewMenu ? "Cancel" : "Add Category"}
             </Button>
-          </form>
-        )}
+          </div>
 
-        {menuState.error && <p className="mt-3 text-sm text-red-600">{menuState.error}</p>}
-        {menuState.success && <p className="mt-3 text-sm text-green-700">Menu category saved.</p>}
-      </section>
+          {showNewMenu && (
+            <form action={createMenuAction} className="mt-5 flex flex-col gap-3 rounded-2xl border border-slate-100/80 bg-slate-50 p-4 sm:flex-row">
+              <Input name="name" placeholder="e.g. Main Course" required />
+              <Button disabled={creatingMenu} type="submit">
+                {creatingMenu ? "Saving…" : "Create"}
+              </Button>
+            </form>
+          )}
+
+          <div className="mt-3">
+            <FormAlert message={menuState.error} />
+            <FormAlert message={menuState.success ? "Menu category saved." : null} variant="success" />
+          </div>
+        </CardBody>
+      </Card>
 
       {menus.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-sm text-zinc-500">
-          No menus yet. Add your first category above.
-        </p>
+        <Card>
+          <CardBody className="py-12 text-center text-sm text-slate-500">
+            No menus yet. Add your first category above.
+          </CardBody>
+        </Card>
       ) : (
         menus.map((menu) => (
           <MenuSection
@@ -110,73 +120,75 @@ function MenuSection({
   const [showAddItem, setShowAddItem] = useState(false);
 
   return (
-    <section className="rounded-xl border border-zinc-200 bg-white shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 px-5 py-4">
-        <div>
-          <h3 className="text-lg font-semibold text-zinc-900">{menu.name}</h3>
-          <p className="text-xs text-zinc-500">{menu.items.length} items</p>
+    <Card hover>
+      <CardHeader>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-900">{menu.name}</h3>
+            <p className="text-xs text-slate-400">{menu.items.length} items</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant={menu.isActive ? "success" : "warning"}>
+              {menu.isActive ? "Active" : "Hidden"}
+            </Badge>
+            <Button
+              disabled={pendingMenuId}
+              onClick={() => onToggleActive(menu.id, !menu.isActive)}
+              size="sm"
+              type="button"
+              variant="secondary"
+            >
+              {menu.isActive ? "Hide" : "Show"}
+            </Button>
+            <Button onClick={() => setShowAddItem((value) => !value)} size="sm" type="button">
+              {showAddItem ? "Cancel" : "Add Item"}
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span
-            className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-              menu.isActive ? "bg-green-100 text-green-800" : "bg-zinc-100 text-zinc-600"
-            }`}
-          >
-            {menu.isActive ? "Active" : "Hidden"}
-          </span>
-          <Button
-            disabled={pendingMenuId}
-            onClick={() => onToggleActive(menu.id, !menu.isActive)}
-            type="button"
-            variant="secondary"
-          >
-            {menu.isActive ? "Hide" : "Show"}
-          </Button>
-          <Button onClick={() => setShowAddItem((value) => !value)} type="button">
-            {showAddItem ? "Cancel" : "Add Item"}
-          </Button>
-        </div>
-      </div>
+      </CardHeader>
 
       {showAddItem && (
-        <form action={createItemAction} className="space-y-3 border-b border-zinc-200 bg-zinc-50 p-5">
-          <input name="menuId" type="hidden" value={menu.id} />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Input name="name" placeholder="Item name" required />
-            <Input min="0.01" name="price" placeholder="Price" required step="0.01" type="number" />
-          </div>
-          <Input name="description" placeholder="Description (optional)" />
-          <Input name="imageUrl" placeholder="Image URL (optional)" type="url" />
-          <Button disabled={creatingItem} type="submit">
-            {creatingItem ? "Adding…" : "Add Item"}
-          </Button>
-          {itemState.error && <p className="text-sm text-red-600">{itemState.error}</p>}
-        </form>
+        <div className="border-b border-slate-100/80 bg-slate-50/80 px-5 py-5">
+          <form action={createItemAction} className="space-y-3">
+            <input name="menuId" type="hidden" value={menu.id} />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Input name="name" placeholder="Item name" required />
+              <Input min="0.01" name="price" placeholder="Price" required step="0.01" type="number" />
+            </div>
+            <Textarea name="description" placeholder="Description (optional)" rows={2} />
+            <Input name="imageUrl" placeholder="Image URL (optional)" type="url" />
+            <Button disabled={creatingItem} type="submit">
+              {creatingItem ? "Adding…" : "Add Item"}
+            </Button>
+            <FormAlert message={itemState.error} />
+          </form>
+        </div>
       )}
 
       {menu.items.length === 0 ? (
-        <p className="px-5 py-6 text-sm text-zinc-500">No items in this category.</p>
+        <CardBody>
+          <p className="text-sm text-slate-500">No items in this category.</p>
+        </CardBody>
       ) : (
-        <ul className="divide-y divide-zinc-200">
+        <ul className="divide-y divide-slate-100/80">
           {menu.items.map((item) => (
-            <li className="px-5 py-4" key={item.id}>
+            <li className="px-5 py-4 transition-all duration-200 hover:bg-slate-50/50" key={item.id}>
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="font-medium text-zinc-900">
-                    {item.name}{" "}
-                    {!item.isAvailable && (
-                      <span className="text-xs font-normal text-amber-600">(Unavailable)</span>
-                    )}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-medium text-slate-900">{item.name}</p>
+                    {!item.isAvailable && <Badge variant="warning">Unavailable</Badge>}
+                  </div>
                   {item.description && (
-                    <p className="mt-0.5 text-sm text-zinc-600">{item.description}</p>
+                    <p className="mt-1 text-sm text-slate-500">{item.description}</p>
                   )}
-                  <p className="mt-1 text-sm font-medium text-zinc-900">{formatPrice(item.price)}</p>
+                  <p className="mt-2 text-sm font-semibold tabular-nums text-slate-900">
+                    {formatPrice(item.price)}
+                  </p>
                 </div>
                 <Button
-                  onClick={() =>
-                    setExpandedItemId(expandedItemId === item.id ? null : item.id)
-                  }
+                  onClick={() => setExpandedItemId(expandedItemId === item.id ? null : item.id)}
+                  size="sm"
                   type="button"
                   variant="secondary"
                 >
@@ -189,7 +201,7 @@ function MenuSection({
           ))}
         </ul>
       )}
-    </section>
+    </Card>
   );
 }
 
@@ -197,7 +209,10 @@ function EditItemForm({ item }: { item: MenuItemData }) {
   const [state, formAction, pending] = useActionState(updateMenuItem, initialState);
 
   return (
-    <form action={formAction} className="mt-4 space-y-3 rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+    <form
+      action={formAction}
+      className="mt-4 space-y-3 rounded-2xl border border-slate-100/80 bg-slate-50 p-4 transition-all duration-200"
+    >
       <input name="itemId" type="hidden" value={item.id} />
       <div className="grid gap-3 sm:grid-cols-2">
         <Input defaultValue={item.name} name="name" placeholder="Item name" required />
@@ -211,17 +226,23 @@ function EditItemForm({ item }: { item: MenuItemData }) {
           type="number"
         />
       </div>
-      <Input defaultValue={item.description ?? ""} name="description" placeholder="Description" />
+      <Textarea defaultValue={item.description ?? ""} name="description" placeholder="Description" rows={2} />
       <Input defaultValue={item.imageUrl ?? ""} name="imageUrl" placeholder="Image URL" type="url" />
-      <label className="flex items-center gap-2 text-sm text-zinc-700">
-        <input defaultChecked={item.isAvailable} name="isAvailable" type="checkbox" value="true" />
+      <label className="flex items-center gap-2 text-sm text-slate-700">
+        <input
+          className="h-4 w-4 rounded border-slate-300"
+          defaultChecked={item.isAvailable}
+          name="isAvailable"
+          type="checkbox"
+          value="true"
+        />
         Available on menu
       </label>
       <Button disabled={pending} type="submit">
         {pending ? "Saving…" : "Save Changes"}
       </Button>
-      {state.error && <p className="text-sm text-red-600">{state.error}</p>}
-      {state.success && <p className="text-sm text-green-700">Item updated.</p>}
+      <FormAlert message={state.error} />
+      <FormAlert message={state.success ? "Item updated." : null} variant="success" />
     </form>
   );
 }

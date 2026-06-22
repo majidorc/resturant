@@ -5,7 +5,16 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { FormAlert } from "@/components/ui/form-alert";
 import { Input } from "@/components/ui/input";
+
+function FieldIcon({ path }: { path: string }) {
+  return (
+    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path d={path} strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+    </svg>
+  );
+}
 
 export function LoginForm() {
   const router = useRouter();
@@ -46,44 +55,57 @@ export function LoginForm() {
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-zinc-700" htmlFor="email">
+        <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="email">
           Email
         </label>
-        <Input
-          autoComplete="email"
-          disabled={loading}
-          id="email"
-          onChange={(event) => setEmail(event.target.value)}
-          required
-          type="email"
-          value={email}
-        />
+        <div className="relative">
+          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+            <FieldIcon path="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </span>
+          <Input
+            autoComplete="email"
+            className="pl-10"
+            disabled={loading}
+            id="email"
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="owner@venue.com"
+            required
+            type="email"
+            value={email}
+          />
+        </div>
       </div>
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-zinc-700" htmlFor="password">
+        <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="password">
           Password
         </label>
-        <Input
-          autoComplete="current-password"
-          disabled={loading}
-          id="password"
-          onChange={(event) => setPassword(event.target.value)}
-          required
-          type="password"
-          value={password}
-        />
+        <div className="relative">
+          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+            <FieldIcon path="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </span>
+          <Input
+            autoComplete="current-password"
+            className="pl-10"
+            disabled={loading}
+            id="password"
+            onChange={(event) => setPassword(event.target.value)}
+            required
+            type="password"
+            value={password}
+          />
+        </div>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      <FormAlert message={error} />
 
-      <Button className="w-full" disabled={loading} type="submit">
+      <Button className="w-full" disabled={loading} size="lg" type="submit">
         {loading ? "Signing in…" : "Sign in"}
       </Button>
 
-      <p className="text-center text-sm text-zinc-600">
+      <p className="text-center text-sm text-slate-500">
         No account?{" "}
-        <Link className="font-medium text-zinc-900 underline" href="/register">
+        <Link className="font-medium text-slate-900 transition-colors duration-200 hover:text-slate-600" href="/register">
           Register your restaurant
         </Link>
       </p>
