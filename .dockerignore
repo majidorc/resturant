@@ -13,3 +13,10 @@ coverage
 .DS_Store
 *.md
 !package.json
+.cursor
+assets
+agent-tools
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.webp

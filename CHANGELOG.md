@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Docker build uses webpack instead of Turbopack, npm/prod-deps layering, and BuildKit caches for more reliable Coolify deploys.
 - Private guest feedback now lives on each tenant dashboard at `/dashboard/feedback` instead of super-admin routes.
 - Removed super-admin Restaurants and Feedback pages; old URLs redirect to `/admin`.
 - Review follow-up cron window temporarily set to **50–70 minutes** (~1 hour) for testing; override via `REVIEW_EMAIL_MIN_AGE_MINUTES` / `REVIEW_EMAIL_MAX_AGE_MINUTES` (production target was 23–25 hours).

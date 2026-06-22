@@ -1,64 +1,69 @@
+# syntax=docker/dockerfile:1
+
 FROM node:20-alpine AS base
 
-# Stage 1: Install dependencies only when needed
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
-# Stage 2: Rebuild the source code
+FROM base AS prod-deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --omit=dev --no-audit --no-fund \
+      prisma@7.8.0 \
+      bcryptjs@3.0.3 \
+      @prisma/adapter-pg@7.8.0 \
+      @prisma/client@7.8.0 \
+      pg@8.22.0 \
+      dotenv@17.4.2 \
+      tsx@4.19.3 \
+      esbuild@0.28.1
+
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Client crucial for dynamic queries at runtime
-RUN npx prisma generate
-
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build
+ENV NODE_OPTIONS="--max-old-space-size=3072"
 
-# Stage 3: Production image runner
+RUN npx prisma generate
+RUN --mount=type=cache,target=/app/.next/cache \
+    npx next build --webpack
+
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 nextjs \
+  && mkdir .next \
+  && chown nextjs:nodejs .next
 
 COPY --from=builder /app/public ./public
-
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Leverage standalone output to drastically reduce container footprint
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder --chown=nextjs:nodejs /app/src/generated ./src/generated
 
-# Database ops: migrations + seed (npm run db:migrate:deploy / npm run db:seed)
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
-COPY --from=builder /app/src/generated ./src/generated
-
-# tsx runner for seed script (explicit copy — npm .bin links are unreliable in standalone)
-COPY --from=deps /app/node_modules/tsx ./node_modules/tsx
-COPY --from=deps /app/node_modules/esbuild ./node_modules/esbuild
-COPY --from=deps /app/node_modules/get-tsconfig ./node_modules/get-tsconfig
-COPY --from=deps /app/node_modules/resolve-pkg-maps ./node_modules/resolve-pkg-maps
-
-RUN npm install prisma@7.8.0 bcryptjs@3.0.3 @prisma/adapter-pg@7.8.0 pg@8.22.0 dotenv@17.4.2 --omit=dev --no-package-lock \
+USER root
+COPY --from=prod-deps /app/node_modules /tmp/db-node_modules
+RUN cp -a /tmp/db-node_modules/. ./node_modules/ \
+  && rm -rf /tmp/db-node_modules \
   && chown -R nextjs:nodejs /app/node_modules /app/prisma /app/src/generated /app/package.json /app/prisma.config.ts
 
 USER nextjs
-
 EXPOSE 3000
-ENV PORT=3000
-ENV HOSTNAME=0.0.0.0
 
 CMD ["node", "server.js"]

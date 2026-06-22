@@ -155,13 +155,22 @@ docker build -t menuhub .
 docker run -p 3000:3000 --env-file .env menuhub
 ```
 
-The `Dockerfile` uses a three-stage build (`deps` → `builder` → `runner`):
+The `Dockerfile` uses a four-stage build (`deps` → `prod-deps` → `builder` → `runner`):
 
-1. `npm ci` for dependencies
-2. `prisma generate` + `npm run build`
-3. Copies `.next/standalone`, static assets, Prisma schema, and DB tooling into the runner image
+1. `npm ci` for full dependencies (builder)
+2. `npm install --omit=dev` for Prisma migrate/seed tooling only (runner merge)
+3. `prisma generate` + `next build --webpack` (webpack is more stable than Turbopack on low-CPU Coolify hosts)
+4. Copies `.next/standalone`, static assets, Prisma schema, and DB tooling into the runner image
 
 Container starts with `node server.js` on port `3000` (`HOSTNAME=0.0.0.0`).
+
+### Coolify build failures (exit 255 at “exporting layers”)
+
+If the build log shows **Compiled successfully** but fails at **exporting to image**, the app code is fine — the host ran out of time, disk, or memory while saving the image.
+
+1. **Free disk space** on the Coolify server (`docker system prune -af` if safe).
+2. **Increase build timeout** in Coolify (Settings → Advanced) — first builds can take 15–25+ minutes on 1 vCPU.
+3. **Redeploy** after this repo’s Dockerfile optimizations (webpack build, fewer runner layers, npm cache mounts).
 
 ### Coolify deployment checklist
 
