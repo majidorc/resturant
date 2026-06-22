@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { MenuQrCode } from "@/components/dashboard/MenuQrCode";
 import { updateRestaurantSettings } from "@/lib/actions/settings";
 import type { ActionState } from "@/lib/actions/settings";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
             {copied ? "Copied!" : "Copy Link"}
           </Button>
         </div>
+        <MenuQrCode publicMenuUrl={publicMenuUrl} restaurantSlug={restaurant.slug} />
       </section>
 
       <form
