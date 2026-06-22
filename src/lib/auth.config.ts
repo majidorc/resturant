@@ -27,9 +27,10 @@ export const authConfig = {
       return token;
     },
     session({ session, token }) {
-      if (session.user) {
+      if (session.user && typeof token.userId === "string") {
         session.user.id = token.userId;
-        session.user.restaurantId = token.restaurantId;
+        session.user.restaurantId =
+          typeof token.restaurantId === "string" ? token.restaurantId : null;
       }
 
       return session;
