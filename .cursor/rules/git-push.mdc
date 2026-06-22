@@ -1,0 +1,15 @@
+---
+description: Always commit and push to origin after completing implementation work
+alwaysApply: true
+---
+
+# Git Push After Every Task
+
+When you finish any implementation, refactor, or fix in this repo:
+
+1. **Always commit and push to `origin/main`** unless the user explicitly says not to push.
+2. Do not leave completed work only on disk — the user deploys from GitHub via Coolify.
+3. Push immediately after the change is verified (build passes when applicable).
+4. Only skip push when the user says "don't push", "local only", or similar.
+
+Default end-of-task flow: `git add` → `git commit` → `git push` → confirm clean status.
