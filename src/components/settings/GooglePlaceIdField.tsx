@@ -169,6 +169,7 @@ export function GooglePlaceIdField({
                 return;
               }
 
+              lastResolvedInput.current = pasted;
               setRawInput(pasted);
               setResolvedPlaceId(null);
               void resolveMapsLink(pasted);

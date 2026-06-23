@@ -41,10 +41,13 @@ export async function POST(request: Request) {
 
     const placeId = await resolvePlaceIdFromMapsLink(url);
     if (!placeId) {
+      const needsApiKey = !process.env.GOOGLE_PLACES_API_KEY?.trim();
       return NextResponse.json(
         {
           success: false,
-          error: "Could not resolve Place ID. Copy the link from Google Maps → Share.",
+          error: needsApiKey
+            ? "Could not resolve Place ID from that link. Ask your admin to set GOOGLE_PLACES_API_KEY, or paste a Place ID starting with ChIJ."
+            : "Could not find this business on Google Maps. Double-check the Share link and try again.",
         },
         { status: 422 },
       );
