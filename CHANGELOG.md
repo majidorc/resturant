@@ -16,15 +16,7 @@ _No unreleased changes._
 
 ### Changed
 
-- Deploy pipeline test commit (Coolify auto-deploy + GHCR pull).
-
----
-
-## [0.7.2] - 2026-06-23
-
-### Changed
-
-- GitHub Actions now runs a dedicated Coolify deploy job after every successful GHCR image push (requires repository secrets).
+- Production deploy flow restored to Coolify Dockerfile auto-deploy on git push; GHCR workflow is manual-only to avoid duplicate builds.
 
 ---
 
