@@ -8,7 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-_No unreleased changes._
+### Changed
+
+- Production deploys build on GitHub Actions (GHCR) again; Coolify pulls the image instead of compiling on the Hetzner node to avoid 100% CPU during deploys.
+
+---
+
+## [0.7.7] - 2026-06-23
+
+### Fixed
+
+- Google Maps share links resolve to Place IDs via Places API, CID parsing, and goo.gl redirect following.
 
 ---
 
