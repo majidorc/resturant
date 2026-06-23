@@ -32,7 +32,7 @@ export async function updateRestaurantSettings(
     const wifiPassword = formData.get("wifiPassword")?.toString() || null;
     const googlePlaceIdInput = formData.get("googlePlaceId")?.toString() ?? "";
     const googleReviewUrlFallback = formData.get("googleReviewUrl")?.toString() ?? "";
-    const googleReviewResult = parseGoogleReviewInput(
+    const googleReviewResult = await parseGoogleReviewInput(
       googlePlaceIdInput.trim() || googleReviewUrlFallback,
     );
     if (!googleReviewResult.ok) {

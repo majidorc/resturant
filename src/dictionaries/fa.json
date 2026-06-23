@@ -267,7 +267,7 @@
     "cityHint": "e.g. Phuket",
     "country": "Country",
     "countryHint": "e.g. Thailand",
-    "reviewProTip": "Pro tip for 5-star reviews: Paste your Place ID above and we build the direct pop-up review link for you automatically.",
+    "reviewProTip": "Pro tip for 5-star reviews: Paste your Google Maps share link and we build the direct pop-up review URL for you.",
     "reviewLinkWarning": "This link may not open the Google review popup directly. For best conversion, use a writereview?placeid= URL from your Google Place ID.",
     "socialTitle": "Social Media Profiles",
     "socialSubtitle": "Optional links shown on your public menu below your address.",
@@ -283,12 +283,14 @@
     "whatsappUrl": "WhatsApp Number / Link",
     "whatsappUrlHint": "Use a click-to-chat wa.me link for mobile guests.",
     "whatsappPlaceholder": "https://wa.me/yournumber",
-    "reviewPlaceId": "Google Place ID",
-    "reviewPlaceIdHint": "Paste your Place ID (ChIJ…), or paste any Google Maps / review link — we extract it automatically.",
-    "reviewPlaceIdPlaceholder": "ChIJw9_OvY8vUDARa_rIFf6wAQo",
+    "reviewPlaceId": "Google Maps or Place ID",
+    "reviewPlaceIdHint": "Paste your Google Maps link (Share → Copy link) or a Place ID. We resolve the review link automatically.",
+    "reviewPlaceIdPlaceholder": "https://maps.google.com/... or ChIJ...",
     "findPlaceId": "Find Place ID",
     "reviewPreview": "Generated review link",
-    "reviewInvalidPlaceId": "Could not read a Place ID. Paste the ChIJ code or use Find Place ID."
+    "reviewInvalidPlaceId": "Paste a full Google Maps share link or a Place ID starting with ChIJ.",
+    "reviewResolving": "Resolving Place ID from your Google Maps link…",
+    "reviewResolveFailed": "Could not read Place ID from that link. Open Google Maps → your business → Share → Copy link, then paste here."
   },
   "admin": {
     "platformLabel": "Platform Control",

@@ -268,9 +268,10 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
                 placeId: s.reviewPlaceId,
                 placeIdHint: s.reviewPlaceIdHint,
                 placeIdPlaceholder: s.reviewPlaceIdPlaceholder,
-                findPlaceId: s.findPlaceId,
                 reviewPreview: s.reviewPreview,
+                resolving: s.reviewResolving,
                 invalidPlaceId: s.reviewInvalidPlaceId,
+                resolveFailed: s.reviewResolveFailed,
               }}
             />
 
