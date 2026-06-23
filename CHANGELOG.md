@@ -12,6 +12,15 @@ _No unreleased changes._
 
 ---
 
+## [0.6.2] - 2026-06-23
+
+### Fixed
+
+- Runtime uploads (WebP and new images) now serve correctly in standalone production via `/api/serve-upload` rewrite.
+- Resolves 404s for dish images uploaded after a container restart.
+
+---
+
 ## [0.6.1] - 2026-06-23
 
 ### Changed
