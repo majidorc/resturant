@@ -4,12 +4,16 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FormAlert } from "@/components/ui/form-alert";
 import { Textarea } from "@/components/ui/textarea";
+import { useDictionary } from "@/components/LocaleProvider";
+import { interpolate } from "@/lib/get-dictionary";
 
 type FeedbackFormProps = {
   restaurantId: string;
 };
 
 export function FeedbackForm({ restaurantId }: FeedbackFormProps) {
+  const dict = useDictionary();
+  const r = dict.review;
   const [rating, setRating] = useState(3);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -32,13 +36,13 @@ export function FeedbackForm({ restaurantId }: FeedbackFormProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error ?? "Could not submit feedback.");
+        setError(data.error ?? r.submitError);
         return;
       }
 
       setSubmitted(true);
     } catch {
-      setError("Network error. Please try again.");
+      setError(r.networkError);
     } finally {
       setLoading(false);
     }
@@ -52,8 +56,8 @@ export function FeedbackForm({ restaurantId }: FeedbackFormProps) {
             <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
           </svg>
         </div>
-        <p className="text-sm font-medium text-emerald-800">Thank you for your feedback.</p>
-        <p className="mt-1 text-sm text-emerald-700">Management will review this privately.</p>
+        <p className="text-sm font-medium text-emerald-800">{r.thankYou}</p>
+        <p className="mt-1 text-sm text-emerald-700">{r.managementReview}</p>
       </div>
     );
   }
@@ -63,7 +67,7 @@ export function FeedbackForm({ restaurantId }: FeedbackFormProps) {
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
       <div>
-        <label className="mb-3 block text-sm font-medium text-slate-700">How would you rate your visit?</label>
+        <label className="mb-3 block text-sm font-medium text-slate-700">{r.rateVisit}</label>
         <div className="flex justify-center gap-2">
           {[1, 2, 3, 4, 5].map((value) => (
             <button
@@ -82,18 +86,21 @@ export function FeedbackForm({ restaurantId }: FeedbackFormProps) {
             </button>
           ))}
         </div>
-        <p className="mt-2 text-center text-xs text-slate-400">{activeRating} out of 5 stars</p>
+        <p className="mt-2 text-center text-xs text-slate-400">
+          {interpolate(r.outOfStars, { rating: activeRating })}
+        </p>
       </div>
 
       <div>
         <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="comment">
-          What could we improve?
+          {r.improveLabel}
         </label>
         <Textarea
           disabled={loading}
           id="comment"
+          maxLength={2000}
           onChange={(event) => setComment(event.target.value)}
-          placeholder="Tell us what went wrong so we can fix it…"
+          placeholder={r.improvePlaceholder}
           rows={5}
           value={comment}
         />
@@ -102,7 +109,7 @@ export function FeedbackForm({ restaurantId }: FeedbackFormProps) {
       <FormAlert message={error} />
 
       <Button className="w-full" disabled={loading} size="lg" type="submit">
-        {loading ? "Submitting…" : "Submit Feedback"}
+        {loading ? r.submitting : r.submitFeedback}
       </Button>
     </form>
   );

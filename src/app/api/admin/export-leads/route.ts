@@ -1,19 +1,17 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-
-function escapeCsvValue(value: string): string {
-  if (value.includes(",") || value.includes('"') || value.includes("\n")) {
-    return `"${value.replaceAll('"', '""')}"`;
-  }
-  return value;
-}
+import { escapeCsvValue } from "@/lib/csv";
 
 export async function GET(request: Request) {
   const session = await auth();
 
-  if (!session?.user?.id || session.user.role !== "SUPERADMIN") {
+  if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.user.role !== "SUPERADMIN") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const { searchParams } = new URL(request.url);

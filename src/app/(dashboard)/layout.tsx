@@ -5,6 +5,8 @@ import {
   DashboardMobileHeader,
   DashboardSidebar,
 } from "@/components/dashboard/DashboardSidebar";
+import { getDictionary } from "@/lib/get-dictionary";
+import { getLocale } from "@/lib/i18n-server";
 
 export default async function DashboardLayout({
   children,
@@ -21,9 +23,12 @@ export default async function DashboardLayout({
     redirect("/admin");
   }
 
+  const locale = await getLocale();
+  const d = getDictionary(locale).dashboard;
+
   const restaurant = await prisma.restaurant.findUnique({
     where: { userId: session.user.id },
-    select: { name: true },
+    select: { name: true, isActive: true },
   });
 
   const restaurantName = restaurant?.name ?? "My Restaurant";
@@ -34,7 +39,16 @@ export default async function DashboardLayout({
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <DashboardMobileHeader restaurantName={restaurantName} />
         <div className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 md:p-8">
-          {children}
+          {restaurant && !restaurant.isActive ? (
+            <div className="mx-auto flex w-full max-w-lg flex-1 items-center">
+              <div className="w-full rounded-2xl border border-amber-200 bg-amber-50 px-6 py-8 text-center shadow-sm">
+                <h1 className="text-xl font-semibold text-amber-900">{d.accountDeactivatedTitle}</h1>
+                <p className="mt-3 text-sm leading-relaxed text-amber-800">{d.accountDeactivatedMessage}</p>
+              </div>
+            </div>
+          ) : (
+            children
+          )}
         </div>
       </div>
     </div>

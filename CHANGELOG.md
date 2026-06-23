@@ -12,6 +12,27 @@ _No unreleased changes._
 
 ---
 
+## [0.2.1] - 2026-06-23
+
+### Fixed
+
+- Cron auth fail-closed when `CRON_SECRET` is missing; timing-safe bearer comparison.
+- Atomic cron email claim prevents duplicate sends under concurrent runs; reverts claim on send failure.
+- Cron skips inactive restaurants; production default follow-up window restored to 23–25 hours (1380–1500 minutes).
+- Unique constraint on `(restaurantId, email)` with upsert in Wi-Fi unlock API.
+- Feedback API enforces `isActive`, 2000-character comment limit.
+- Review page enforces `isActive`, i18n wired, positive path thank-you when Google URL missing.
+- Deactivated tenants see account-suspended message instead of full dashboard.
+- Production seed skips wipe when data exists unless `SEED_FORCE=true`.
+- CSV export neutralizes formula injection; non-superadmin export returns 403.
+- Client-controlled `source` field removed from Wi-Fi unlock (server sets `WIFI_UNLOCK`).
+
+### Migrations
+
+- `20250623120000_unique_lead_email_per_restaurant` — dedupe leads and add unique index.
+
+---
+
 ## [0.2.0] - 2026-06-23
 
 ### Added
@@ -127,6 +148,7 @@ _No unreleased changes._
 
 ---
 
-[Unreleased]: https://github.com/majidorc/resturant/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/majidorc/resturant/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/majidorc/resturant/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/majidorc/resturant/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/majidorc/resturant/releases/tag/v0.1.0

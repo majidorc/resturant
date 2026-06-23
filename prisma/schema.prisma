@@ -78,6 +78,7 @@ model CustomerLead {
   emailSent    Boolean    @default(false)
   createdAt    DateTime   @default(now())
 
+  @@unique([restaurantId, email])
   @@index([restaurantId])
   @@index([emailSent, createdAt])
 }

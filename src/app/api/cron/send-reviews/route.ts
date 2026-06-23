@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendReviewEmail } from "@/lib/mailer";
+import { isValidCronRequest } from "@/lib/cron-auth";
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!isValidCronRequest(authHeader)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const now = new Date();
-    // TEST: 1-hour follow-up window (leads created 50-70 minutes ago)
-    const minAgeMinutes = Number(process.env.REVIEW_EMAIL_MIN_AGE_MINUTES ?? "50");
-    const maxAgeMinutes = Number(process.env.REVIEW_EMAIL_MAX_AGE_MINUTES ?? "70");
+    const minAgeMinutes = Number(process.env.REVIEW_EMAIL_MIN_AGE_MINUTES ?? "1380");
+    const maxAgeMinutes = Number(process.env.REVIEW_EMAIL_MAX_AGE_MINUTES ?? "1500");
     const newestEligible = new Date(now.getTime() - minAgeMinutes * 60 * 1000);
     const oldestEligible = new Date(now.getTime() - maxAgeMinutes * 60 * 1000);
 
@@ -23,6 +23,7 @@ export async function GET(request: Request) {
           gte: oldestEligible,
           lte: newestEligible,
         },
+        restaurant: { isActive: true },
       },
       include: {
         restaurant: true,
@@ -31,9 +32,20 @@ export async function GET(request: Request) {
 
     let emailsProcessed = 0;
     let emailsFailed = 0;
+    let skipped = 0;
 
     for (const lead of pendingLeads) {
       try {
+        const claim = await prisma.customerLead.updateMany({
+          where: { id: lead.id, emailSent: false },
+          data: { emailSent: true },
+        });
+
+        if (claim.count === 0) {
+          skipped++;
+          continue;
+        }
+
         const result = await sendReviewEmail({
           to: lead.email,
           restaurantName: lead.restaurant.name,
@@ -41,18 +53,23 @@ export async function GET(request: Request) {
         });
 
         if (!result.success) {
+          await prisma.customerLead.update({
+            where: { id: lead.id },
+            data: { emailSent: false },
+          });
           emailsFailed++;
           console.error(`[CRON] Email not sent for lead ${lead.id}: ${result.error ?? "unknown"}`);
           continue;
         }
 
-        await prisma.customerLead.update({
-          where: { id: lead.id },
-          data: { emailSent: true },
-        });
-
         emailsProcessed++;
       } catch (error) {
+        await prisma.customerLead
+          .update({
+            where: { id: lead.id },
+            data: { emailSent: false },
+          })
+          .catch(() => undefined);
         emailsFailed++;
         console.error(`[CRON] Failed processing lead ${lead.id}:`, error);
       }
@@ -62,6 +79,7 @@ export async function GET(request: Request) {
       success: true,
       processed: emailsProcessed,
       failed: emailsFailed,
+      skipped,
       queued: pendingLeads.length,
     });
   } catch (error) {

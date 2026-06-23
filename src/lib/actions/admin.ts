@@ -23,6 +23,7 @@ export async function setRestaurantActive(
 
     revalidatePath("/admin");
     revalidatePath("/admin/restaurants");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (error) {
     console.error("[ADMIN] Failed to update restaurant status:", error);
@@ -54,6 +55,7 @@ export async function deleteRestaurant(restaurantId: string): Promise<AdminActio
 
     revalidatePath("/admin");
     revalidatePath("/admin/restaurants");
+    revalidatePath("/dashboard");
     revalidatePath("/admin/leads");
     return { success: true };
   } catch (error) {

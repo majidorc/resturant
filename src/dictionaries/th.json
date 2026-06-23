@@ -174,6 +174,8 @@
     "settingsEyebrow": "การกำหนดค่า",
     "settingsTitle": "การตั้งค่า",
     "settingsSubtitle": "อัปเดต Wi-Fi การแปลภาษา ลิงก์เมนูสาธารณะ และปลายทางรีวิว Google",
+    "accountDeactivatedTitle": "บัญชีถูกปิดใช้งาน",
+    "accountDeactivatedMessage": "ร้านของคุณถูกปิดใช้งานโดยผู้ดูแลแพลตฟอร์ม เมนูสาธารณะและการเก็บ Wi-Fi ถูกปิดแล้ว กรุณาติดต่อฝ่ายสนับสนุน",
     "feedbackEyebrow": "ฟีดแบ็กจากลูกค้า",
     "feedbackTitle": "ฟีดแบ็กส่วนตัว",
     "feedbackSubtitle": "ความคิดเห็นเชิงลบที่ลูกค้าส่งจากร้านของคุณ",
@@ -300,6 +302,10 @@
     "stars": "ดาว"
   },
   "review": {
+    "honestyTitle": "ขอบคุณที่บอกความจริง",
+    "honestySubtitle": "เราเสียใจที่ประสบการณ์ที่ {restaurantName} ไม่เป็นไปตามที่คาดหวัง กรุณาแจ้งทีมงานว่าเราปรับปรุงอะไรได้บ้าง",
+    "positiveThankYouTitle": "ขอบคุณสำหรับคำชม",
+    "positiveThankYouSubtitle": "เรายินดีที่คุณชอบ {restaurantName} การสนับสนุนของคุณมีความหมายกับทีมเรามาก",
     "feedbackTitle": "เราเสียใจที่ได้ยินเช่นนั้น",
     "feedbackSubtitle": "ความคิดเห็นของคุณช่วยให้เราปรับปรุงได้ กรุณาแชร์สิ่งที่เกิดขึ้น",
     "ratingLabel": "คะแนนของคุณ",
@@ -314,6 +320,7 @@
     "improveLabel": "เราปรับปรุงอะไรได้บ้าง?",
     "improvePlaceholder": "บอกเราว่าเกิดอะไรขึ้นเพื่อให้เราแก้ไขได้…",
     "submitError": "ไม่สามารถส่งฟีดแบ็กได้",
+    "networkError": "เครือข่ายผิดพลาด กรุณาลองอีกครั้ง",
     "redirecting": "กำลังนำไปยัง Google Reviews…"
   },
   "accessDenied": {

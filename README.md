@@ -121,7 +121,7 @@ Guests and owners can switch between **English** and **Thai** using the flag tog
 | Public menu (`/menu/slug`) | Visible | Hidden (404) |
 | Wi-Fi email capture | Works | Blocked |
 | Follow-up review emails | Sent | Should stop (see code review notes) |
-| Owner dashboard | Full access | Full access |
+| Owner dashboard | Full access | Suspended notice only |
 | Google review routing | Works | Review links may still work for old emails |
 
 ---

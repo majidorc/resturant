@@ -26,14 +26,32 @@ function daysAgo(days: number, hourOffset = 12) {
 }
 
 async function main() {
-  console.log("Clearing existing data...");
+  const forceSeed = process.env.SEED_FORCE === "true";
+  const isProduction = process.env.NODE_ENV === "production";
+  const existingUsers = await prisma.user.count();
 
-  await prisma.feedback.deleteMany();
-  await prisma.customerLead.deleteMany();
-  await prisma.menuItem.deleteMany();
-  await prisma.menu.deleteMany();
-  await prisma.restaurant.deleteMany();
-  await prisma.user.deleteMany();
+  if (isProduction && !forceSeed && existingUsers > 0) {
+    console.log("Production seed skipped: database already has data. Set SEED_FORCE=true to wipe and reseed.");
+    return;
+  }
+
+  if (!forceSeed && existingUsers > 0 && !isProduction) {
+    console.log("Seed skipped: database already has data. Set SEED_FORCE=true to wipe and reseed.");
+    return;
+  }
+
+  if (forceSeed || existingUsers === 0) {
+    console.log(forceSeed ? "SEED_FORCE enabled — clearing existing data..." : "Empty database — seeding...");
+  }
+
+  if (forceSeed || existingUsers === 0) {
+    await prisma.feedback.deleteMany();
+    await prisma.customerLead.deleteMany();
+    await prisma.menuItem.deleteMany();
+    await prisma.menu.deleteMany();
+    await prisma.restaurant.deleteMany();
+    await prisma.user.deleteMany();
+  }
 
   console.log("Seeding Green Bistro Coffee tenant...");
 

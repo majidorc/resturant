@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, restaurantId, source } = body;
+    const { email, restaurantId } = body;
 
     if (!email || !restaurantId) {
       return NextResponse.json(
@@ -37,25 +37,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "This restaurant is currently unavailable." }, { status: 403 });
     }
 
-    const existingLead = await prisma.customerLead.findFirst({
+    await prisma.customerLead.upsert({
       where: {
-        restaurantId,
-        email: normalizedEmail,
-      },
-    });
-
-    if (existingLead) {
-      console.log("[WIFI_GATE] Email already registered for this venue. Skipping creation.");
-    } else {
-      await prisma.customerLead.create({
-        data: {
+        restaurantId_email: {
           restaurantId,
           email: normalizedEmail,
-          source: source || "WIFI_UNLOCK",
-          emailSent: false,
         },
-      });
-    }
+      },
+      create: {
+        restaurantId,
+        email: normalizedEmail,
+        source: "WIFI_UNLOCK",
+        emailSent: false,
+      },
+      update: {},
+    });
 
     return NextResponse.json({
       success: true,
