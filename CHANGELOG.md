@@ -12,6 +12,14 @@ _No unreleased changes._
 
 ---
 
+## [0.7.1] - 2026-06-23
+
+### Fixed
+
+- Install `curl` in the production Docker image so Coolify healthchecks pass during GHCR pull deploys.
+
+---
+
 ## [0.7.0] - 2026-06-23
 
 ### Added
