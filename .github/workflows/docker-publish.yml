@@ -42,15 +42,22 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
       - name: Trigger Coolify deploy
         env:
           COOLIFY_WEBHOOK: ${{ secrets.COOLIFY_WEBHOOK }}
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
         run: |
           if [ -z "$COOLIFY_WEBHOOK" ] || [ -z "$COOLIFY_TOKEN" ]; then
-            echo "Coolify secrets not configured; skip remote deploy trigger."
-            exit 0
+            echo "::error::Missing GitHub secrets COOLIFY_WEBHOOK and COOLIFY_TOKEN. Auto-deploy cannot run."
+            echo "::error::Coolify → Keys & Tokens → create API token with Deploy permission."
+            echo "::error::Coolify → ReviewBite → Webhooks → copy deploy URL into COOLIFY_WEBHOOK."
+            exit 1
           fi
-          curl --fail --silent --show-error \
+          curl --fail --show-error --retry 3 --retry-delay 10 \
             -H "Authorization: Bearer ${COOLIFY_TOKEN}" \
             "${COOLIFY_WEBHOOK}?force=true"
+          echo "Coolify deploy triggered for commit ${GITHUB_SHA}"

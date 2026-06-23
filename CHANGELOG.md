@@ -12,6 +12,14 @@ _No unreleased changes._
 
 ---
 
+## [0.7.2] - 2026-06-23
+
+### Changed
+
+- GitHub Actions now runs a dedicated Coolify deploy job after every successful GHCR image push (requires repository secrets).
+
+---
+
 ## [0.7.1] - 2026-06-23
 
 ### Fixed
