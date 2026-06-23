@@ -11,7 +11,7 @@ const prisma = new PrismaClient({ adapter });
 
 const SEED_EMAIL = "bistro_owner@greenbistro.com";
 const SEED_PASSWORD = "bistro1234";
-const ADMIN_EMAIL = "admin@menuhub.com";
+const ADMIN_EMAIL = "admin@reviewbite.co";
 const ADMIN_PASSWORD = "admin1234";
 
 function hoursAgo(hours: number) {

@@ -1,4 +1,4 @@
-# MenuHub — Deep Code Review
+# ReviewBite — Deep Code Review
 
 **Date:** 2026-06-23  
 **Last updated:** 2026-06-23 (post v0.2.1 fixes)

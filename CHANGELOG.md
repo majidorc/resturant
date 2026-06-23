@@ -12,6 +12,20 @@ _No unreleased changes._
 
 ---
 
+## [0.3.0] - 2026-06-23
+
+### Changed
+
+- Full platform rebrand from MenuHub to **ReviewBite** (`reviewbite.co`).
+- ReviewBite design system: `amber-500` signature CTAs, `slate-950` dark surfaces, emerald/rose metric cues.
+- Landing page rebuilt with tagline *"Turn Every Table Into a 5-Star Review."* and updated hero copy.
+- Resend email template rebranded to ReviewBite with subject *"How was your experience at [Restaurant] yesterday?"*
+- Noto Sans Thai font for clean loopless Thai typography when `NEXT_LOCALE=th`.
+- Public menu: amber category pills and pricing, image placeholders when `imageUrl` is missing.
+- Primary buttons app-wide use amber accent; admin nav uses `slate-950`.
+
+---
+
 ## [0.2.1] - 2026-06-23
 
 ### Fixed
@@ -148,7 +162,8 @@ _No unreleased changes._
 
 ---
 
-[Unreleased]: https://github.com/majidorc/resturant/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/majidorc/resturant/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/majidorc/resturant/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/majidorc/resturant/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/majidorc/resturant/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/majidorc/resturant/releases/tag/v0.1.0

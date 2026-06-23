@@ -57,7 +57,7 @@ function SidebarContent({
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
                 isActive
-                  ? "bg-slate-900 text-white shadow-sm"
+                  ? "bg-slate-950 text-white shadow-sm"
                   : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
               )}
               href={item.href}

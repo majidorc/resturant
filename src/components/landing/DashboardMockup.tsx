@@ -10,7 +10,7 @@ export function DashboardMockup() {
           <span className="h-3 w-3 rounded-full bg-red-300" />
           <span className="h-3 w-3 rounded-full bg-amber-300" />
           <span className="h-3 w-3 rounded-full bg-emerald-300" />
-          <p className="ml-3 text-xs font-medium text-slate-400">MenuHub Dashboard Preview</p>
+          <p className="ml-3 text-xs font-medium text-slate-400">ReviewBite Dashboard Preview</p>
         </div>
 
         <div className="grid gap-4 bg-gradient-to-b from-slate-50 to-white p-4 sm:grid-cols-[220px_1fr] sm:p-6">

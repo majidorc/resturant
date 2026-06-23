@@ -110,7 +110,7 @@ export function MenuList({ menus, currency, locale }: MenuListProps) {
             <button
               className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
                 activeId === menu.id
-                  ? "bg-slate-900 text-white shadow-sm"
+                  ? "bg-amber-500 text-slate-950 shadow-sm"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
               key={menu.id}
@@ -161,7 +161,11 @@ export function MenuList({ menus, currency, locale }: MenuListProps) {
                       <div className="flex items-start gap-4">
                         {item.imageUrl?.trim() ? (
                           <MenuItemImage imageUrl={item.imageUrl.trim()} name={itemName} />
-                        ) : null}
+                        ) : (
+                          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-300 md:h-24 md:w-24">
+                            <UtensilsCrossed className="h-6 w-6" strokeWidth={1.5} />
+                          </div>
+                        )}
 
                         <div className="flex min-w-0 flex-1 items-start justify-between gap-4">
                           <div className="min-w-0 flex-1">
@@ -175,7 +179,7 @@ export function MenuList({ menus, currency, locale }: MenuListProps) {
                               </p>
                             )}
                           </div>
-                          <span className="shrink-0 text-sm font-semibold tabular-nums text-slate-900">
+                          <span className="shrink-0 text-base font-bold tabular-nums text-amber-600">
                             {formatMenuPrice(item.price, currency, locale)}
                           </span>
                         </div>

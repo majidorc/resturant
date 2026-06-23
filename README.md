@@ -1,14 +1,14 @@
-# MenuHub
+# ReviewBite
 
-Turn every table scan into a guest email, a Wi-Fi unlock, and a Google review — without awkward asks at the counter.
+**Turn Every Table Into a 5-Star Review.**
 
-MenuHub is a restaurant marketing system. Each venue gets its own digital menu, Wi-Fi lead capture, automated follow-up emails, and smart routing that sends happy guests to Google and unhappy guests to private feedback.
+ReviewBite is a premium restaurant marketing platform. Each venue gets its own digital menu, Wi-Fi lead capture, automated follow-up emails, and smart routing that sends happy guests to Google and unhappy guests to private feedback.
 
-**Live demo:** [qrmenu.majidorc.com](https://qrmenu.majidorc.com)
+**Domain:** [reviewbite.co](https://reviewbite.co)
 
 ---
 
-## Who Uses MenuHub
+## Who Uses ReviewBite
 
 ### Restaurant owner (tenant)
 
@@ -16,7 +16,7 @@ Runs one restaurant. Signs up, builds a menu, prints a QR code, and watches lead
 
 ### Platform operator (super admin)
 
-Runs the whole MenuHub installation. Sees platform-wide stats, exports all guest emails, and can activate, deactivate, or remove restaurants.
+Runs the whole ReviewBite installation. Sees platform-wide stats, exports all guest emails, and can activate, deactivate, or remove restaurants.
 
 ### Guest (no account)
 
@@ -29,7 +29,7 @@ Scans a QR code on the table, views the menu, optionally unlocks Wi-Fi with an e
 1. **Scan** — Guest scans the QR code on the table or counter.
 2. **Menu** — They see a mobile-friendly digital menu with photos, prices, and categories in English or Thai.
 3. **Wi-Fi gate** — To get the Wi-Fi password, they enter their email. They can also skip and browse the menu without Wi-Fi.
-4. **Follow-up email** — Hours later, MenuHub sends a friendly email: “How was your visit?”
+4. **Follow-up email** — Hours later, ReviewBite sends a friendly email: “How was your visit?”
 5. **Smart routing**
    - **Loved it** → Guest is sent to the restaurant’s Google Review page.
    - **Could be better** → Guest fills a private feedback form. Only the restaurant owner sees it — never posted publicly.
@@ -71,7 +71,7 @@ After logging in, the owner manages everything from one place.
 
 ## Super Admin Console
 
-Platform-wide control for the MenuHub operator.
+Platform-wide control for the ReviewBite operator.
 
 ### Global Overview
 

@@ -14,12 +14,12 @@ export function Button({
 }: ButtonProps) {
   const variants = {
     primary:
-      "bg-slate-900 text-white shadow-sm hover:bg-slate-800 active:scale-[0.98] disabled:bg-slate-300",
+      "bg-amber-500 text-slate-950 shadow-sm hover:bg-amber-400 active:scale-[0.98] disabled:bg-amber-200 disabled:text-slate-500",
     secondary:
       "border border-slate-200/80 bg-white text-slate-900 shadow-sm hover:bg-slate-50 active:scale-[0.98] disabled:opacity-50",
     ghost: "text-slate-600 hover:bg-slate-100 active:scale-[0.98] disabled:opacity-50",
     admin:
-      "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500 active:scale-[0.98] disabled:bg-indigo-300",
+      "bg-slate-950 text-white shadow-sm hover:bg-zinc-900 active:scale-[0.98] disabled:bg-slate-400",
     danger:
       "border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 active:scale-[0.98] disabled:opacity-50",
   };

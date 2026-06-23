@@ -46,7 +46,7 @@ export function WifiGate({
       const response = await fetch("/api/lead/unlock-wifi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ restaurantId, email, source: "WIFI_UNLOCK" }),
+        body: JSON.stringify({ restaurantId, email }),
       });
 
       const data = await response.json();

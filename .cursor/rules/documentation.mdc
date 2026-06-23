@@ -7,7 +7,7 @@ alwaysApply: true
 
 ## System Context
 
-Multi-tenant QR Menu & Google Review SaaS (MenuHub):
+Multi-tenant QR Menu & Google Review SaaS (ReviewBite):
 - Next.js App Router, TypeScript, Tailwind CSS
 - Prisma ORM, PostgreSQL
 - NextAuth.js (`SUPERADMIN`, `TENANT` roles)

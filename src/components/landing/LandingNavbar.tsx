@@ -22,9 +22,12 @@ export function LandingNavbar() {
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
         <Link
-          className="text-lg font-semibold tracking-tight text-slate-900 transition-colors duration-200 hover:text-slate-600"
+          className="flex items-center gap-2 text-lg font-semibold tracking-tight text-slate-950 transition-colors duration-200 hover:text-amber-600"
           href="/"
         >
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 text-sm font-bold text-slate-950">
+            R
+          </span>
           {t.brand}
         </Link>
 
