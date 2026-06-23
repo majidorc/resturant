@@ -12,6 +12,31 @@ _No unreleased changes._
 
 ---
 
+## [0.4.0] - 2026-06-22
+
+### Added
+
+- Dynamic JSON translation fields on `Menu` and `MenuItem` (`name`, `description`) replacing hardcoded bilingual columns.
+- `Restaurant.languages` array for tenant-configurable menu languages (EN, TH, FA, AR, RU).
+- `Restaurant.uiLanguage` for dashboard UI locale (renamed from `language`).
+- Expanded operational currencies: USD, THB, IRT (Toman), SAR (Rial), RUB (Ruble) with locale-aware formatting.
+- UI dictionaries for Persian (`fa.json`), Arabic (`ar.json`), and Russian (`ru.json`).
+- Multi-select **Supported Menu Languages** and expanded currency dropdown in tenant Settings.
+- Dynamic per-language inputs in Menu Manager driven by tenant language configuration.
+- Public menu reads `NEXT_LOCALE` cookie and resolves JSON translations with English fallback.
+- RTL layout support for Arabic and Persian; Noto Sans Arabic font.
+
+### Changed
+
+- `LanguageSwitcher` supports five global locales; public menu shows only tenant-enabled languages.
+
+### Migration
+
+- Run `npm run db:migrate:deploy` on production after deploy.
+- Existing bilingual data is migrated automatically into JSON objects (`en` + `th` keys).
+
+---
+
 ## [0.3.0] - 2026-06-23
 
 ### Changed

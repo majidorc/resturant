@@ -4,18 +4,17 @@ import { useState } from "react";
 import { MenuList } from "@/components/MenuList";
 import { WifiGate } from "@/components/WifiGate";
 import { useDictionary } from "@/components/LocaleProvider";
+import type { MenuLanguage } from "@/lib/locale";
 import type { Locale } from "@/types/dictionary";
+import type { JsonTranslationField } from "@/types/translations";
 
 type MenuData = {
   id: string;
-  nameEn: string;
-  nameTh: string;
+  name: JsonTranslationField;
   items: {
     id: string;
-    nameEn: string;
-    nameTh: string;
-    descriptionEn: string | null;
-    descriptionTh: string | null;
+    name: JsonTranslationField;
+    description: JsonTranslationField;
     price: number;
     imageUrl: string | null;
   }[];
@@ -27,6 +26,7 @@ type PublicMenuExperienceProps = {
   menus: MenuData[];
   currency: string;
   locale: Locale;
+  enabledLanguages: MenuLanguage[];
 };
 
 function WifiLockedBanner({ onReopen }: { onReopen: () => void }) {
@@ -59,6 +59,7 @@ export function PublicMenuExperience({
   menus,
   currency,
   locale,
+  enabledLanguages,
 }: PublicMenuExperienceProps) {
   const [gateOpen, setGateOpen] = useState(true);
   const [wifiUnlocked, setWifiUnlocked] = useState(false);
@@ -77,7 +78,12 @@ export function PublicMenuExperience({
             : "opacity-100 blur-0"
         }`}
       >
-        <MenuList currency={currency} locale={locale} menus={menus} />
+        <MenuList
+          currency={currency}
+          enabledLanguages={enabledLanguages}
+          locale={locale}
+          menus={menus}
+        />
       </div>
 
       <WifiGate

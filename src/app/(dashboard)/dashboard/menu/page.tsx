@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
 import { MenuManager } from "./MenuManager";
+import { parseMenuLanguages } from "@/lib/locale";
+import { asTranslationField } from "@/lib/translations";
 
 export default async function MenuManagementPage() {
   const session = await auth();
@@ -17,7 +19,7 @@ export default async function MenuManagementPage() {
 
   const restaurant = await prisma.restaurant.findUnique({
     where: { userId: session.user.id },
-    select: { id: true, currency: true },
+    select: { id: true, currency: true, languages: true },
   });
 
   if (!restaurant) {
@@ -28,11 +30,26 @@ export default async function MenuManagementPage() {
     where: { restaurantId: restaurant.id },
     include: {
       items: {
-        orderBy: { nameEn: "asc" },
+        orderBy: { id: "asc" },
       },
     },
-    orderBy: { nameEn: "asc" },
+    orderBy: { id: "asc" },
   });
+
+  const languages = parseMenuLanguages(restaurant.languages);
+  const serializedMenus = menus.map((menu) => ({
+    id: menu.id,
+    name: asTranslationField(menu.name),
+    isActive: menu.isActive,
+    items: menu.items.map((item) => ({
+      id: item.id,
+      name: asTranslationField(item.name),
+      description: asTranslationField(item.description),
+      price: item.price,
+      imageUrl: item.imageUrl,
+      isAvailable: item.isAvailable,
+    })),
+  }));
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
@@ -41,7 +58,7 @@ export default async function MenuManagementPage() {
         <p className="mt-1 text-sm text-slate-500">{dict.dashboard.menuSubtitle}</p>
       </div>
 
-      <MenuManager currency={restaurant.currency} menus={menus} />
+      <MenuManager currency={restaurant.currency} languages={languages} menus={serializedMenus} />
     </div>
   );
 }

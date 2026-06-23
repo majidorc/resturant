@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getRequiredRestaurantId } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import type { ActionState } from "@/lib/actions/settings";
+import { buildMenuTranslationPayload, getRestaurantMenuLanguages } from "@/lib/menu-form";
 
 async function verifyMenuOwnership(menuId: string, restaurantId: string) {
   const menu = await prisma.menu.findFirst({
@@ -38,15 +39,18 @@ export async function createMenu(
 ): Promise<ActionState> {
   try {
     const { restaurantId } = await getRequiredRestaurantId();
-    const nameEn = formData.get("nameEn")?.toString().trim();
-    const nameTh = formData.get("nameTh")?.toString().trim();
+    const languages = await getRestaurantMenuLanguages(restaurantId);
+    const nameResult = buildMenuTranslationPayload(formData, languages, "name", true);
 
-    if (!nameEn || !nameTh) {
-      return { error: "English and Thai category names are required." };
+    if (!nameResult.ok) {
+      return { error: nameResult.error };
     }
 
     await prisma.menu.create({
-      data: { restaurantId, nameEn, nameTh },
+      data: {
+        restaurantId,
+        name: nameResult.value,
+      },
     });
 
     revalidatePath("/dashboard/menu");
@@ -79,16 +83,28 @@ export async function createMenuItem(
 ): Promise<ActionState> {
   try {
     const { restaurantId } = await getRequiredRestaurantId();
+    const languages = await getRestaurantMenuLanguages(restaurantId);
     const menuId = formData.get("menuId")?.toString();
-    const nameEn = formData.get("nameEn")?.toString().trim();
-    const nameTh = formData.get("nameTh")?.toString().trim();
-    const descriptionEn = formData.get("descriptionEn")?.toString().trim() || null;
-    const descriptionTh = formData.get("descriptionTh")?.toString().trim() || null;
     const priceRaw = formData.get("price")?.toString();
     const imageUrl = formData.get("imageUrl")?.toString().trim() || null;
+    const nameResult = buildMenuTranslationPayload(formData, languages, "name", true);
+    const descriptionResult = buildMenuTranslationPayload(
+      formData,
+      languages,
+      "description",
+      false,
+    );
 
-    if (!menuId || !nameEn || !nameTh || !priceRaw) {
-      return { error: "English name, Thai name, and price are required." };
+    if (!menuId || !priceRaw) {
+      return { error: "Menu category and price are required." };
+    }
+
+    if (!nameResult.ok) {
+      return { error: nameResult.error };
+    }
+
+    if (!descriptionResult.ok) {
+      return { error: descriptionResult.error };
     }
 
     const price = Number(priceRaw);
@@ -101,10 +117,8 @@ export async function createMenuItem(
     await prisma.menuItem.create({
       data: {
         menuId,
-        nameEn,
-        nameTh,
-        descriptionEn,
-        descriptionTh,
+        name: nameResult.value,
+        description: descriptionResult.value,
         price,
         imageUrl,
       },
@@ -123,17 +137,29 @@ export async function updateMenuItem(
 ): Promise<ActionState> {
   try {
     const { restaurantId } = await getRequiredRestaurantId();
+    const languages = await getRestaurantMenuLanguages(restaurantId);
     const itemId = formData.get("itemId")?.toString();
-    const nameEn = formData.get("nameEn")?.toString().trim();
-    const nameTh = formData.get("nameTh")?.toString().trim();
-    const descriptionEn = formData.get("descriptionEn")?.toString().trim() || null;
-    const descriptionTh = formData.get("descriptionTh")?.toString().trim() || null;
     const priceRaw = formData.get("price")?.toString();
     const imageUrl = formData.get("imageUrl")?.toString().trim() || null;
     const isAvailable = formData.get("isAvailable") === "true";
+    const nameResult = buildMenuTranslationPayload(formData, languages, "name", true);
+    const descriptionResult = buildMenuTranslationPayload(
+      formData,
+      languages,
+      "description",
+      false,
+    );
 
-    if (!itemId || !nameEn || !nameTh || !priceRaw) {
-      return { error: "English name, Thai name, and price are required." };
+    if (!itemId || !priceRaw) {
+      return { error: "Item and price are required." };
+    }
+
+    if (!nameResult.ok) {
+      return { error: nameResult.error };
+    }
+
+    if (!descriptionResult.ok) {
+      return { error: descriptionResult.error };
     }
 
     const price = Number(priceRaw);
@@ -146,10 +172,8 @@ export async function updateMenuItem(
     await prisma.menuItem.update({
       where: { id: itemId },
       data: {
-        nameEn,
-        nameTh,
-        descriptionEn,
-        descriptionTh,
+        name: nameResult.value,
+        description: descriptionResult.value,
         price,
         imageUrl,
         isAvailable,

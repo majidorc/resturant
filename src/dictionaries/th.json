@@ -28,7 +28,10 @@
   "languageSwitcher": {
     "label": "ภาษา",
     "english": "อังกฤษ",
-    "thai": "ไทย"
+    "thai": "ไทย",
+    "persian": "เปอร์เซีย",
+    "arabic": "อาหรับ",
+    "russian": "รัสเซีย"
   },
   "landing": {
     "brand": "ReviewBite",
@@ -231,6 +234,10 @@
     "localeSubtitle": "กำหนดวิธีแสดงราคาและข้อความเมนูให้แขก",
     "currency": "สกุลเงินที่ใช้",
     "currencyHint": "ใช้กับราคาเมนูทั้งหมดบนเมนูสาธารณะ",
+    "uiLanguage": "ภาษาหน้าแดชบอร์ด",
+    "uiLanguageHint": "ภาษาเริ่มต้นสำหรับหน้าแดชบอร์ดของร้าน",
+    "supportedMenuLanguages": "ภาษาเมนูที่รองรับ",
+    "supportedMenuLanguagesHint": "เลือกภาษาที่ใช้แก้ไขและแสดงเมนูให้แขก",
     "language": "ภาษาเมนูเริ่มต้น",
     "languageHint": "ภาษาเริ่มต้นสำหรับการจัดรูปแบบราคาและการแสดงเมนู",
     "savedSuccess": "บันทึกการตั้งค่าเรียบร้อยแล้ว",

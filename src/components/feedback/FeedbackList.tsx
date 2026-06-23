@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import type { Locale } from "@/types/dictionary";
 
 export type FeedbackRow = {
   id: string;
@@ -19,7 +20,7 @@ type FeedbackListProps = {
     noFeedback: string;
     stars: string;
   };
-  locale: "en" | "th";
+  locale: Locale;
   showRestaurant?: boolean;
 };
 

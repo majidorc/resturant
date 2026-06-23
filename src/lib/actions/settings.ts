@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { getRequiredRestaurantId } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { isSupportedCurrency, isSupportedLanguage } from "@/lib/locale";
+import {
+  isSupportedCurrency,
+  isSupportedLanguage,
+  parseMenuLanguages,
+} from "@/lib/locale";
 
 export type ActionState = {
   error?: string;
@@ -21,7 +25,10 @@ export async function updateRestaurantSettings(
     const wifiPassword = formData.get("wifiPassword")?.toString() || null;
     const googleReviewUrl = formData.get("googleReviewUrl")?.toString().trim() || null;
     const currency = formData.get("currency")?.toString().trim() ?? "USD";
-    const language = formData.get("language")?.toString().trim() ?? "en";
+    const uiLanguage = formData.get("uiLanguage")?.toString().trim() ?? "en";
+    const languages = parseMenuLanguages(
+      formData.getAll("languages").map((value) => value.toString()),
+    );
 
     if (googleReviewUrl && !googleReviewUrl.startsWith("http")) {
       return { error: "Google Review URL must start with http:// or https://" };
@@ -31,8 +38,12 @@ export async function updateRestaurantSettings(
       return { error: "Please select a supported currency." };
     }
 
-    if (!isSupportedLanguage(language)) {
-      return { error: "Please select a supported language." };
+    if (!isSupportedLanguage(uiLanguage)) {
+      return { error: "Please select a supported dashboard language." };
+    }
+
+    if (!languages.includes(uiLanguage)) {
+      return { error: "Dashboard language must be included in supported menu languages." };
     }
 
     const updated = await prisma.restaurant.update({
@@ -42,12 +53,14 @@ export async function updateRestaurantSettings(
         wifiPassword,
         googleReviewUrl,
         currency,
-        language,
+        uiLanguage,
+        languages,
       },
       select: { slug: true },
     });
 
     revalidatePath("/dashboard/settings");
+    revalidatePath("/dashboard/menu");
     revalidatePath(`/menu/${updated.slug}`);
     return { success: true };
   } catch {

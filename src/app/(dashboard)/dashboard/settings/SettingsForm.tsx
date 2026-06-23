@@ -9,7 +9,11 @@ import { Button } from "@/components/ui/button";
 import { FormAlert } from "@/components/ui/form-alert";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { CURRENCY_OPTIONS, LANGUAGE_OPTIONS } from "@/lib/locale";
+import {
+  CURRENCY_OPTIONS,
+  LANGUAGE_OPTIONS,
+  MENU_LANGUAGE_OPTIONS,
+} from "@/lib/locale";
 import { cn } from "@/lib/utils";
 import { useDictionary } from "@/components/LocaleProvider";
 
@@ -20,7 +24,8 @@ type SettingsFormProps = {
     googleReviewUrl: string | null;
     slug: string;
     currency: string;
-    language: string;
+    uiLanguage: string;
+    languages: string[];
   };
   publicMenuUrl: string;
 };
@@ -75,6 +80,7 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
   const c = dict.common;
   const [state, formAction, pending] = useActionState(updateRestaurantSettings, initialState);
   const [copied, setCopied] = useState(false);
+  const enabledLanguages = new Set(restaurant.languages);
 
   async function copyMenuLink() {
     await navigator.clipboard.writeText(publicMenuUrl);
@@ -171,37 +177,67 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
         </SectionCard>
 
         <SectionCard description={s.localeSubtitle} title={s.localeTitle}>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div>
-              <FieldLabel hint={s.currencyHint} htmlFor="currency" label={s.currency} />
-              <Select
-                className={fieldInputClass}
-                defaultValue={restaurant.currency}
-                id="currency"
-                name="currency"
-              >
-                {CURRENCY_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <FieldLabel hint={s.currencyHint} htmlFor="currency" label={s.currency} />
+                <Select
+                  className={fieldInputClass}
+                  defaultValue={restaurant.currency}
+                  id="currency"
+                  name="currency"
+                >
+                  {CURRENCY_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+
+              <div>
+                <FieldLabel hint={s.uiLanguageHint} htmlFor="uiLanguage" label={s.uiLanguage} />
+                <Select
+                  className={fieldInputClass}
+                  defaultValue={restaurant.uiLanguage}
+                  id="uiLanguage"
+                  name="uiLanguage"
+                >
+                  {LANGUAGE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              </div>
             </div>
 
             <div>
-              <FieldLabel hint={s.languageHint} htmlFor="language" label={s.language} />
-              <Select
-                className={fieldInputClass}
-                defaultValue={restaurant.language}
-                id="language"
-                name="language"
-              >
-                {LANGUAGE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+              <FieldLabel
+                hint={s.supportedMenuLanguagesHint}
+                htmlFor="languages-en"
+                label={s.supportedMenuLanguages}
+              />
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {MENU_LANGUAGE_OPTIONS.map((option) => (
+                  <label
+                    className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 transition-colors hover:border-slate-300"
+                    key={option.value}
+                  >
+                    <input
+                      className="h-4 w-4 rounded border-slate-300"
+                      defaultChecked={enabledLanguages.has(option.value)}
+                      name="languages"
+                      type="checkbox"
+                      value={option.value}
+                    />
+                    <span>
+                      {option.label}{" "}
+                      <span className="text-slate-500">({option.nativeLabel})</span>
+                    </span>
+                  </label>
                 ))}
-              </Select>
+              </div>
             </div>
           </div>
         </SectionCard>

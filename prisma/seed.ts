@@ -80,6 +80,7 @@ async function main() {
           wifiSsid: "GreenBistro-Guest",
           wifiPassword: "Welcome2024!",
           googleReviewUrl: "https://g.page/r/green-bistro-coffee/review",
+          languages: ["en", "th"],
         },
       },
     },
@@ -91,32 +92,34 @@ async function main() {
   const specialtyCoffee = await prisma.menu.create({
     data: {
       restaurantId: restaurant.id,
-      nameEn: "Specialty Coffee",
-      nameTh: "กาแฟพิเศษ",
+      name: { en: "Specialty Coffee", th: "กาแฟพิเศษ" },
       isActive: true,
       items: {
         create: [
           {
-            nameEn: "House Espresso",
-            nameTh: "เอสเปรสโซ่สูตรเฮาส์",
-            descriptionEn: "Rich double shot pulled from single-origin beans.",
-            descriptionTh: "เอสเปรสโซ่ดับเบิลช็อตจากเมล็ดกาแฟคั่วคุณภาพ",
+            name: { en: "House Espresso", th: "เอสเปรสโซ่สูตรเฮาส์" },
+            description: {
+              en: "Rich double shot pulled from single-origin beans.",
+              th: "เอสเปรสโซ่ดับเบิลช็อตจากเมล็ดกาแฟคั่วคุณภาพ",
+            },
             price: 3.5,
             imageUrl: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=200&h=200&fit=crop",
           },
           {
-            nameEn: "Vanilla Latte",
-            nameTh: "วานิลลาลาเต้",
-            descriptionEn: "Steamed milk with Madagascar vanilla syrup.",
-            descriptionTh: "นมสตีมผสมไซรัปวานิลลามาดากัสการ์",
+            name: { en: "Vanilla Latte", th: "วานิลลาลาเต้" },
+            description: {
+              en: "Steamed milk with Madagascar vanilla syrup.",
+              th: "นมสตีมผสมไซรัปวานิลลามาดากัสการ์",
+            },
             price: 5.25,
             imageUrl: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=200&h=200&fit=crop",
           },
           {
-            nameEn: "Cold Brew Tonic",
-            nameTh: "โคลด์บริวโทนิค",
-            descriptionEn: "Slow-steeped cold brew topped with citrus tonic.",
-            descriptionTh: "โคลด์บริวแช่นานท็อปด้วยโทนิกรสซิตรัส",
+            name: { en: "Cold Brew Tonic", th: "โคลด์บริวโทนิค" },
+            description: {
+              en: "Slow-steeped cold brew topped with citrus tonic.",
+              th: "โคลด์บริวแช่นานท็อปด้วยโทนิกรสซิตรัส",
+            },
             price: 4.75,
             imageUrl: "https://images.unsplash.com/photo-1517701603779-8ce32db8941d?w=200&h=200&fit=crop",
           },
@@ -128,32 +131,34 @@ async function main() {
   const artisanBakery = await prisma.menu.create({
     data: {
       restaurantId: restaurant.id,
-      nameEn: "Artisan Bakery",
-      nameTh: "เบเกอรี่อาร์ติซาน",
+      name: { en: "Artisan Bakery", th: "เบเกอรี่อาร์ติซาน" },
       isActive: true,
       items: {
         create: [
           {
-            nameEn: "Butter Croissant",
-            nameTh: "ครัวซองต์เนย",
-            descriptionEn: "Classic flaky French pastry baked every morning.",
-            descriptionTh: "เบเกอรี่ฝรั่งเศสสไตล์คลาสสิก อบสดใหม่ทุกเช้า",
+            name: { en: "Butter Croissant", th: "ครัวซองต์เนย" },
+            description: {
+              en: "Classic flaky French pastry baked every morning.",
+              th: "เบเกอรี่ฝรั่งเศสสไตล์คลาสสิก อบสดใหม่ทุกเช้า",
+            },
             price: 3.95,
             imageUrl: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=200&h=200&fit=crop",
           },
           {
-            nameEn: "Sourdough Avocado Toast",
-            nameTh: "ขนมปังซาวโดว์ท็อปอะโวคาโด",
-            descriptionEn: "Thick-cut sourdough with smashed avocado and sea salt.",
-            descriptionTh: "ขนมปังซาวโดว์หนา ท็อปอะโวคาโดบดและเกลือทะเล",
+            name: { en: "Sourdough Avocado Toast", th: "ขนมปังซาวโดว์ท็อปอะโวคาโด" },
+            description: {
+              en: "Thick-cut sourdough with smashed avocado and sea salt.",
+              th: "ขนมปังซาวโดว์หนา ท็อปอะโวคาโดบดและเกลือทะเล",
+            },
             price: 8.5,
             imageUrl: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=200&h=200&fit=crop",
           },
           {
-            nameEn: "Blueberry Muffin",
-            nameTh: "มัฟฟินบลูเบอร์รี่",
-            descriptionEn: "Oven-fresh muffin with wild blueberries.",
-            descriptionTh: "มัฟฟินอบสดใหม่พร้อมบลูเบอร์รี่",
+            name: { en: "Blueberry Muffin", th: "มัฟฟินบลูเบอร์รี่" },
+            description: {
+              en: "Oven-fresh muffin with wild blueberries.",
+              th: "มัฟฟินอบสดใหม่พร้อมบลูเบอร์รี่",
+            },
             price: 4.25,
             imageUrl: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=200&h=200&fit=crop",
           },
@@ -221,7 +226,7 @@ async function main() {
   console.log(`Tenant login: ${SEED_EMAIL} / ${SEED_PASSWORD}`);
   console.log(`Super admin login: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
   console.log(`Public menu: /menu/${restaurant.slug}`);
-  console.log(`Menus created: ${specialtyCoffee.nameEn}, ${artisanBakery.nameEn}`);
+  console.log(`Menus created: Specialty Coffee, Artisan Bakery`);
 }
 
 main()

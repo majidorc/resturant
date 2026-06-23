@@ -32,7 +32,8 @@ model Restaurant {
   wifiPassword    String?
   googleReviewUrl String?
   currency        String         @default("USD")
-  language        String         @default("en")
+  uiLanguage      String         @default("en")
+  languages       String[]       @default(["en"])
   isActive        Boolean        @default(true)
   menus           Menu[]
   leads           CustomerLead[]
@@ -46,8 +47,7 @@ model Menu {
   id           String     @id @default(cuid())
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  nameEn       String
-  nameTh       String
+  name         Json
   isActive     Boolean    @default(true)
   items        MenuItem[]
 
@@ -58,10 +58,8 @@ model MenuItem {
   id            String  @id @default(cuid())
   menuId        String
   menu          Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
-  nameEn        String
-  nameTh        String
-  descriptionEn String?
-  descriptionTh String?
+  name          Json
+  description   Json       @default("{}")
   price         Float
   imageUrl      String?
   isAvailable   Boolean @default(true)

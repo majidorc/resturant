@@ -53,6 +53,7 @@ export async function registerTenant(
         create: {
           name: restaurantName,
           slug,
+          languages: ["en"],
         },
       },
     },

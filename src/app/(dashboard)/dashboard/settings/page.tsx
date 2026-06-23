@@ -22,7 +22,8 @@ export default async function SettingsPage() {
       googleReviewUrl: true,
       slug: true,
       currency: true,
-      language: true,
+      uiLanguage: true,
+      languages: true,
     },
   });
 

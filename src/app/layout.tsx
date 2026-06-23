@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Noto_Sans_Thai } from "next/font/google";
+import { Noto_Sans_Arabic, Noto_Sans_Thai } from "next/font/google";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
+import { isRtlLocale } from "@/lib/i18n";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,6 +23,12 @@ const notoSansThai = Noto_Sans_Thai({
   weight: ["400", "500", "600", "700"],
 });
 
+const notoSansArabic = Noto_Sans_Arabic({
+  variable: "--font-noto-sans-arabic",
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "ReviewBite | Turn Every Table Into a 5-Star Review",
   description:
@@ -35,11 +42,13 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const dict = getDictionary(locale);
+  const dir = isRtlLocale(locale) ? "rtl" : "ltr";
 
   return (
     <html
+      dir={dir}
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} ${notoSansThai.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${notoSansThai.variable} ${notoSansArabic.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <LocaleProvider dict={dict} locale={locale}>

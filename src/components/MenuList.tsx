@@ -5,23 +5,21 @@ import { UtensilsCrossed } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useDictionary } from "@/components/LocaleProvider";
 import { pickLocalizedOptional, pickLocalizedText } from "@/lib/i18n";
-import { formatMenuPrice } from "@/lib/locale";
+import { formatMenuPrice, type MenuLanguage } from "@/lib/locale";
 import type { Locale } from "@/types/dictionary";
+import type { JsonTranslationField } from "@/types/translations";
 
 type MenuItemData = {
   id: string;
-  nameEn: string;
-  nameTh: string;
-  descriptionEn: string | null;
-  descriptionTh: string | null;
+  name: JsonTranslationField;
+  description: JsonTranslationField;
   price: number;
   imageUrl: string | null;
 };
 
 type MenuData = {
   id: string;
-  nameEn: string;
-  nameTh: string;
+  name: JsonTranslationField;
   items: MenuItemData[];
 };
 
@@ -29,6 +27,7 @@ type MenuListProps = {
   menus: MenuData[];
   currency: string;
   locale: Locale;
+  enabledLanguages: MenuLanguage[];
 };
 
 function MenuItemImage({ imageUrl, name }: { imageUrl: string; name: string }) {
@@ -60,7 +59,7 @@ function MenuItemImage({ imageUrl, name }: { imageUrl: string; name: string }) {
   );
 }
 
-export function MenuList({ menus, currency, locale }: MenuListProps) {
+export function MenuList({ menus, currency, locale, enabledLanguages }: MenuListProps) {
   const dict = useDictionary();
   const [activeId, setActiveId] = useState(menus[0]?.id ?? "");
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -117,7 +116,7 @@ export function MenuList({ menus, currency, locale }: MenuListProps) {
               onClick={() => scrollToCategory(menu.id)}
               type="button"
             >
-              {pickLocalizedText(locale, menu.nameEn, menu.nameTh)}
+              {pickLocalizedText(locale, menu.name, enabledLanguages)}
             </button>
           ))}
         </div>
@@ -125,7 +124,7 @@ export function MenuList({ menus, currency, locale }: MenuListProps) {
 
       <div className="space-y-6 px-4 py-6">
         {menus.map((menu, menuIndex) => {
-          const menuName = pickLocalizedText(locale, menu.nameEn, menu.nameTh);
+          const menuName = pickLocalizedText(locale, menu.name, enabledLanguages);
 
           return (
             <section
@@ -145,11 +144,11 @@ export function MenuList({ menus, currency, locale }: MenuListProps) {
 
               <ul className="space-y-3">
                 {menu.items.map((item, itemIndex) => {
-                  const itemName = pickLocalizedText(locale, item.nameEn, item.nameTh);
+                  const itemName = pickLocalizedText(locale, item.name, enabledLanguages);
                   const itemDescription = pickLocalizedOptional(
                     locale,
-                    item.descriptionEn,
-                    item.descriptionTh,
+                    item.description,
+                    enabledLanguages,
                   );
 
                   return (

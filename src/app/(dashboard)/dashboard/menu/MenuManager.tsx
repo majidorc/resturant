@@ -15,15 +15,18 @@ import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { FormAlert } from "@/components/ui/form-alert";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { formatMenuPrice } from "@/lib/locale";
+import { formatMenuPrice, getMenuLanguageLabel, type MenuLanguage } from "@/lib/locale";
 import { useLocale } from "@/components/LocaleProvider";
+import {
+  formatTranslationPreview,
+  parseTranslationMap,
+} from "@/lib/translations";
+import type { JsonTranslationField } from "@/types/translations";
 
 type MenuItemData = {
   id: string;
-  nameEn: string;
-  nameTh: string;
-  descriptionEn: string | null;
-  descriptionTh: string | null;
+  name: JsonTranslationField;
+  description: JsonTranslationField;
   price: number;
   imageUrl: string | null;
   isAvailable: boolean;
@@ -31,8 +34,7 @@ type MenuItemData = {
 
 type MenuData = {
   id: string;
-  nameEn: string;
-  nameTh: string;
+  name: JsonTranslationField;
   isActive: boolean;
   items: MenuItemData[];
 };
@@ -40,11 +42,58 @@ type MenuData = {
 type MenuManagerProps = {
   menus: MenuData[];
   currency: string;
+  languages: MenuLanguage[];
 };
 
 const initialState: ActionState = {};
 
-export function MenuManager({ menus, currency }: MenuManagerProps) {
+function TranslationInputs({
+  languages,
+  prefix,
+  values,
+  multiline = false,
+}: {
+  languages: MenuLanguage[];
+  prefix: "name" | "description";
+  values?: JsonTranslationField;
+  multiline?: boolean;
+}) {
+  const parsed = parseTranslationMap(values);
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {languages.map((language) => {
+        const fieldName = `${prefix}_${language}`;
+        const label = `${prefix === "name" ? "Name" : "Description"} (${getMenuLanguageLabel(language)})`;
+        const defaultValue = parsed[language] ?? "";
+
+        if (multiline) {
+          return (
+            <Textarea
+              defaultValue={defaultValue}
+              key={fieldName}
+              name={fieldName}
+              placeholder={label}
+              rows={2}
+            />
+          );
+        }
+
+        return (
+          <Input
+            defaultValue={defaultValue}
+            key={fieldName}
+            name={fieldName}
+            placeholder={label}
+            required
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+export function MenuManager({ menus, currency, languages }: MenuManagerProps) {
   const dict = useDictionary();
   const t = dict.menuManager;
   const c = dict.common;
@@ -71,10 +120,7 @@ export function MenuManager({ menus, currency }: MenuManagerProps) {
 
           {showNewMenu && (
             <form action={createMenuAction} className="mt-5 space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Input name="nameEn" placeholder={t.categoryPlaceholderEn} required />
-                <Input name="nameTh" placeholder={t.categoryPlaceholderTh} required />
-              </div>
+              <TranslationInputs languages={languages} prefix="name" />
               <Button disabled={creatingMenu} type="submit">
                 {creatingMenu ? c.saving : c.create}
               </Button>
@@ -98,6 +144,7 @@ export function MenuManager({ menus, currency }: MenuManagerProps) {
             currency={currency}
             expandedItemId={expandedItemId}
             key={menu.id}
+            languages={languages}
             locale={locale}
             menu={menu}
             onToggleActive={(menuId, isActive) => {
@@ -122,6 +169,7 @@ function MenuSection({
   pendingMenuId,
   currency,
   locale,
+  languages,
 }: {
   menu: MenuData;
   expandedItemId: string | null;
@@ -130,6 +178,7 @@ function MenuSection({
   pendingMenuId: boolean;
   currency: string;
   locale: string;
+  languages: MenuLanguage[];
 }) {
   const dict = useDictionary();
   const t = dict.menuManager;
@@ -144,7 +193,7 @@ function MenuSection({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="text-lg font-semibold text-slate-900">
-              {menu.nameEn} <span className="text-slate-400">/</span> {menu.nameTh}
+              {formatTranslationPreview(menu.name, languages)}
             </h3>
             <p className="text-xs text-slate-500">
               {menu.items.length} {c.items}
@@ -174,18 +223,12 @@ function MenuSection({
         <div className="border-b border-slate-200 bg-slate-50 px-5 py-5">
           <form action={createItemAction} className="space-y-3">
             <input name="menuId" type="hidden" value={menu.id} />
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Input name="nameEn" placeholder={t.itemNameEn} required />
-              <Input name="nameTh" placeholder={t.itemNameTh} required />
-            </div>
+            <TranslationInputs languages={languages} prefix="name" />
             <div className="grid gap-3 sm:grid-cols-2">
               <Input min="0.01" name="price" placeholder={t.price} required step="0.01" type="number" />
               <Input name="imageUrl" placeholder={t.imageUrl} type="url" />
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Textarea name="descriptionEn" placeholder={t.descriptionEn} rows={2} />
-              <Textarea name="descriptionTh" placeholder={t.descriptionTh} rows={2} />
-            </div>
+            <TranslationInputs languages={languages} multiline prefix="description" />
             <Button disabled={creatingItem} type="submit">
               {creatingItem ? t.adding : t.addItem}
             </Button>
@@ -206,15 +249,13 @@ function MenuSection({
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-medium text-slate-900">
-                      {item.nameEn} <span className="text-slate-400">/</span> {item.nameTh}
+                      {formatTranslationPreview(item.name, languages)}
                     </p>
                     {!item.isAvailable && <Badge variant="warning">{c.unavailable}</Badge>}
                   </div>
-                  {(item.descriptionEn || item.descriptionTh) && (
+                  {formatTranslationPreview(item.description, languages) && (
                     <p className="mt-1 text-sm text-slate-500">
-                      {item.descriptionEn}
-                      {item.descriptionEn && item.descriptionTh ? " / " : ""}
-                      {item.descriptionTh}
+                      {formatTranslationPreview(item.description, languages)}
                     </p>
                   )}
                   <p className="mt-2 text-sm font-semibold tabular-nums text-slate-900">
@@ -231,7 +272,9 @@ function MenuSection({
                 </Button>
               </div>
 
-              {expandedItemId === item.id && <EditItemForm item={item} />}
+              {expandedItemId === item.id && (
+                <EditItemForm item={item} languages={languages} />
+              )}
             </li>
           ))}
         </ul>
@@ -240,7 +283,13 @@ function MenuSection({
   );
 }
 
-function EditItemForm({ item }: { item: MenuItemData }) {
+function EditItemForm({
+  item,
+  languages,
+}: {
+  item: MenuItemData;
+  languages: MenuLanguage[];
+}) {
   const dict = useDictionary();
   const t = dict.menuManager;
   const c = dict.common;
@@ -252,10 +301,7 @@ function EditItemForm({ item }: { item: MenuItemData }) {
       className="mt-4 space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 transition-all duration-200"
     >
       <input name="itemId" type="hidden" value={item.id} />
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Input defaultValue={item.nameEn} name="nameEn" placeholder={t.itemNameEn} required />
-        <Input defaultValue={item.nameTh} name="nameTh" placeholder={t.itemNameTh} required />
-      </div>
+      <TranslationInputs languages={languages} prefix="name" values={item.name} />
       <div className="grid gap-3 sm:grid-cols-2">
         <Input
           defaultValue={item.price}
@@ -268,20 +314,12 @@ function EditItemForm({ item }: { item: MenuItemData }) {
         />
         <Input defaultValue={item.imageUrl ?? ""} name="imageUrl" placeholder={t.imageUrl} type="url" />
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Textarea
-          defaultValue={item.descriptionEn ?? ""}
-          name="descriptionEn"
-          placeholder={t.descriptionEn}
-          rows={2}
-        />
-        <Textarea
-          defaultValue={item.descriptionTh ?? ""}
-          name="descriptionTh"
-          placeholder={t.descriptionTh}
-          rows={2}
-        />
-      </div>
+      <TranslationInputs
+        languages={languages}
+        multiline
+        prefix="description"
+        values={item.description}
+      />
       <label className="flex items-center gap-2 text-sm text-slate-700">
         <input
           className="h-4 w-4 rounded border-slate-300"
