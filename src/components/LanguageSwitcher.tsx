@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, ChevronDown, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -42,6 +42,7 @@ export function LanguageSwitcher({
   const router = useRouter();
   const { locale, dict } = useLocale();
   const [open, setOpen] = useState(false);
+  const [opensUpward, setOpensUpward] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   const locales = LOCALE_CONFIG.filter(
@@ -72,6 +73,17 @@ export function LanguageSwitcher({
     };
   }, [open]);
 
+  useLayoutEffect(() => {
+    if (!open || !rootRef.current) {
+      return;
+    }
+
+    const rect = rootRef.current.getBoundingClientRect();
+    const estimatedMenuHeight = locales.length * 42 + 24;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    setOpensUpward(spaceBelow < estimatedMenuHeight);
+  }, [open, locales.length]);
+
   if (locales.length <= 1 || !activeOption) {
     return null;
   }
@@ -96,7 +108,7 @@ export function LanguageSwitcher({
         aria-haspopup="listbox"
         aria-label={dict.languageSwitcher.label}
         className={cn(
-          "flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200",
+          "flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200",
           "hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900",
           open && "border-slate-300 bg-slate-50 shadow-md",
         )}
@@ -114,7 +126,10 @@ export function LanguageSwitcher({
 
       {open && (
         <div
-          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 min-w-[11rem] overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg"
+          className={cn(
+            "absolute left-0 z-50 min-w-[11rem] w-full overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg",
+            opensUpward ? "bottom-[calc(100%+0.5rem)]" : "top-[calc(100%+0.5rem)]",
+          )}
           role="listbox"
         >
           {locales.map((option) => {

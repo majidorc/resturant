@@ -71,7 +71,7 @@ function SidebarContent({
         })}
       </nav>
 
-      <div className="border-t border-slate-200 p-4 space-y-3">
+      <div className="overflow-visible border-t border-slate-200 p-4 space-y-3">
         <LanguageSwitcher className="w-full justify-center" />
         <SignOutButton />
       </div>
