@@ -3,14 +3,14 @@
 FROM node:20-alpine AS base
 
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat vips-dev
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci
 
 FROM base AS prod-deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat vips
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN --mount=type=cache,target=/root/.npm \
@@ -22,7 +22,8 @@ RUN --mount=type=cache,target=/root/.npm \
       pg@8.22.0 \
       dotenv@17.4.2 \
       tsx@4.19.3 \
-      esbuild@0.28.1
+      esbuild@0.28.1 \
+      sharp@0.34.5
 
 FROM base AS builder
 WORKDIR /app

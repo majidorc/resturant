@@ -153,7 +153,8 @@
   "publicMenu": {
     "digitalMenu": "Digital Menu",
     "noItems": "No menu items available yet.",
-    "noItemsCategory": "No items in this category."
+    "noItemsCategory": "No items in this category.",
+    "closeLightbox": "Close image preview"
   },
   "directory": {
     "title": "Restaurant Directory",
@@ -224,6 +225,9 @@
     "dishImagesMax": "Maximum of 3 images per dish.",
     "adding": "Adding…",
     "itemUpdated": "Item updated.",
+    "deleteItem": "Delete Item",
+    "itemDeleted": "Item deleted.",
+    "deleteItemConfirm": "Delete this menu item permanently?",
     "availableOnMenu": "Available on menu"
   },
   "settings": {

@@ -151,9 +151,10 @@
     "noPublicWifi": "ไม่มี Wi-Fi สาธารณะ"
   },
   "publicMenu": {
-    "digitalMenu": "เมนูดิจิทัล",
-    "noItems": "ยังไม่มีรายการเมนู",
-    "noItemsCategory": "ยังไม่มีรายการในหมวดหมู่นี้"
+    "digitalMenu": "Digital Menu",
+    "noItems": "No menu items available yet.",
+    "noItemsCategory": "No items in this category.",
+    "closeLightbox": "Close image preview"
   },
   "dashboard": {
     "restaurantLabel": "ร้านอาหาร",
@@ -218,7 +219,10 @@
     "dishImagesDrag": "Drop images here or click to upload",
     "dishImagesUploading": "Uploading images…",
     "dishImagesRemove": "Remove image",
-    "dishImagesMax": "Maximum of 3 images per dish."
+    "dishImagesMax": "Maximum of 3 images per dish.",
+    "deleteItem": "Delete Item",
+    "itemDeleted": "Item deleted.",
+    "deleteItemConfirm": "Delete this menu item permanently?"
   },
   "settings": {
     "profileTitle": "Restaurant Profile",

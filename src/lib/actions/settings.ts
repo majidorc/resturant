@@ -8,6 +8,8 @@ import {
   isSupportedLanguage,
   parseMenuLanguages,
 } from "@/lib/locale";
+import { isValidUploadPath } from "@/lib/upload-constants";
+import { deleteUploadFile } from "@/lib/upload-cleanup";
 
 export type ActionState = {
   error?: string;
@@ -33,9 +35,14 @@ export async function updateRestaurantSettings(
     const city = formData.get("city")?.toString().trim() || null;
     const country = formData.get("country")?.toString().trim() || null;
 
-    if (logoUrl && !logoUrl.startsWith("/uploads/")) {
+    if (logoUrl && !isValidUploadPath(logoUrl)) {
       return { error: "Invalid logo path." };
     }
+
+    const existingRestaurant = await prisma.restaurant.findUnique({
+      where: { id: restaurantId },
+      select: { logoUrl: true },
+    });
 
     if (googleReviewUrl && !googleReviewUrl.startsWith("http")) {
       return { error: "Google Review URL must start with http:// or https://" };
@@ -73,6 +80,12 @@ export async function updateRestaurantSettings(
     revalidatePath("/dashboard/menu");
     revalidatePath(`/menu/${updated.slug}`);
     revalidatePath("/restaurants");
+
+    const previousLogo = existingRestaurant?.logoUrl;
+    if (previousLogo && previousLogo !== logoUrl && isValidUploadPath(previousLogo)) {
+      await deleteUploadFile(previousLogo);
+    }
+
     return { success: true };
   } catch {
     return { error: "Failed to update settings." };

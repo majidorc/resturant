@@ -30,6 +30,19 @@ html[lang="th"] body {
   font-family: var(--font-noto-sans-thai), var(--font-geist-sans), system-ui, sans-serif;
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out both;
+}
+
 @keyframes fade-in-up {
   from {
     opacity: 0;

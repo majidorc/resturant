@@ -151,9 +151,10 @@
     "noPublicWifi": "لا يوجد واي فاي عام"
   },
   "publicMenu": {
-    "digitalMenu": "القائمة الرقمية",
-    "noItems": "لا توجد عناصر في القائمة بعد.",
-    "noItemsCategory": "لا توجد عناصر في هذا القسم."
+    "digitalMenu": "Digital Menu",
+    "noItems": "No menu items available yet.",
+    "noItemsCategory": "No items in this category.",
+    "closeLightbox": "Close image preview"
   },
   "dashboard": {
     "restaurantLabel": "Restaurant",
@@ -218,7 +219,10 @@
     "dishImagesDrag": "Drop images here or click to upload",
     "dishImagesUploading": "Uploading images…",
     "dishImagesRemove": "Remove image",
-    "dishImagesMax": "Maximum of 3 images per dish."
+    "dishImagesMax": "Maximum of 3 images per dish.",
+    "deleteItem": "Delete Item",
+    "itemDeleted": "Item deleted.",
+    "deleteItemConfirm": "Delete this menu item permanently?"
   },
   "settings": {
     "profileTitle": "Restaurant Profile",

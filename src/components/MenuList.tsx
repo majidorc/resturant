@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { UtensilsCrossed } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ImageLightbox } from "@/components/menu/ImageLightbox";
 import { useDictionary } from "@/components/LocaleProvider";
 import { pickLocalizedOptional, pickLocalizedText } from "@/lib/i18n";
 import { formatMenuPrice, type MenuLanguage } from "@/lib/locale";
@@ -31,7 +32,15 @@ type MenuListProps = {
   enabledLanguages: MenuLanguage[];
 };
 
-function DishImageCarousel({ images, name }: { images: string[]; name: string }) {
+function DishImageCarousel({
+  images,
+  name,
+  onImageClick,
+}: {
+  images: string[];
+  name: string;
+  onImageClick: (imageUrl: string) => void;
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -41,6 +50,10 @@ function DishImageCarousel({ images, name }: { images: string[]; name: string })
   useEffect(() => {
     setActiveIndex(0);
   }, [images]);
+
+  function openImage(imageUrl: string) {
+    onImageClick(imageUrl);
+  }
 
   if (validImages.length === 0) {
     return (
@@ -52,7 +65,11 @@ function DishImageCarousel({ images, name }: { images: string[]; name: string })
 
   if (validImages.length === 1) {
     return (
-      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-slate-100 md:h-24 md:w-24">
+      <button
+        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-slate-100 transition-transform duration-200 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 md:h-24 md:w-24"
+        onClick={() => openImage(validImages[0])}
+        type="button"
+      >
         <img
           alt={name}
           className="h-full w-full object-cover"
@@ -60,7 +77,7 @@ function DishImageCarousel({ images, name }: { images: string[]; name: string })
           onError={() => setFailedUrls((current) => new Set(current).add(validImages[0]))}
           src={validImages[0]}
         />
-      </div>
+      </button>
     );
   }
 
@@ -90,14 +107,20 @@ function DishImageCarousel({ images, name }: { images: string[]; name: string })
         ref={scrollRef}
       >
         {validImages.map((url, index) => (
-          <img
-            alt={`${name} ${index + 1}`}
-            className="h-20 w-20 shrink-0 snap-center object-cover md:h-24 md:w-24"
+          <button
+            className="h-20 w-20 shrink-0 snap-center overflow-hidden transition-transform duration-200 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 md:h-24 md:w-24"
             key={`${url}-${index}`}
-            loading="lazy"
-            onError={() => setFailedUrls((current) => new Set(current).add(url))}
-            src={url}
-          />
+            onClick={() => openImage(url)}
+            type="button"
+          >
+            <img
+              alt={`${name} ${index + 1}`}
+              className="h-full w-full object-cover"
+              loading="lazy"
+              onError={() => setFailedUrls((current) => new Set(current).add(url))}
+              src={url}
+            />
+          </button>
         ))}
       </div>
       <div className="mt-1.5 flex justify-center gap-1">
@@ -121,6 +144,7 @@ function DishImageCarousel({ images, name }: { images: string[]; name: string })
 export function MenuList({ menus, currency, locale, enabledLanguages }: MenuListProps) {
   const dict = useDictionary();
   const [activeId, setActiveId] = useState(menus[0]?.id ?? "");
+  const [lightbox, setLightbox] = useState<{ imageUrl: string; alt: string } | null>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   useEffect(() => {
@@ -161,89 +185,105 @@ export function MenuList({ menus, currency, locale, enabledLanguages }: MenuList
   }
 
   return (
-    <div className="pb-8">
-      <nav className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur-md">
-        <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {menus.map((menu) => (
-            <button
-              className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                activeId === menu.id
-                  ? "bg-amber-500 text-slate-950 shadow-sm"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-              key={menu.id}
-              onClick={() => scrollToCategory(menu.id)}
-              type="button"
-            >
-              {pickLocalizedText(locale, menu.name, enabledLanguages)}
-            </button>
-          ))}
-        </div>
-      </nav>
+    <>
+      <div className="pb-8">
+        <nav className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur-md">
+          <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {menus.map((menu) => (
+              <button
+                className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                  activeId === menu.id
+                    ? "bg-amber-500 text-slate-950 shadow-sm"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+                key={menu.id}
+                onClick={() => scrollToCategory(menu.id)}
+                type="button"
+              >
+                {pickLocalizedText(locale, menu.name, enabledLanguages)}
+              </button>
+            ))}
+          </div>
+        </nav>
 
-      <div className="space-y-6 px-4 py-6">
-        {menus.map((menu, menuIndex) => {
-          const menuName = pickLocalizedText(locale, menu.name, enabledLanguages);
+        <div className="space-y-6 px-4 py-6">
+          {menus.map((menu, menuIndex) => {
+            const menuName = pickLocalizedText(locale, menu.name, enabledLanguages);
 
-          return (
-            <section
-              className="scroll-mt-28"
-              id={menu.id}
-              key={menu.id}
-              ref={(node) => {
-                sectionRefs.current[menu.id] = node;
-              }}
-            >
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold tracking-tight text-slate-900">{menuName}</h2>
-                <Badge>
-                  {menu.items.length} {dict.common.items}
-                </Badge>
-              </div>
+            return (
+              <section
+                className="scroll-mt-28"
+                id={menu.id}
+                key={menu.id}
+                ref={(node) => {
+                  sectionRefs.current[menu.id] = node;
+                }}
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-lg font-semibold tracking-tight text-slate-900">{menuName}</h2>
+                  <Badge>
+                    {menu.items.length} {dict.common.items}
+                  </Badge>
+                </div>
 
-              <ul className="space-y-3">
-                {menu.items.map((item, itemIndex) => {
-                  const itemName = pickLocalizedText(locale, item.name, enabledLanguages);
-                  const itemDescription = pickLocalizedOptional(
-                    locale,
-                    item.description,
-                    enabledLanguages,
-                  );
+                <ul className="space-y-3">
+                  {menu.items.map((item, itemIndex) => {
+                    const itemName = pickLocalizedText(locale, item.name, enabledLanguages);
+                    const itemDescription = pickLocalizedOptional(
+                      locale,
+                      item.description,
+                      enabledLanguages,
+                    );
 
-                  return (
-                    <li
-                      className="animate-fade-in-up rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md"
-                      key={item.id}
-                      style={{ animationDelay: `${menuIndex * 80 + itemIndex * 40}ms` }}
-                    >
-                      <div className="flex items-start gap-4">
-                        <DishImageCarousel images={item.images} name={itemName} />
+                    return (
+                      <li
+                        className="animate-fade-in-up rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md"
+                        key={item.id}
+                        style={{ animationDelay: `${menuIndex * 80 + itemIndex * 40}ms` }}
+                      >
+                        <div className="flex items-start gap-4">
+                          <DishImageCarousel
+                            images={item.images}
+                            name={itemName}
+                            onImageClick={(imageUrl) =>
+                              setLightbox({ imageUrl, alt: itemName })
+                            }
+                          />
 
-                        <div className="flex min-w-0 flex-1 items-start justify-between gap-4">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <p className="font-medium text-slate-900">{itemName}</p>
-                              <Badge variant="success">{dict.common.available}</Badge>
+                          <div className="flex min-w-0 flex-1 items-start justify-between gap-4">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <p className="font-medium text-slate-900">{itemName}</p>
+                                <Badge variant="success">{dict.common.available}</Badge>
+                              </div>
+                              {itemDescription && (
+                                <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+                                  {itemDescription}
+                                </p>
+                              )}
                             </div>
-                            {itemDescription && (
-                              <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
-                                {itemDescription}
-                              </p>
-                            )}
+                            <span className="shrink-0 text-base font-bold tabular-nums text-amber-600">
+                              {formatMenuPrice(item.price, currency, locale)}
+                            </span>
                           </div>
-                          <span className="shrink-0 text-base font-bold tabular-nums text-amber-600">
-                            {formatMenuPrice(item.price, currency, locale)}
-                          </span>
                         </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          );
-        })}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
       </div>
-    </div>
+
+      {lightbox && (
+        <ImageLightbox
+          alt={lightbox.alt}
+          imageUrl={lightbox.imageUrl}
+          onClose={() => setLightbox(null)}
+        />
+      )}
+    </>
   );
 }

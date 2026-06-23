@@ -4,6 +4,7 @@ import { useActionState, useState, useTransition } from "react";
 import {
   createMenu,
   createMenuItem,
+  deleteMenuItem,
   toggleMenuActive,
   updateMenuItem,
 } from "@/lib/actions/menu";
@@ -294,7 +295,11 @@ function MenuSection({
               </div>
 
               {expandedItemId === item.id && (
-                <EditItemForm item={item} languages={languages} />
+                <EditItemForm
+                  item={item}
+                  languages={languages}
+                  onDeleted={() => setExpandedItemId(null)}
+                />
               )}
             </li>
           ))}
@@ -307,14 +312,34 @@ function MenuSection({
 function EditItemForm({
   item,
   languages,
+  onDeleted,
 }: {
   item: MenuItemData;
   languages: MenuLanguage[];
+  onDeleted: () => void;
 }) {
   const dict = useDictionary();
   const t = dict.menuManager;
   const c = dict.common;
   const [state, formAction, pending] = useActionState(updateMenuItem, initialState);
+  const [deletePending, startDelete] = useTransition();
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  function handleDelete() {
+    if (!window.confirm(t.deleteItemConfirm)) {
+      return;
+    }
+
+    startDelete(async () => {
+      setDeleteError(null);
+      const result = await deleteMenuItem(item.id);
+      if (result.error) {
+        setDeleteError(result.error);
+        return;
+      }
+      onDeleted();
+    });
+  }
 
   return (
     <form
@@ -349,9 +374,20 @@ function EditItemForm({
         />
         {t.availableOnMenu}
       </label>
-      <Button disabled={pending} type="submit">
-        {pending ? c.saving : c.saveChanges}
-      </Button>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button disabled={pending || deletePending} type="submit">
+          {pending ? c.saving : c.saveChanges}
+        </Button>
+        <Button
+          disabled={pending || deletePending}
+          onClick={handleDelete}
+          type="button"
+          variant="danger"
+        >
+          {deletePending ? c.saving : t.deleteItem}
+        </Button>
+      </div>
+      <FormAlert message={deleteError} />
       <FormAlert message={state.error} />
       <FormAlert message={state.success ? t.itemUpdated : null} variant="success" />
     </form>

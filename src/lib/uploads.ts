@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
+import { optimizeImageBuffer } from "@/lib/image-processing";
 import {
   MAX_UPLOAD_BYTES,
   getUploadPublicPath,
@@ -14,11 +15,11 @@ export {
   parseImagesField,
 } from "@/lib/upload-constants";
 
-const ALLOWED_MIME_TYPES = new Map<string, string>([
-  ["image/jpeg", "jpg"],
-  ["image/png", "png"],
-  ["image/webp", "webp"],
-  ["image/gif", "gif"],
+const ALLOWED_MIME_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
 ]);
 
 export function getUploadRoot(): string {
@@ -48,15 +49,15 @@ export async function saveUploadedImage(file: File): Promise<string> {
     throw new Error("Image exceeds the 5 MB size limit.");
   }
 
-  const extension = ALLOWED_MIME_TYPES.get(file.type)!;
-  const fileName = `${Date.now()}-${randomUUID()}.${extension}`;
   const uploadRoot = getUploadRoot();
-  const destination = path.join(uploadRoot, fileName);
-
   await mkdir(uploadRoot, { recursive: true });
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(destination, buffer);
+  const inputBuffer = Buffer.from(await file.arrayBuffer());
+  const optimizedBuffer = await optimizeImageBuffer(inputBuffer, file.type);
+  const fileName = `${Date.now()}-${randomUUID()}.webp`;
+  const destination = path.join(uploadRoot, fileName);
+
+  await writeFile(destination, optimizedBuffer);
 
   return buildUploadPublicPath(fileName);
 }

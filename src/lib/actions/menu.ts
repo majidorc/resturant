@@ -6,6 +6,10 @@ import { prisma } from "@/lib/prisma";
 import type { ActionState } from "@/lib/actions/settings";
 import { buildMenuTranslationPayload, getRestaurantMenuLanguages } from "@/lib/menu-form";
 import { parseImagesField } from "@/lib/upload-constants";
+import {
+  deleteUploadFiles,
+  getRemovedUploadPaths,
+} from "@/lib/upload-cleanup";
 
 async function verifyMenuOwnership(menuId: string, restaurantId: string) {
   const menu = await prisma.menu.findFirst({
@@ -168,7 +172,8 @@ export async function updateMenuItem(
       return { error: "Price must be a positive number." };
     }
 
-    await verifyMenuItemOwnership(itemId, restaurantId);
+    const existingItem = await verifyMenuItemOwnership(itemId, restaurantId);
+    const removedImages = getRemovedUploadPaths(existingItem.images, images);
 
     await prisma.menuItem.update({
       where: { id: itemId },
@@ -181,9 +186,29 @@ export async function updateMenuItem(
       },
     });
 
+    await deleteUploadFiles(removedImages);
+
     revalidatePath("/dashboard/menu");
     return { success: true };
   } catch {
     return { error: "Failed to update menu item." };
+  }
+}
+
+export async function deleteMenuItem(itemId: string): Promise<ActionState> {
+  try {
+    const { restaurantId } = await getRequiredRestaurantId();
+    const existingItem = await verifyMenuItemOwnership(itemId, restaurantId);
+
+    await prisma.menuItem.delete({
+      where: { id: itemId },
+    });
+
+    await deleteUploadFiles(existingItem.images);
+
+    revalidatePath("/dashboard/menu");
+    return { success: true };
+  } catch {
+    return { error: "Failed to delete menu item." };
   }
 }

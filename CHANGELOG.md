@@ -12,6 +12,24 @@ _No unreleased changes._
 
 ---
 
+## [0.6.0] - 2026-06-23
+
+### Added
+
+- Premium language dropdown with globe trigger, popover list, and active-state styling.
+- Server-side image optimization via `sharp` (WebP, max 1024px, quality 82) on upload.
+- Upload garbage collection when menu items are deleted or images are removed/replaced.
+- Logo file cleanup when restaurant logo is replaced in settings.
+- Public menu image lightbox with ESC, overlay click, and close button dismiss.
+- Menu item delete action in tenant menu manager.
+
+### Changed
+
+- `LanguageSwitcher` refactored from horizontal pill buttons to compact dropdown.
+- All uploaded images stored as optimized `.webp` files.
+
+---
+
 ## [0.5.1] - 2026-06-22
 
 ### Added
