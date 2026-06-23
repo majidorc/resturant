@@ -1,18 +1,28 @@
 # syntax=docker/dockerfile:1
 
-FROM node:20-alpine AS base
+FROM node:20-bookworm-slim AS base
+WORKDIR /app
 
 FROM base AS deps
-RUN apk add --no-cache libc6-compat vips-dev
-WORKDIR /app
-COPY package.json package-lock.json* ./
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libvips-dev \
+    python3 \
+    make \
+    g++ \
+  && rm -rf /var/lib/apt/lists/*
+COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci
 
 FROM base AS prod-deps
-RUN apk add --no-cache libc6-compat vips
-WORKDIR /app
-COPY package.json package-lock.json* ./
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libvips42 \
+  && rm -rf /var/lib/apt/lists/*
+COPY package.json package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
     npm install --omit=dev --no-audit --no-fund \
       prisma@7.8.0 \
@@ -45,7 +55,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-RUN addgroup --system --gid 1001 nodejs \
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends libvips42 ca-certificates \
+  && rm -rf /var/lib/apt/lists/* \
+  && addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs \
   && mkdir -p .next public/uploads \
   && chown -R nextjs:nodejs .next public/uploads

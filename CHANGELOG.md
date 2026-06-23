@@ -12,6 +12,16 @@ _No unreleased changes._
 
 ---
 
+## [0.6.1] - 2026-06-23
+
+### Changed
+
+- Dockerfile switched to Debian slim for reliable `sharp` and `npm ci` in CI.
+- GitHub Actions now builds on cloud runners and optionally triggers Coolify pull-only deploy.
+- Coolify auto-deploy on git push disabled server-side to prevent 200% CPU on-server builds.
+
+---
+
 ## [0.6.0] - 2026-06-23
 
 ### Added
