@@ -12,6 +12,14 @@ _No unreleased changes._
 
 ---
 
+## [0.7.3] - 2026-06-23
+
+### Changed
+
+- Deploy pipeline test commit (Coolify auto-deploy + GHCR pull).
+
+---
+
 ## [0.7.2] - 2026-06-23
 
 ### Changed
