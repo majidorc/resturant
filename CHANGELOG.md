@@ -12,6 +12,18 @@ _No unreleased changes._
 
 ---
 
+## [0.5.1] - 2026-06-22
+
+### Added
+
+- GitHub Actions workflow (`.github/workflows/docker-publish.yml`) builds the Docker image on GitHub runners and pushes to `ghcr.io/majidorc/resturant` so Coolify can **pull** instead of building on the Hetzner CX23.
+
+### Changed
+
+- Dockerfile runner stage pre-creates `public/uploads` for persistent volume mounts.
+
+---
+
 ## [0.5.0] - 2026-06-22
 
 ### Added

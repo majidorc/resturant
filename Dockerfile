@@ -46,8 +46,8 @@ ENV HOSTNAME=0.0.0.0
 
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs \
-  && mkdir .next \
-  && chown nextjs:nodejs .next
+  && mkdir -p .next public/uploads \
+  && chown -R nextjs:nodejs .next public/uploads
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
