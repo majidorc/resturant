@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
+import { isValidUploadPath } from "@/lib/upload-constants";
 import { getUploadRoot } from "@/lib/uploads";
 
 const MIME_BY_EXTENSION: Record<string, string> = {
@@ -11,18 +12,26 @@ const MIME_BY_EXTENSION: Record<string, string> = {
   ".gif": "image/gif",
 };
 
+const SAFE_SEGMENT = /^[a-zA-Z0-9._-]+$/;
+
 function resolveUploadFile(segments: string[]): string | null {
-  if (segments.length !== 1) {
+  if (segments.length < 1 || segments.length > 2) {
     return null;
   }
 
-  const fileName = segments[0];
-  if (!fileName || fileName.includes("..") || fileName.includes("/") || fileName.includes("\\")) {
+  for (const segment of segments) {
+    if (!segment || !SAFE_SEGMENT.test(segment)) {
+      return null;
+    }
+  }
+
+  const publicPath = `/uploads/${segments.join("/")}`;
+  if (!isValidUploadPath(publicPath)) {
     return null;
   }
 
   const uploadRoot = path.resolve(getUploadRoot());
-  const filePath = path.resolve(uploadRoot, fileName);
+  const filePath = path.resolve(uploadRoot, ...segments);
 
   if (!filePath.startsWith(`${uploadRoot}${path.sep}`) && filePath !== uploadRoot) {
     return null;

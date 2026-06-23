@@ -3,6 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { getRequiredSuperAdminSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import {
+  collectLegacyUploadPaths,
+  deleteRestaurantUploadDirectory,
+  deleteUploadFiles,
+} from "@/lib/upload-cleanup";
 
 export type AdminActionState = {
   error?: string;
@@ -37,7 +42,18 @@ export async function deleteRestaurant(restaurantId: string): Promise<AdminActio
 
     const restaurant = await prisma.restaurant.findUnique({
       where: { id: restaurantId },
-      select: { userId: true, user: { select: { role: true } } },
+      select: {
+        userId: true,
+        logoUrl: true,
+        user: { select: { role: true } },
+        menus: {
+          select: {
+            items: {
+              select: { images: true },
+            },
+          },
+        },
+      },
     });
 
     if (!restaurant) {
@@ -47,6 +63,15 @@ export async function deleteRestaurant(restaurantId: string): Promise<AdminActio
     if (restaurant.user.role === "SUPERADMIN") {
       return { error: "Cannot delete super admin accounts." };
     }
+
+    const legacyUploadPaths = collectLegacyUploadPaths(
+      restaurantId,
+      restaurant.logoUrl,
+      restaurant.menus.flatMap((menu) => menu.items.map((item) => item.images)),
+    );
+
+    await deleteRestaurantUploadDirectory(restaurantId);
+    await deleteUploadFiles(legacyUploadPaths);
 
     await prisma.$transaction([
       prisma.restaurant.delete({ where: { id: restaurantId } }),

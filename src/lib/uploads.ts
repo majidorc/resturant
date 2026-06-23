@@ -32,11 +32,11 @@ export function getUploadRoot(): string {
   return path.join(/* turbopackIgnore: true */ process.cwd(), "public", "uploads");
 }
 
-function buildUploadPublicPath(fileName: string): string {
-  return getUploadPublicPath(fileName);
+function buildUploadPublicPath(restaurantId: string, fileName: string): string {
+  return getUploadPublicPath(restaurantId, fileName);
 }
 
-export async function saveUploadedImage(file: File): Promise<string> {
+export async function saveUploadedImage(file: File, restaurantId: string): Promise<string> {
   if (!ALLOWED_MIME_TYPES.has(file.type)) {
     throw new Error("Unsupported image type. Use JPEG, PNG, WebP, or GIF.");
   }
@@ -50,14 +50,15 @@ export async function saveUploadedImage(file: File): Promise<string> {
   }
 
   const uploadRoot = getUploadRoot();
-  await mkdir(uploadRoot, { recursive: true });
+  const restaurantDir = path.join(uploadRoot, restaurantId);
+  await mkdir(restaurantDir, { recursive: true });
 
   const inputBuffer = Buffer.from(await file.arrayBuffer());
   const optimizedBuffer = await optimizeImageBuffer(inputBuffer, file.type);
   const fileName = `${Date.now()}-${randomUUID()}.webp`;
-  const destination = path.join(uploadRoot, fileName);
+  const destination = path.join(restaurantDir, fileName);
 
   await writeFile(destination, optimizedBuffer);
 
-  return buildUploadPublicPath(fileName);
+  return buildUploadPublicPath(restaurantId, fileName);
 }

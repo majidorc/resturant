@@ -12,6 +12,16 @@ _No unreleased changes._
 
 ---
 
+## [0.6.3] - 2026-06-23
+
+### Changed
+
+- Uploads are stored per restaurant at `/uploads/{restaurantId}/` for isolated storage and simpler cleanup.
+- Deleting a restaurant removes its upload folder and any legacy flat files still on disk.
+- Existing flat `/uploads/{filename}` paths remain supported for older images.
+
+---
+
 ## [0.6.2] - 2026-06-23
 
 ### Fixed

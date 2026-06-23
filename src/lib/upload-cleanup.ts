@@ -1,6 +1,11 @@
-import { unlink } from "node:fs/promises";
+import { rm, unlink } from "node:fs/promises";
 import path from "node:path";
-import { UPLOAD_PUBLIC_PREFIX, isValidUploadPath } from "@/lib/upload-constants";
+import {
+  UPLOAD_PUBLIC_PREFIX,
+  isLegacyUploadPath,
+  isRestaurantScopedUploadPath,
+  isValidUploadPath,
+} from "@/lib/upload-constants";
 import { getUploadRoot } from "@/lib/uploads";
 
 export function resolveUploadDiskPath(publicPath: string): string | null {
@@ -9,7 +14,7 @@ export function resolveUploadDiskPath(publicPath: string): string | null {
   }
 
   const relativePath = publicPath.slice(UPLOAD_PUBLIC_PREFIX.length);
-  if (!relativePath || relativePath.includes("/") || relativePath.includes("\\")) {
+  if (!relativePath || relativePath.includes("..") || relativePath.includes("\\")) {
     return null;
   }
 
@@ -46,4 +51,48 @@ export async function deleteUploadFiles(publicPaths: string[]): Promise<void> {
 export function getRemovedUploadPaths(previous: string[], next: string[]): string[] {
   const nextSet = new Set(next);
   return previous.filter((publicPath) => !nextSet.has(publicPath));
+}
+
+export async function deleteRestaurantUploadDirectory(restaurantId: string): Promise<void> {
+  const uploadRoot = path.resolve(getUploadRoot());
+  const restaurantDir = path.resolve(uploadRoot, restaurantId);
+
+  if (!restaurantDir.startsWith(`${uploadRoot}${path.sep}`)) {
+    return;
+  }
+
+  try {
+    await rm(restaurantDir, { recursive: true, force: true });
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code !== "ENOENT") {
+      console.error("Failed to delete restaurant upload directory:", restaurantId, error);
+    }
+  }
+}
+
+export function collectLegacyUploadPaths(
+  restaurantId: string,
+  logoUrl: string | null,
+  itemImages: string[][],
+): string[] {
+  const paths = new Set<string>();
+
+  if (logoUrl && isValidUploadPath(logoUrl) && isLegacyUploadPath(logoUrl)) {
+    paths.add(logoUrl);
+  }
+
+  for (const images of itemImages) {
+    for (const imagePath of images) {
+      if (
+        isValidUploadPath(imagePath) &&
+        isLegacyUploadPath(imagePath) &&
+        !isRestaurantScopedUploadPath(imagePath, restaurantId)
+      ) {
+        paths.add(imagePath);
+      }
+    }
+  }
+
+  return [...paths];
 }

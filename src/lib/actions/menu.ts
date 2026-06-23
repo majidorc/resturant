@@ -5,7 +5,7 @@ import { getRequiredRestaurantId } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import type { ActionState } from "@/lib/actions/settings";
 import { buildMenuTranslationPayload, getRestaurantMenuLanguages } from "@/lib/menu-form";
-import { parseImagesField } from "@/lib/upload-constants";
+import { parseImagesFieldForRestaurant } from "@/lib/upload-constants";
 import {
   deleteUploadFiles,
   getRemovedUploadPaths,
@@ -91,7 +91,7 @@ export async function createMenuItem(
     const languages = await getRestaurantMenuLanguages(restaurantId);
     const menuId = formData.get("menuId")?.toString();
     const priceRaw = formData.get("price")?.toString();
-    const images = parseImagesField(formData.get("images"));
+    const images = parseImagesFieldForRestaurant(formData.get("images"), restaurantId);
     const nameResult = buildMenuTranslationPayload(formData, languages, "name", true);
     const descriptionResult = buildMenuTranslationPayload(
       formData,
@@ -145,7 +145,7 @@ export async function updateMenuItem(
     const languages = await getRestaurantMenuLanguages(restaurantId);
     const itemId = formData.get("itemId")?.toString();
     const priceRaw = formData.get("price")?.toString();
-    const images = parseImagesField(formData.get("images"));
+    const images = parseImagesFieldForRestaurant(formData.get("images"), restaurantId);
     const isAvailable = formData.get("isAvailable") === "true";
     const nameResult = buildMenuTranslationPayload(formData, languages, "name", true);
     const descriptionResult = buildMenuTranslationPayload(

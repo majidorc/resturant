@@ -8,7 +8,10 @@ import {
   isSupportedLanguage,
   parseMenuLanguages,
 } from "@/lib/locale";
-import { isValidUploadPath } from "@/lib/upload-constants";
+import {
+  isAllowedUploadPathForRestaurant,
+  isValidUploadPath,
+} from "@/lib/upload-constants";
 import { deleteUploadFile } from "@/lib/upload-cleanup";
 
 export type ActionState = {
@@ -35,7 +38,7 @@ export async function updateRestaurantSettings(
     const city = formData.get("city")?.toString().trim() || null;
     const country = formData.get("country")?.toString().trim() || null;
 
-    if (logoUrl && !isValidUploadPath(logoUrl)) {
+    if (logoUrl && !isAllowedUploadPathForRestaurant(logoUrl, restaurantId)) {
       return { error: "Invalid logo path." };
     }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { getRequiredRestaurantId } from "@/lib/session";
 import { saveUploadedImage } from "@/lib/uploads";
 
 export async function POST(request: Request) {
@@ -14,6 +15,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
+    const { restaurantId } = await getRequiredRestaurantId();
+
     const formData = await request.formData();
     const file = formData.get("file");
 
@@ -21,7 +24,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "No file provided." }, { status: 400 });
     }
 
-    const url = await saveUploadedImage(file);
+    const url = await saveUploadedImage(file, restaurantId);
 
     return NextResponse.json({ success: true, url });
   } catch (error) {
