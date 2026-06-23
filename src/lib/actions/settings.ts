@@ -14,6 +14,7 @@ import {
 } from "@/lib/upload-constants";
 import { deleteUploadFile } from "@/lib/upload-cleanup";
 import { parseOptionalHttpUrl } from "@/lib/social-urls";
+import { parseGoogleReviewInput } from "@/lib/google-place-id";
 
 export type ActionState = {
   error?: string;
@@ -29,7 +30,15 @@ export async function updateRestaurantSettings(
 
     const wifiSsid = formData.get("wifiSsid")?.toString().trim() || null;
     const wifiPassword = formData.get("wifiPassword")?.toString() || null;
-    const googleReviewUrl = formData.get("googleReviewUrl")?.toString().trim() || null;
+    const googlePlaceIdInput = formData.get("googlePlaceId")?.toString() ?? "";
+    const googleReviewUrlFallback = formData.get("googleReviewUrl")?.toString() ?? "";
+    const googleReviewResult = parseGoogleReviewInput(
+      googlePlaceIdInput.trim() || googleReviewUrlFallback,
+    );
+    if (!googleReviewResult.ok) {
+      return { error: googleReviewResult.error };
+    }
+    const googleReviewUrl = googleReviewResult.value;
     const currency = formData.get("currency")?.toString().trim() ?? "USD";
     const uiLanguage = formData.get("uiLanguage")?.toString().trim() ?? "en";
     const languages = parseMenuLanguages(

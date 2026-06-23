@@ -3,10 +3,10 @@
 import { useActionState, useState } from "react";
 import { Check, Copy, Loader2 } from "lucide-react";
 import { MenuQrCode } from "@/components/dashboard/MenuQrCode";
+import { GooglePlaceIdField } from "@/components/settings/GooglePlaceIdField";
 import { ImageDropzone } from "@/components/upload/ImageDropzone";
 import { updateRestaurantSettings } from "@/lib/actions/settings";
 import type { ActionState } from "@/lib/actions/settings";
-import { isOptimalGoogleReviewUrl } from "@/lib/social-urls";
 import { Button } from "@/components/ui/button";
 import { FormAlert } from "@/components/ui/form-alert";
 import { Input } from "@/components/ui/input";
@@ -90,10 +90,7 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
   const [state, formAction, pending] = useActionState(updateRestaurantSettings, initialState);
   const [copied, setCopied] = useState(false);
   const [logoUrl, setLogoUrl] = useState(restaurant.logoUrl);
-  const [googleReviewUrl, setGoogleReviewUrl] = useState(restaurant.googleReviewUrl ?? "");
   const enabledLanguages = new Set(restaurant.languages);
-  const showReviewLinkWarning =
-    googleReviewUrl.trim().length > 0 && !isOptimalGoogleReviewUrl(googleReviewUrl);
 
   async function copyMenuLink() {
     await navigator.clipboard.writeText(publicMenuUrl);
@@ -264,18 +261,18 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
 
         <SectionCard description={s.reviewSubtitle} title={s.reviewTitle}>
           <div className="space-y-3">
-            <div>
-              <FieldLabel hint={s.reviewUrlHint} htmlFor="googleReviewUrl" label={s.reviewUrl} />
-              <Input
-                className={fieldInputClass}
-                id="googleReviewUrl"
-                name="googleReviewUrl"
-                onChange={(event) => setGoogleReviewUrl(event.target.value)}
-                placeholder="https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID"
-                type="url"
-                value={googleReviewUrl}
-              />
-            </div>
+            <GooglePlaceIdField
+              initialReviewUrl={restaurant.googleReviewUrl}
+              inputClassName={fieldInputClass}
+              labels={{
+                placeId: s.reviewPlaceId,
+                placeIdHint: s.reviewPlaceIdHint,
+                placeIdPlaceholder: s.reviewPlaceIdPlaceholder,
+                findPlaceId: s.findPlaceId,
+                reviewPreview: s.reviewPreview,
+                invalidPlaceId: s.reviewInvalidPlaceId,
+              }}
+            />
 
             <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
               <span aria-hidden className="mr-1">
@@ -283,12 +280,6 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
               </span>
               {s.reviewProTip}
             </div>
-
-            {showReviewLinkWarning ? (
-              <p className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-900">
-                {s.reviewLinkWarning}
-              </p>
-            ) : null}
           </div>
         </SectionCard>
 
