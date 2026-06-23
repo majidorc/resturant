@@ -6,6 +6,7 @@ import { MenuQrCode } from "@/components/dashboard/MenuQrCode";
 import { ImageDropzone } from "@/components/upload/ImageDropzone";
 import { updateRestaurantSettings } from "@/lib/actions/settings";
 import type { ActionState } from "@/lib/actions/settings";
+import { isOptimalGoogleReviewUrl } from "@/lib/social-urls";
 import { Button } from "@/components/ui/button";
 import { FormAlert } from "@/components/ui/form-alert";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,10 @@ type SettingsFormProps = {
     logoUrl: string | null;
     city: string | null;
     country: string | null;
+    instagramUrl: string | null;
+    facebookUrl: string | null;
+    tiktokUrl: string | null;
+    whatsappUrl: string | null;
   };
   publicMenuUrl: string;
 };
@@ -85,7 +90,10 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
   const [state, formAction, pending] = useActionState(updateRestaurantSettings, initialState);
   const [copied, setCopied] = useState(false);
   const [logoUrl, setLogoUrl] = useState(restaurant.logoUrl);
+  const [googleReviewUrl, setGoogleReviewUrl] = useState(restaurant.googleReviewUrl ?? "");
   const enabledLanguages = new Set(restaurant.languages);
+  const showReviewLinkWarning =
+    googleReviewUrl.trim().length > 0 && !isOptimalGoogleReviewUrl(googleReviewUrl);
 
   async function copyMenuLink() {
     await navigator.clipboard.writeText(publicMenuUrl);
@@ -179,6 +187,55 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
           </div>
         </SectionCard>
 
+        <SectionCard description={s.socialSubtitle} title={s.socialTitle}>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <FieldLabel hint={s.instagramUrlHint} htmlFor="instagramUrl" label={s.instagramUrl} />
+              <Input
+                className={fieldInputClass}
+                defaultValue={restaurant.instagramUrl ?? ""}
+                id="instagramUrl"
+                name="instagramUrl"
+                placeholder={s.instagramPlaceholder}
+                type="url"
+              />
+            </div>
+            <div>
+              <FieldLabel hint={s.facebookUrlHint} htmlFor="facebookUrl" label={s.facebookUrl} />
+              <Input
+                className={fieldInputClass}
+                defaultValue={restaurant.facebookUrl ?? ""}
+                id="facebookUrl"
+                name="facebookUrl"
+                placeholder={s.facebookPlaceholder}
+                type="url"
+              />
+            </div>
+            <div>
+              <FieldLabel hint={s.tiktokUrlHint} htmlFor="tiktokUrl" label={s.tiktokUrl} />
+              <Input
+                className={fieldInputClass}
+                defaultValue={restaurant.tiktokUrl ?? ""}
+                id="tiktokUrl"
+                name="tiktokUrl"
+                placeholder={s.tiktokPlaceholder}
+                type="url"
+              />
+            </div>
+            <div>
+              <FieldLabel hint={s.whatsappUrlHint} htmlFor="whatsappUrl" label={s.whatsappUrl} />
+              <Input
+                className={fieldInputClass}
+                defaultValue={restaurant.whatsappUrl ?? ""}
+                id="whatsappUrl"
+                name="whatsappUrl"
+                placeholder={s.whatsappPlaceholder}
+                type="url"
+              />
+            </div>
+          </div>
+        </SectionCard>
+
         <SectionCard description={s.wifiSubtitle} title={s.wifiTitle}>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
@@ -206,16 +263,32 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
         </SectionCard>
 
         <SectionCard description={s.reviewSubtitle} title={s.reviewTitle}>
-          <div>
-            <FieldLabel hint={s.reviewUrlHint} htmlFor="googleReviewUrl" label={s.reviewUrl} />
-            <Input
-              className={fieldInputClass}
-              defaultValue={restaurant.googleReviewUrl ?? ""}
-              id="googleReviewUrl"
-              name="googleReviewUrl"
-              placeholder="https://g.page/r/your-review-link"
-              type="url"
-            />
+          <div className="space-y-3">
+            <div>
+              <FieldLabel hint={s.reviewUrlHint} htmlFor="googleReviewUrl" label={s.reviewUrl} />
+              <Input
+                className={fieldInputClass}
+                id="googleReviewUrl"
+                name="googleReviewUrl"
+                onChange={(event) => setGoogleReviewUrl(event.target.value)}
+                placeholder="https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID"
+                type="url"
+                value={googleReviewUrl}
+              />
+            </div>
+
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+              <span aria-hidden className="mr-1">
+                💡
+              </span>
+              {s.reviewProTip}
+            </div>
+
+            {showReviewLinkWarning ? (
+              <p className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-900">
+                {s.reviewLinkWarning}
+              </p>
+            ) : null}
           </div>
         </SectionCard>
 

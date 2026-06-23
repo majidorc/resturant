@@ -13,6 +13,7 @@ import {
   isValidUploadPath,
 } from "@/lib/upload-constants";
 import { deleteUploadFile } from "@/lib/upload-cleanup";
+import { parseOptionalHttpUrl } from "@/lib/social-urls";
 
 export type ActionState = {
   error?: string;
@@ -37,6 +38,26 @@ export async function updateRestaurantSettings(
     const logoUrl = formData.get("logoUrl")?.toString().trim() || null;
     const city = formData.get("city")?.toString().trim() || null;
     const country = formData.get("country")?.toString().trim() || null;
+
+    const instagramResult = parseOptionalHttpUrl(formData.get("instagramUrl"), "Instagram URL");
+    if (!instagramResult.ok) {
+      return { error: instagramResult.error };
+    }
+
+    const facebookResult = parseOptionalHttpUrl(formData.get("facebookUrl"), "Facebook URL");
+    if (!facebookResult.ok) {
+      return { error: facebookResult.error };
+    }
+
+    const tiktokResult = parseOptionalHttpUrl(formData.get("tiktokUrl"), "TikTok URL");
+    if (!tiktokResult.ok) {
+      return { error: tiktokResult.error };
+    }
+
+    const whatsappResult = parseOptionalHttpUrl(formData.get("whatsappUrl"), "WhatsApp URL");
+    if (!whatsappResult.ok) {
+      return { error: whatsappResult.error };
+    }
 
     if (logoUrl && !isAllowedUploadPathForRestaurant(logoUrl, restaurantId)) {
       return { error: "Invalid logo path." };
@@ -75,6 +96,10 @@ export async function updateRestaurantSettings(
         logoUrl,
         city,
         country,
+        instagramUrl: instagramResult.value,
+        facebookUrl: facebookResult.value,
+        tiktokUrl: tiktokResult.value,
+        whatsappUrl: whatsappResult.value,
       },
       select: { slug: true },
     });

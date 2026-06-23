@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { PublicMenuExperience } from "@/components/menu/PublicMenuExperience";
+import { RestaurantSocialLinks } from "@/components/menu/RestaurantSocialLinks";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
 import { resolveMenuLocale } from "@/lib/i18n";
@@ -83,6 +84,12 @@ export default async function PublicMenuPage({ params }: PageProps) {
             {location ? (
               <p className="mt-1 text-sm text-slate-500">{location}</p>
             ) : null}
+            <RestaurantSocialLinks
+              facebookUrl={restaurant.facebookUrl}
+              instagramUrl={restaurant.instagramUrl}
+              tiktokUrl={restaurant.tiktokUrl}
+              whatsappUrl={restaurant.whatsappUrl}
+            />
           </div>
         </div>
       </header>

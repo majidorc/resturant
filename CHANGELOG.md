@@ -12,6 +12,15 @@ _No unreleased changes._
 
 ---
 
+## [0.7.0] - 2026-06-23
+
+### Added
+
+- Restaurant social media fields (Instagram, Facebook, TikTok, WhatsApp) in settings and on the public menu header.
+- Google Review direct-link pro tip and client-side validation warning for non-optimal URLs.
+
+---
+
 ## [0.6.3] - 2026-06-23
 
 ### Changed

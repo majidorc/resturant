@@ -27,6 +27,10 @@ export default async function SettingsPage() {
       logoUrl: true,
       city: true,
       country: true,
+      instagramUrl: true,
+      facebookUrl: true,
+      tiktokUrl: true,
+      whatsappUrl: true,
     },
   });
 

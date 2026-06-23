@@ -31,6 +31,10 @@ model Restaurant {
   wifiSsid        String?
   wifiPassword    String?
   googleReviewUrl String?
+  instagramUrl    String?
+  facebookUrl     String?
+  tiktokUrl       String?
+  whatsappUrl     String?
   currency        String         @default("USD")
   uiLanguage      String         @default("en")
   languages       String[]       @default(["en"])
