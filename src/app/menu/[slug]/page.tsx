@@ -6,6 +6,7 @@ import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
 import { resolveMenuLocale } from "@/lib/i18n";
 import { isMenuLanguage, parseMenuLanguages } from "@/lib/locale";
+import { buildGoogleMapsLocationUrl } from "@/lib/google-place-id";
 import { prisma } from "@/lib/prisma";
 import type { Locale } from "@/types/dictionary";
 import { asTranslationField } from "@/lib/translations";
@@ -57,6 +58,7 @@ export default async function PublicMenuPage({ params }: PageProps) {
   }));
 
   const location = [restaurant.city, restaurant.country].filter(Boolean).join(", ");
+  const locationUrl = buildGoogleMapsLocationUrl(restaurant.googleReviewUrl);
 
   return (
     <main className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white pb-28">
@@ -87,6 +89,8 @@ export default async function PublicMenuPage({ params }: PageProps) {
             <RestaurantSocialLinks
               facebookUrl={restaurant.facebookUrl}
               instagramUrl={restaurant.instagramUrl}
+              locationLabel={dict.publicMenu.openLocation}
+              locationUrl={locationUrl}
               tiktokUrl={restaurant.tiktokUrl}
               whatsappUrl={restaurant.whatsappUrl}
             />

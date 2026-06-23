@@ -5,6 +5,8 @@ type RestaurantSocialLinksProps = {
   facebookUrl: string | null;
   tiktokUrl: string | null;
   whatsappUrl: string | null;
+  locationUrl?: string | null;
+  locationLabel?: string;
 };
 
 type SocialLinkItem = {
@@ -57,6 +59,25 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 
+function LocationIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.75"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10z" />
+      <circle cx="12" cy="11" r="2.5" />
+    </svg>
+  );
+}
+
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -76,6 +97,8 @@ export function RestaurantSocialLinks({
   facebookUrl,
   tiktokUrl,
   whatsappUrl,
+  locationUrl,
+  locationLabel = "Location",
 }: RestaurantSocialLinksProps) {
   const items: SocialLinkItem[] = [];
 
@@ -108,6 +131,14 @@ export function RestaurantSocialLinks({
       href: whatsappUrl,
       label: "WhatsApp",
       icon: <WhatsAppIcon className="h-5 w-5" />,
+    });
+  }
+
+  if (locationUrl) {
+    items.push({
+      href: locationUrl,
+      label: locationLabel,
+      icon: <LocationIcon className="h-5 w-5" />,
     });
   }
 

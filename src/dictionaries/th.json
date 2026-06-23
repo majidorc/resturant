@@ -154,7 +154,8 @@
     "digitalMenu": "Digital Menu",
     "noItems": "No menu items available yet.",
     "noItemsCategory": "No items in this category.",
-    "closeLightbox": "Close image preview"
+    "closeLightbox": "Close image preview",
+    "openLocation": "Open location on Google Maps"
   },
   "dashboard": {
     "restaurantLabel": "ร้านอาหาร",

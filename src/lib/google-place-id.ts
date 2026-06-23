@@ -385,3 +385,28 @@ export function placeIdFromReviewUrl(url: string | null | undefined): string {
   }
   return extractGooglePlaceId(url) ?? "";
 }
+
+/** Maps link for the public menu location button (from a saved review URL or Maps URL). */
+export function buildGoogleMapsLocationUrl(
+  reviewOrMapsUrl: string | null | undefined,
+): string | null {
+  const trimmed = reviewOrMapsUrl?.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  if (isGoogleMapsLink(trimmed)) {
+    return trimmed;
+  }
+
+  const placeId = extractGooglePlaceId(trimmed);
+  if (placeId) {
+    return `https://www.google.com/maps/search/?api=1&query_place_id=${encodeURIComponent(placeId)}`;
+  }
+
+  if (/g\.page\//i.test(trimmed)) {
+    return trimmed.replace(/\/review\/?(\?.*)?$/i, "");
+  }
+
+  return null;
+}
