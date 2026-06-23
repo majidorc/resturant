@@ -22,13 +22,14 @@ import {
   parseTranslationMap,
 } from "@/lib/translations";
 import type { JsonTranslationField } from "@/types/translations";
+import { MultiImageDropzone } from "@/components/upload/MultiImageDropzone";
 
 type MenuItemData = {
   id: string;
   name: JsonTranslationField;
   description: JsonTranslationField;
   price: number;
-  imageUrl: string | null;
+  images: string[];
   isAvailable: boolean;
 };
 
@@ -90,6 +91,28 @@ function TranslationInputs({
         );
       })}
     </div>
+  );
+}
+
+function DishImagesField({ initialImages }: { initialImages?: string[] }) {
+  const dict = useDictionary();
+  const t = dict.menuManager;
+  const [images, setImages] = useState(initialImages ?? []);
+
+  return (
+    <>
+      <MultiImageDropzone
+        dragLabel={t.dishImagesDrag}
+        hint={t.dishImagesHint}
+        label={t.dishImages}
+        maxReachedLabel={t.dishImagesMax}
+        onChange={setImages}
+        removeLabel={t.dishImagesRemove}
+        uploadingLabel={t.dishImagesUploading}
+        value={images}
+      />
+      <input name="images" type="hidden" value={JSON.stringify(images)} />
+    </>
   );
 }
 
@@ -224,10 +247,8 @@ function MenuSection({
           <form action={createItemAction} className="space-y-3">
             <input name="menuId" type="hidden" value={menu.id} />
             <TranslationInputs languages={languages} prefix="name" />
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Input min="0.01" name="price" placeholder={t.price} required step="0.01" type="number" />
-              <Input name="imageUrl" placeholder={t.imageUrl} type="url" />
-            </div>
+            <Input min="0.01" name="price" placeholder={t.price} required step="0.01" type="number" />
+            <DishImagesField />
             <TranslationInputs languages={languages} multiline prefix="description" />
             <Button disabled={creatingItem} type="submit">
               {creatingItem ? t.adding : t.addItem}
@@ -302,18 +323,16 @@ function EditItemForm({
     >
       <input name="itemId" type="hidden" value={item.id} />
       <TranslationInputs languages={languages} prefix="name" values={item.name} />
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Input
-          defaultValue={item.price}
-          min="0.01"
-          name="price"
-          placeholder={t.price}
-          required
-          step="0.01"
-          type="number"
-        />
-        <Input defaultValue={item.imageUrl ?? ""} name="imageUrl" placeholder={t.imageUrl} type="url" />
-      </div>
+      <Input
+        defaultValue={item.price}
+        min="0.01"
+        name="price"
+        placeholder={t.price}
+        required
+        step="0.01"
+        type="number"
+      />
+      <DishImagesField initialImages={item.images} />
       <TranslationInputs
         languages={languages}
         multiline

@@ -12,6 +12,30 @@ _No unreleased changes._
 
 ---
 
+## [0.5.0] - 2026-06-22
+
+### Added
+
+- Local image upload API at `/api/upload` (tenant-authenticated, JPEG/PNG/WebP/GIF, 5 MB max).
+- Persistent storage support via `UPLOAD_DIR` env or default `public/uploads/` (Coolify volume mount ready).
+- Restaurant `logoUrl`, `city`, and `country` fields with Settings UI (logo dropzone + location inputs).
+- `MenuItem.images` string array (max 3) replacing single `imageUrl`; multi-image dropzone in Menu Manager.
+- Public menu dish image carousel with touch scroll and dot pagination.
+- Restaurant logo and location in public menu header.
+- Global public directory at `/restaurants` listing all active venues with logo, location, and View Menu CTA.
+- Landing nav/footer link to Restaurant Directory.
+
+### Changed
+
+- Seed data uses location metadata; external Unsplash image URLs removed from seed items.
+
+### Migration
+
+- Run `npm run db:migrate:deploy` on production after deploy.
+- Mount a persistent volume to `public/uploads` (or set `UPLOAD_DIR`) so uploads survive redeploys.
+
+---
+
 ## [0.4.0] - 2026-06-22
 
 ### Added

@@ -52,6 +52,7 @@
     "footerBuiltFor": "Built for hospitality operators",
     "navFeatures": "Features",
     "navPricing": "Pricing",
+    "navDirectory": "Restaurant Directory",
     "steps": [
       {
         "number": "01",
@@ -154,6 +155,13 @@
     "noItems": "No menu items available yet.",
     "noItemsCategory": "No items in this category."
   },
+  "directory": {
+    "title": "Restaurant Directory",
+    "subtitle": "Discover active venues and explore their digital menus.",
+    "noRestaurants": "No active restaurants yet.",
+    "viewMenu": "View Menu",
+    "locationUnknown": "Location not set"
+  },
   "dashboard": {
     "restaurantLabel": "Restaurant",
     "navOverview": "Overview",
@@ -208,7 +216,12 @@
     "descriptionEn": "Description (English)",
     "descriptionTh": "Description (Thai)",
     "price": "Price",
-    "imageUrl": "Image URL (optional)",
+    "dishImages": "Dish Images",
+    "dishImagesHint": "Upload up to 3 images. Drag and drop or click to browse.",
+    "dishImagesDrag": "Drop images here or click to upload",
+    "dishImagesUploading": "Uploading images…",
+    "dishImagesRemove": "Remove image",
+    "dishImagesMax": "Maximum of 3 images per dish.",
     "adding": "Adding…",
     "itemUpdated": "Item updated.",
     "availableOnMenu": "Available on menu"
@@ -216,6 +229,18 @@
   "settings": {
     "profileTitle": "Restaurant Profile",
     "profileSubtitle": "Your public menu identity and shareable guest link.",
+    "logoTitle": "Brand Logo",
+    "logoSubtitle": "Displayed on your public menu and in the global restaurant directory.",
+    "logoUpload": "Drop logo here or click to upload",
+    "logoReplace": "Replace logo",
+    "logoUploading": "Uploading logo…",
+    "logoHint": "Square images work best. JPEG, PNG, WebP, or GIF up to 5 MB.",
+    "locationTitle": "Location",
+    "locationSubtitle": "Shown on your public directory listing.",
+    "city": "City",
+    "cityHint": "e.g. Phuket",
+    "country": "Country",
+    "countryHint": "e.g. Thailand",
     "menuSlug": "Menu Slug",
     "menuSlugHint": "Unique path segment used in your public menu URL.",
     "publicMenuLink": "Public Menu Link",

@@ -46,7 +46,7 @@ export default async function MenuManagementPage() {
       name: asTranslationField(item.name),
       description: asTranslationField(item.description),
       price: item.price,
-      imageUrl: item.imageUrl,
+      images: item.images,
       isAvailable: item.isAvailable,
     })),
   }));

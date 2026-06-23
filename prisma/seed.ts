@@ -81,6 +81,8 @@ async function main() {
           wifiPassword: "Welcome2024!",
           googleReviewUrl: "https://g.page/r/green-bistro-coffee/review",
           languages: ["en", "th"],
+          city: "Phuket",
+          country: "Thailand",
         },
       },
     },
@@ -103,7 +105,6 @@ async function main() {
               th: "เอสเปรสโซ่ดับเบิลช็อตจากเมล็ดกาแฟคั่วคุณภาพ",
             },
             price: 3.5,
-            imageUrl: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=200&h=200&fit=crop",
           },
           {
             name: { en: "Vanilla Latte", th: "วานิลลาลาเต้" },
@@ -112,7 +113,6 @@ async function main() {
               th: "นมสตีมผสมไซรัปวานิลลามาดากัสการ์",
             },
             price: 5.25,
-            imageUrl: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=200&h=200&fit=crop",
           },
           {
             name: { en: "Cold Brew Tonic", th: "โคลด์บริวโทนิค" },
@@ -121,7 +121,6 @@ async function main() {
               th: "โคลด์บริวแช่นานท็อปด้วยโทนิกรสซิตรัส",
             },
             price: 4.75,
-            imageUrl: "https://images.unsplash.com/photo-1517701603779-8ce32db8941d?w=200&h=200&fit=crop",
           },
         ],
       },
@@ -142,7 +141,6 @@ async function main() {
               th: "เบเกอรี่ฝรั่งเศสสไตล์คลาสสิก อบสดใหม่ทุกเช้า",
             },
             price: 3.95,
-            imageUrl: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=200&h=200&fit=crop",
           },
           {
             name: { en: "Sourdough Avocado Toast", th: "ขนมปังซาวโดว์ท็อปอะโวคาโด" },
@@ -151,7 +149,6 @@ async function main() {
               th: "ขนมปังซาวโดว์หนา ท็อปอะโวคาโดบดและเกลือทะเล",
             },
             price: 8.5,
-            imageUrl: "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=200&h=200&fit=crop",
           },
           {
             name: { en: "Blueberry Muffin", th: "มัฟฟินบลูเบอร์รี่" },
@@ -160,7 +157,6 @@ async function main() {
               th: "มัฟฟินอบสดใหม่พร้อมบลูเบอร์รี่",
             },
             price: 4.25,
-            imageUrl: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=200&h=200&fit=crop",
           },
         ],
       },

@@ -29,6 +29,13 @@ export async function updateRestaurantSettings(
     const languages = parseMenuLanguages(
       formData.getAll("languages").map((value) => value.toString()),
     );
+    const logoUrl = formData.get("logoUrl")?.toString().trim() || null;
+    const city = formData.get("city")?.toString().trim() || null;
+    const country = formData.get("country")?.toString().trim() || null;
+
+    if (logoUrl && !logoUrl.startsWith("/uploads/")) {
+      return { error: "Invalid logo path." };
+    }
 
     if (googleReviewUrl && !googleReviewUrl.startsWith("http")) {
       return { error: "Google Review URL must start with http:// or https://" };
@@ -55,6 +62,9 @@ export async function updateRestaurantSettings(
         currency,
         uiLanguage,
         languages,
+        logoUrl,
+        city,
+        country,
       },
       select: { slug: true },
     });
@@ -62,6 +72,7 @@ export async function updateRestaurantSettings(
     revalidatePath("/dashboard/settings");
     revalidatePath("/dashboard/menu");
     revalidatePath(`/menu/${updated.slug}`);
+    revalidatePath("/restaurants");
     return { success: true };
   } catch {
     return { error: "Failed to update settings." };

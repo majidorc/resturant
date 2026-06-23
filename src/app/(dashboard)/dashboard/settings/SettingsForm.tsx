@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { Check, Copy, Loader2 } from "lucide-react";
 import { MenuQrCode } from "@/components/dashboard/MenuQrCode";
+import { ImageDropzone } from "@/components/upload/ImageDropzone";
 import { updateRestaurantSettings } from "@/lib/actions/settings";
 import type { ActionState } from "@/lib/actions/settings";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,9 @@ type SettingsFormProps = {
     currency: string;
     uiLanguage: string;
     languages: string[];
+    logoUrl: string | null;
+    city: string | null;
+    country: string | null;
   };
   publicMenuUrl: string;
 };
@@ -80,6 +84,7 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
   const c = dict.common;
   const [state, formAction, pending] = useActionState(updateRestaurantSettings, initialState);
   const [copied, setCopied] = useState(false);
+  const [logoUrl, setLogoUrl] = useState(restaurant.logoUrl);
   const enabledLanguages = new Set(restaurant.languages);
 
   async function copyMenuLink() {
@@ -136,6 +141,44 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
       <MenuQrCode publicMenuUrl={publicMenuUrl} restaurantSlug={restaurant.slug} />
 
       <form action={formAction} className="space-y-6">
+        <SectionCard description={s.logoSubtitle} title={s.logoTitle}>
+          <ImageDropzone
+            dragLabel={s.logoUpload}
+            hint={s.logoHint}
+            label={s.logoTitle}
+            onChange={setLogoUrl}
+            replaceLabel={s.logoReplace}
+            uploadingLabel={s.logoUploading}
+            value={logoUrl}
+          />
+          <input name="logoUrl" type="hidden" value={logoUrl ?? ""} />
+        </SectionCard>
+
+        <SectionCard description={s.locationSubtitle} title={s.locationTitle}>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <FieldLabel hint={s.cityHint} htmlFor="city" label={s.city} />
+              <Input
+                className={fieldInputClass}
+                defaultValue={restaurant.city ?? ""}
+                id="city"
+                name="city"
+                placeholder="Phuket"
+              />
+            </div>
+            <div>
+              <FieldLabel hint={s.countryHint} htmlFor="country" label={s.country} />
+              <Input
+                className={fieldInputClass}
+                defaultValue={restaurant.country ?? ""}
+                id="country"
+                name="country"
+                placeholder="Thailand"
+              />
+            </div>
+          </div>
+        </SectionCard>
+
         <SectionCard description={s.wifiSubtitle} title={s.wifiTitle}>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>

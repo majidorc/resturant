@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useDictionary } from "@/components/LocaleProvider";
 import { pickLocalizedOptional, pickLocalizedText } from "@/lib/i18n";
 import { formatMenuPrice, type MenuLanguage } from "@/lib/locale";
+import { cn } from "@/lib/utils";
 import type { Locale } from "@/types/dictionary";
 import type { JsonTranslationField } from "@/types/translations";
 
@@ -14,7 +15,7 @@ type MenuItemData = {
   name: JsonTranslationField;
   description: JsonTranslationField;
   price: number;
-  imageUrl: string | null;
+  images: string[];
 };
 
 type MenuData = {
@@ -30,31 +31,89 @@ type MenuListProps = {
   enabledLanguages: MenuLanguage[];
 };
 
-function MenuItemImage({ imageUrl, name }: { imageUrl: string; name: string }) {
-  const [failed, setFailed] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+function DishImageCarousel({ images, name }: { images: string[]; name: string }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  if (failed) {
+  const validImages = images.map((url) => url.trim()).filter((url) => url && !failedUrls.has(url));
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [images]);
+
+  if (validImages.length === 0) {
     return (
-      <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-400 md:h-24 md:w-24">
+      <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-300 md:h-24 md:w-24">
         <UtensilsCrossed className="h-6 w-6" strokeWidth={1.5} />
       </div>
     );
   }
 
+  if (validImages.length === 1) {
+    return (
+      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-slate-100 md:h-24 md:w-24">
+        <img
+          alt={name}
+          className="h-full w-full object-cover"
+          loading="lazy"
+          onError={() => setFailedUrls((current) => new Set(current).add(validImages[0]))}
+          src={validImages[0]}
+        />
+      </div>
+    );
+  }
+
+  function handleScroll() {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const width = container.clientWidth;
+    if (width <= 0) return;
+
+    const index = Math.round(container.scrollLeft / width);
+    setActiveIndex(Math.min(index, validImages.length - 1));
+  }
+
+  function scrollToIndex(index: number) {
+    const container = scrollRef.current;
+    if (!container) return;
+    container.scrollTo({ left: index * container.clientWidth, behavior: "smooth" });
+    setActiveIndex(index);
+  }
+
   return (
-    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-slate-100 md:h-24 md:w-24">
-      {!loaded && <div className="absolute inset-0 animate-pulse bg-slate-200" />}
-      <img
-        alt={name}
-        className={`h-full w-full object-cover transition-opacity duration-200 ${
-          loaded ? "opacity-100" : "opacity-0"
-        }`}
-        loading="lazy"
-        onError={() => setFailed(true)}
-        onLoad={() => setLoaded(true)}
-        src={imageUrl}
-      />
+    <div className="w-20 shrink-0 md:w-24">
+      <div
+        className="flex h-20 snap-x snap-mandatory overflow-x-auto rounded-xl [-ms-overflow-style:none] [scrollbar-width:none] md:h-24 [&::-webkit-scrollbar]:hidden"
+        onScroll={handleScroll}
+        ref={scrollRef}
+      >
+        {validImages.map((url, index) => (
+          <img
+            alt={`${name} ${index + 1}`}
+            className="h-20 w-20 shrink-0 snap-center object-cover md:h-24 md:w-24"
+            key={`${url}-${index}`}
+            loading="lazy"
+            onError={() => setFailedUrls((current) => new Set(current).add(url))}
+            src={url}
+          />
+        ))}
+      </div>
+      <div className="mt-1.5 flex justify-center gap-1">
+        {validImages.map((url, index) => (
+          <button
+            aria-label={`Show image ${index + 1}`}
+            className={cn(
+              "h-1.5 rounded-full transition-all",
+              activeIndex === index ? "w-3 bg-amber-500" : "w-1.5 bg-slate-300",
+            )}
+            key={`dot-${url}`}
+            onClick={() => scrollToIndex(index)}
+            type="button"
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -158,13 +217,7 @@ export function MenuList({ menus, currency, locale, enabledLanguages }: MenuList
                       style={{ animationDelay: `${menuIndex * 80 + itemIndex * 40}ms` }}
                     >
                       <div className="flex items-start gap-4">
-                        {item.imageUrl?.trim() ? (
-                          <MenuItemImage imageUrl={item.imageUrl.trim()} name={itemName} />
-                        ) : (
-                          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-300 md:h-24 md:w-24">
-                            <UtensilsCrossed className="h-6 w-6" strokeWidth={1.5} />
-                          </div>
-                        )}
+                        <DishImageCarousel images={item.images} name={itemName} />
 
                         <div className="flex min-w-0 flex-1 items-start justify-between gap-4">
                           <div className="min-w-0 flex-1">

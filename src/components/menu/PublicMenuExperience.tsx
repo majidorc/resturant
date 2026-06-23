@@ -16,7 +16,7 @@ type MenuData = {
     name: JsonTranslationField;
     description: JsonTranslationField;
     price: number;
-    imageUrl: string | null;
+    images: string[];
   }[];
 };
 

@@ -16,6 +16,7 @@ export function LandingNavbar() {
   const navLinks = [
     { href: "#features", label: t.navFeatures },
     { href: "#pricing", label: t.navPricing },
+    { href: "/restaurants", label: t.navDirectory },
   ];
 
   return (
@@ -33,13 +34,23 @@ export function LandingNavbar() {
 
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
-            <a
-              className="text-sm font-medium text-slate-600 transition-all duration-200 ease-in-out hover:text-slate-900"
-              href={link.href}
-              key={link.href}
-            >
-              {link.label}
-            </a>
+            link.href.startsWith("/") ? (
+              <Link
+                className="text-sm font-medium text-slate-600 transition-all duration-200 ease-in-out hover:text-slate-900"
+                href={link.href}
+                key={link.href}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                className="text-sm font-medium text-slate-600 transition-all duration-200 ease-in-out hover:text-slate-900"
+                href={link.href}
+                key={link.href}
+              >
+                {link.label}
+              </a>
+            )
           ))}
         </nav>
 
@@ -76,16 +87,27 @@ export function LandingNavbar() {
             <div className="mb-2 flex justify-center">
               <LanguageSwitcher />
             </div>
-            {navLinks.map((link) => (
-              <a
-                className="rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition-all duration-200 ease-in-out hover:bg-slate-50"
-                href={link.href}
-                key={link.href}
-                onClick={() => setOpen(false)}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.href.startsWith("/") ? (
+                <Link
+                  className="rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition-all duration-200 ease-in-out hover:bg-slate-50"
+                  href={link.href}
+                  key={link.href}
+                  onClick={() => setOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  className="rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition-all duration-200 ease-in-out hover:bg-slate-50"
+                  href={link.href}
+                  key={link.href}
+                  onClick={() => setOpen(false)}
+                >
+                  {link.label}
+                </a>
+              ),
+            )}
             <Link className="mt-2" href="/login" onClick={() => setOpen(false)}>
               <Button className="w-full" type="button" variant="secondary">
                 {c.signIn}

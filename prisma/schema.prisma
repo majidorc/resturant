@@ -35,6 +35,9 @@ model Restaurant {
   uiLanguage      String         @default("en")
   languages       String[]       @default(["en"])
   isActive        Boolean        @default(true)
+  logoUrl         String?
+  city            String?
+  country         String?
   menus           Menu[]
   leads           CustomerLead[]
   feedbacks       Feedback[]
@@ -61,7 +64,7 @@ model MenuItem {
   name          Json
   description   Json       @default("{}")
   price         Float
-  imageUrl      String?
+  images        String[]   @default([])
   isAvailable   Boolean @default(true)
 
   @@index([menuId])

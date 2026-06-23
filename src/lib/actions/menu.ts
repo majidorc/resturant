@@ -5,6 +5,7 @@ import { getRequiredRestaurantId } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import type { ActionState } from "@/lib/actions/settings";
 import { buildMenuTranslationPayload, getRestaurantMenuLanguages } from "@/lib/menu-form";
+import { parseImagesField } from "@/lib/upload-constants";
 
 async function verifyMenuOwnership(menuId: string, restaurantId: string) {
   const menu = await prisma.menu.findFirst({
@@ -86,7 +87,7 @@ export async function createMenuItem(
     const languages = await getRestaurantMenuLanguages(restaurantId);
     const menuId = formData.get("menuId")?.toString();
     const priceRaw = formData.get("price")?.toString();
-    const imageUrl = formData.get("imageUrl")?.toString().trim() || null;
+    const images = parseImagesField(formData.get("images"));
     const nameResult = buildMenuTranslationPayload(formData, languages, "name", true);
     const descriptionResult = buildMenuTranslationPayload(
       formData,
@@ -120,7 +121,7 @@ export async function createMenuItem(
         name: nameResult.value,
         description: descriptionResult.value,
         price,
-        imageUrl,
+        images,
       },
     });
 
@@ -140,7 +141,7 @@ export async function updateMenuItem(
     const languages = await getRestaurantMenuLanguages(restaurantId);
     const itemId = formData.get("itemId")?.toString();
     const priceRaw = formData.get("price")?.toString();
-    const imageUrl = formData.get("imageUrl")?.toString().trim() || null;
+    const images = parseImagesField(formData.get("images"));
     const isAvailable = formData.get("isAvailable") === "true";
     const nameResult = buildMenuTranslationPayload(formData, languages, "name", true);
     const descriptionResult = buildMenuTranslationPayload(
@@ -175,7 +176,7 @@ export async function updateMenuItem(
         name: nameResult.value,
         description: descriptionResult.value,
         price,
-        imageUrl,
+        images,
         isAvailable,
       },
     });

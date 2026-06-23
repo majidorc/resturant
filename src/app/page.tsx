@@ -204,9 +204,9 @@ export default async function HomePage() {
             © {new Date().getFullYear()} {t.brand}. {t.footerRights}
           </p>
           <div className="flex items-center gap-6 text-sm text-slate-500">
-            <a className="transition-colors duration-200 ease-in-out hover:text-slate-800" href="#">
-              {dict.common.privacy}
-            </a>
+            <Link className="transition-colors duration-200 ease-in-out hover:text-slate-800" href="/restaurants">
+              {t.navDirectory}
+            </Link>
             <a className="transition-colors duration-200 ease-in-out hover:text-slate-800" href="#">
               {dict.common.terms}
             </a>

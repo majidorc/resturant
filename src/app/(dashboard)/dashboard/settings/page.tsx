@@ -24,6 +24,9 @@ export default async function SettingsPage() {
       currency: true,
       uiLanguage: true,
       languages: true,
+      logoUrl: true,
+      city: true,
+      country: true,
     },
   });
 

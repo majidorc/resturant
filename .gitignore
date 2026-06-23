@@ -43,3 +43,7 @@ next-env.d.ts
 /prisma/seed.bundle.cjs
 
 /src/generated/prisma
+
+# tenant uploads (persist via Coolify volume mount on public/uploads)
+/public/uploads/*
+!/public/uploads/.gitkeep

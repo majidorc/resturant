@@ -51,9 +51,11 @@ export default async function PublicMenuPage({ params }: PageProps) {
       name: asTranslationField(item.name),
       description: asTranslationField(item.description),
       price: item.price,
-      imageUrl: item.imageUrl,
+      images: item.images,
     })),
   }));
+
+  const location = [restaurant.city, restaurant.country].filter(Boolean).join(", ");
 
   return (
     <main className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white pb-28">
@@ -61,12 +63,28 @@ export default async function PublicMenuPage({ params }: PageProps) {
         <div className="absolute right-4 top-4">
           <LanguageSwitcher availableLocales={switcherLocales} />
         </div>
-        <p className="text-center text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
-          {dict.publicMenu.digitalMenu}
-        </p>
-        <h1 className="mt-1 text-center text-2xl font-semibold tracking-tight text-slate-900">
-          {restaurant.name}
-        </h1>
+
+        <div className="mx-auto flex max-w-lg flex-col items-center gap-3 pt-2">
+          {restaurant.logoUrl ? (
+            <img
+              alt={`${restaurant.name} logo`}
+              className="h-16 w-16 rounded-2xl border border-slate-200 object-cover shadow-sm"
+              src={restaurant.logoUrl}
+            />
+          ) : null}
+
+          <div className="text-center">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+              {dict.publicMenu.digitalMenu}
+            </p>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+              {restaurant.name}
+            </h1>
+            {location ? (
+              <p className="mt-1 text-sm text-slate-500">{location}</p>
+            ) : null}
+          </div>
+        </div>
       </header>
 
       <PublicMenuExperience
