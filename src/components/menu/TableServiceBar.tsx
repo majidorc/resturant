@@ -58,7 +58,7 @@ export function TableServiceBar({
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 flex justify-center px-4">
+    <div className="pointer-events-none fixed inset-x-0 bottom-5 z-40 flex justify-center px-4 pb-[env(safe-area-inset-bottom)]">
       <div className="animate-slide-up pointer-events-auto flex w-[90%] max-w-md gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-lg backdrop-blur-md">
         <ServiceButton
           idleLabel={labels.callWaiter}

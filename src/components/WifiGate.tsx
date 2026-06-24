@@ -7,35 +7,99 @@ import { Input } from "@/components/ui/input";
 import { useDictionary } from "@/components/LocaleProvider";
 import { interpolate } from "@/lib/get-dictionary";
 
-type WifiGateProps = {
-  restaurantId: string;
-  restaurantName: string;
-  visible: boolean;
-  onUnlock: () => void;
-  onSkip: () => void;
-};
-
-type WifiCredentials = {
+export type WifiCredentials = {
   wifiSsid: string;
   wifiPassword: string;
 };
 
-export function WifiGate({
+type WifiGateModalProps = {
+  restaurantId: string;
+  restaurantName: string;
+  visible: boolean;
+  onUnlock: (credentials: WifiCredentials) => void;
+  onSkip: () => void;
+};
+
+type WifiCredentialsCardProps = {
+  wifi: WifiCredentials;
+  onDismiss: () => void;
+};
+
+export function WifiCredentialsCard({ wifi, onDismiss }: WifiCredentialsCardProps) {
+  const dict = useDictionary();
+  const t = dict.wifi;
+  const [copied, setCopied] = useState(false);
+
+  async function copyPassword() {
+    if (!wifi.wifiPassword) return;
+    await navigator.clipboard.writeText(wifi.wifiPassword);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-sm">
+      <div className="border-b border-emerald-100 bg-emerald-50 px-4 py-3 sm:px-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
+            <svg aria-hidden className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10 10 0 0114.142 0M6.343 6.343a8 8 0 0111.314 0"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+              />
+            </svg>
+          </div>
+          <div className="min-w-0">
+            <h2 className="font-semibold text-slate-900">{t.connectedTitle}</h2>
+            <p className="text-xs text-slate-500">{t.connectedSubtitle}</p>
+          </div>
+        </div>
+      </div>
+
+      <dl className="space-y-3 px-4 py-4 text-sm sm:space-y-4 sm:px-5">
+        <div className="rounded-2xl bg-slate-50 px-4 py-3">
+          <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{t.network}</dt>
+          <dd className="mt-1 font-medium text-slate-900">{wifi.wifiSsid}</dd>
+        </div>
+        <div className="rounded-2xl bg-slate-50 px-4 py-3">
+          <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{t.password}</dt>
+          <dd className="mt-1 break-all font-mono text-base font-medium text-slate-900">
+            {wifi.wifiPassword || "—"}
+          </dd>
+        </div>
+      </dl>
+
+      <div className="flex flex-col gap-2 border-t border-slate-200 p-4 sm:flex-row">
+        <Button
+          className={`flex-1 transition-all duration-200 ${copied ? "bg-emerald-600 hover:bg-emerald-600" : ""}`}
+          onClick={copyPassword}
+          type="button"
+        >
+          {copied ? dict.common.copied : t.copyPassword}
+        </Button>
+        <Button className="flex-1" onClick={onDismiss} type="button" variant="secondary">
+          {t.viewMenu}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export function WifiGateModal({
   restaurantId,
   restaurantName,
   visible,
   onUnlock,
   onSkip,
-}: WifiGateProps) {
+}: WifiGateModalProps) {
   const dict = useDictionary();
   const t = dict.wifi;
 
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [wifi, setWifi] = useState<WifiCredentials | null>(null);
-  const [copied, setCopied] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -57,11 +121,11 @@ export function WifiGate({
       }
 
       if (data.success) {
-        setWifi({
+        onUnlock({
           wifiSsid: data.ssid,
           wifiPassword: data.password ?? "",
         });
-        onUnlock();
+        setEmail("");
       }
     } catch {
       setError(t.networkError);
@@ -70,85 +134,21 @@ export function WifiGate({
     }
   }
 
-  async function copyPassword() {
-    if (!wifi?.wifiPassword) return;
-    await navigator.clipboard.writeText(wifi.wifiPassword);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
   function handleSkip() {
     setError(null);
     onSkip();
   }
 
-  if (wifi && !dismissed) {
-    return (
-      <div className="fixed inset-x-4 bottom-4 z-30 mx-auto max-w-md animate-fade-in-up">
-        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
-          <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 transition-all duration-200">
-                {copied ? (
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
-                  </svg>
-                ) : (
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10 10 0 0114.142 0M6.343 6.343a8 8 0 0111.314 0"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                    />
-                  </svg>
-                )}
-              </div>
-              <div>
-                <h2 className="font-semibold text-slate-900">{t.connectedTitle}</h2>
-                <p className="text-xs text-slate-500">{t.connectedSubtitle}</p>
-              </div>
-            </div>
-          </div>
-
-          <dl className="space-y-4 px-5 py-4 text-sm">
-            <div className="rounded-2xl bg-slate-50 px-4 py-3">
-              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{t.network}</dt>
-              <dd className="mt-1 font-medium text-slate-900">{wifi.wifiSsid}</dd>
-            </div>
-            <div className="rounded-2xl bg-slate-50 px-4 py-3">
-              <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{t.password}</dt>
-              <dd className="mt-1 font-mono text-base font-medium text-slate-900">
-                {wifi.wifiPassword || "—"}
-              </dd>
-            </div>
-          </dl>
-
-          <div className="flex gap-2 border-t border-slate-200 p-4">
-            <Button
-              className={`flex-1 transition-all duration-200 ${copied ? "bg-emerald-600 hover:bg-emerald-600" : ""}`}
-              onClick={copyPassword}
-              type="button"
-            >
-              {copied ? dict.common.copied : t.copyPassword}
-            </Button>
-            <Button className="flex-1" onClick={() => setDismissed(true)} type="button" variant="secondary">
-              {t.viewMenu}
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+  if (!visible) {
+    return null;
   }
 
-  if (!visible) return null;
-
   return (
-    <div className="fixed inset-0 z-20 flex items-end justify-center bg-slate-900/40 p-4 backdrop-blur-md sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/60 p-4 backdrop-blur-md sm:items-center">
       <div className="w-full max-w-md animate-fade-in-up overflow-hidden rounded-3xl border border-white/20 bg-white/95 shadow-2xl backdrop-blur-xl">
         <div className="border-b border-slate-200 bg-gradient-to-b from-white to-slate-50 px-6 py-5 text-center">
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm">
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg aria-hidden className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10 10 0 0114.142 0M6.343 6.343a8 8 0 0111.314 0"
                 strokeLinecap="round"
@@ -170,6 +170,7 @@ export function WifiGate({
             </label>
             <div className="relative">
               <svg
+                aria-hidden
                 className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
                 fill="none"
                 stroke="currentColor"
@@ -215,5 +216,30 @@ export function WifiGate({
         </form>
       </div>
     </div>
+  );
+}
+
+/** @deprecated Use WifiGateModal and WifiCredentialsCard directly in PublicMenuExperience. */
+export function WifiGate({
+  restaurantId,
+  restaurantName,
+  visible,
+  onUnlock,
+  onSkip,
+}: {
+  restaurantId: string;
+  restaurantName: string;
+  visible: boolean;
+  onUnlock: () => void;
+  onSkip: () => void;
+}) {
+  return (
+    <WifiGateModal
+      onSkip={onSkip}
+      onUnlock={() => onUnlock()}
+      restaurantId={restaurantId}
+      restaurantName={restaurantName}
+      visible={visible}
+    />
   );
 }

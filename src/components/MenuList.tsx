@@ -30,6 +30,7 @@ type MenuListProps = {
   currency: string;
   locale: Locale;
   enabledLanguages: MenuLanguage[];
+  dockPadding?: string;
 };
 
 function DishImageCarousel({
@@ -141,11 +142,40 @@ function DishImageCarousel({
   );
 }
 
-export function MenuList({ menus, currency, locale, enabledLanguages }: MenuListProps) {
+export function MenuList({
+  menus,
+  currency,
+  locale,
+  enabledLanguages,
+  dockPadding = "pb-32",
+}: MenuListProps) {
   const dict = useDictionary();
   const [activeId, setActiveId] = useState(menus[0]?.id ?? "");
   const [lightbox, setLightbox] = useState<{ imageUrl: string; alt: string } | null>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  useEffect(() => {
+    const header = document.getElementById("public-menu-header");
+    if (!header) return;
+
+    function syncHeaderOffset() {
+      if (!header) return;
+      document.documentElement.style.setProperty(
+        "--public-menu-header-h",
+        `${header.offsetHeight}px`,
+      );
+    }
+
+    syncHeaderOffset();
+    const observer = new ResizeObserver(syncHeaderOffset);
+    observer.observe(header);
+    window.addEventListener("resize", syncHeaderOffset);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", syncHeaderOffset);
+    };
+  }, []);
 
   useEffect(() => {
     if (!menus.length) return;
@@ -178,7 +208,7 @@ export function MenuList({ menus, currency, locale, enabledLanguages }: MenuList
 
   if (menus.length === 0) {
     return (
-      <div className="px-4 py-16 text-center">
+      <div className={`px-4 py-16 text-center ${dockPadding}`}>
         <p className="text-sm text-slate-500">{dict.publicMenu.noItems}</p>
       </div>
     );
@@ -186,8 +216,8 @@ export function MenuList({ menus, currency, locale, enabledLanguages }: MenuList
 
   return (
     <>
-      <div className="pb-8">
-        <nav className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur-md">
+      <div className={dockPadding}>
+        <nav className="sticky top-[var(--public-menu-header-h,0px)] z-20 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur-md">
           <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {menus.map((menu) => (
               <button
@@ -212,7 +242,7 @@ export function MenuList({ menus, currency, locale, enabledLanguages }: MenuList
 
             return (
               <section
-                className="scroll-mt-28"
+                className="scroll-mt-[calc(var(--public-menu-header-h,0px)+4.5rem)]"
                 id={menu.id}
                 key={menu.id}
                 ref={(node) => {

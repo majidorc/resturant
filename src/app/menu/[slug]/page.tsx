@@ -68,39 +68,44 @@ export default async function PublicMenuPage({ params, searchParams }: PageProps
   const locationUrl = buildGoogleMapsLocationUrl(restaurant.googleReviewUrl);
 
   return (
-    <main className={`relative min-h-screen bg-gradient-to-b from-slate-50 to-white ${tableNumber ? "pb-36" : "pb-28"}`}>
-      <header className="relative border-b border-slate-200 bg-white px-4 py-5">
-        <div className="absolute right-4 top-4">
-          <LanguageSwitcher availableLocales={switcherLocales} />
-        </div>
+    <main className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      <header
+        className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 px-4 py-5 backdrop-blur-md"
+        id="public-menu-header"
+      >
+        <div className="relative mx-auto max-w-lg">
+          <div className="absolute right-0 top-0 z-30">
+            <LanguageSwitcher availableLocales={switcherLocales} />
+          </div>
 
-        <div className="mx-auto flex max-w-lg flex-col items-center gap-3 pt-2">
-          {restaurant.logoUrl ? (
-            <img
-              alt={`${restaurant.name} logo`}
-              className="h-16 w-16 rounded-2xl border border-slate-200 object-cover shadow-sm"
-              src={restaurant.logoUrl}
-            />
-          ) : null}
-
-          <div className="text-center">
-            <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
-              {dict.publicMenu.digitalMenu}
-            </p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
-              {restaurant.name}
-            </h1>
-            {location ? (
-              <p className="mt-1 text-sm text-slate-500">{location}</p>
+          <div className="flex flex-col items-center gap-3 pt-2 pr-24 sm:pr-28">
+            {restaurant.logoUrl ? (
+              <img
+                alt={`${restaurant.name} logo`}
+                className="h-16 w-16 rounded-2xl border border-slate-200 object-cover shadow-sm"
+                src={restaurant.logoUrl}
+              />
             ) : null}
-            <RestaurantSocialLinks
-              facebookUrl={restaurant.facebookUrl}
-              instagramUrl={restaurant.instagramUrl}
-              locationLabel={dict.publicMenu.openLocation}
-              locationUrl={locationUrl}
-              tiktokUrl={restaurant.tiktokUrl}
-              whatsappUrl={restaurant.whatsappUrl}
-            />
+
+            <div className="text-center">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+                {dict.publicMenu.digitalMenu}
+              </p>
+              <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+                {restaurant.name}
+              </h1>
+              {location ? (
+                <p className="mt-1 text-sm text-slate-500">{location}</p>
+              ) : null}
+              <RestaurantSocialLinks
+                facebookUrl={restaurant.facebookUrl}
+                instagramUrl={restaurant.instagramUrl}
+                locationLabel={dict.publicMenu.openLocation}
+                locationUrl={locationUrl}
+                tiktokUrl={restaurant.tiktokUrl}
+                whatsappUrl={restaurant.whatsappUrl}
+              />
+            </div>
           </div>
         </div>
       </header>

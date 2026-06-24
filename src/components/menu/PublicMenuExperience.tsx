@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { TableServiceBar } from "@/components/menu/TableServiceBar";
 import { MenuList } from "@/components/MenuList";
-import { WifiGate } from "@/components/WifiGate";
+import {
+  WifiCredentialsCard,
+  WifiGateModal,
+  type WifiCredentials,
+} from "@/components/WifiGate";
 import { useDictionary } from "@/components/LocaleProvider";
 import type { MenuLanguage } from "@/lib/locale";
 import type { Locale } from "@/types/dictionary";
@@ -67,13 +71,34 @@ export function PublicMenuExperience({
   const dict = useDictionary();
   const [gateOpen, setGateOpen] = useState(true);
   const [wifiUnlocked, setWifiUnlocked] = useState(false);
+  const [wifiCredentials, setWifiCredentials] = useState<WifiCredentials | null>(null);
+  const [wifiCardDismissed, setWifiCardDismissed] = useState(false);
 
   const gateBlockingMenu = gateOpen && !wifiUnlocked;
   const showLockedBanner = !gateOpen && !wifiUnlocked;
+  const showWifiCard = Boolean(wifiCredentials) && !wifiCardDismissed;
+
+  function handleWifiUnlock(credentials: WifiCredentials) {
+    setWifiCredentials(credentials);
+    setWifiUnlocked(true);
+    setGateOpen(false);
+    setWifiCardDismissed(false);
+  }
 
   return (
-    <>
-      {showLockedBanner && <WifiLockedBanner onReopen={() => setGateOpen(true)} />}
+    <div className="relative flex flex-col">
+      {showLockedBanner ? <WifiLockedBanner onReopen={() => setGateOpen(true)} /> : null}
+
+      {showWifiCard && wifiCredentials ? (
+        <div className="border-b border-slate-200 bg-white px-4 py-4">
+          <div className="mx-auto max-w-2xl">
+            <WifiCredentialsCard
+              onDismiss={() => setWifiCardDismissed(true)}
+              wifi={wifiCredentials}
+            />
+          </div>
+        </div>
+      ) : null}
 
       <div
         className={`transition-all duration-500 ${
@@ -84,18 +109,16 @@ export function PublicMenuExperience({
       >
         <MenuList
           currency={currency}
+          dockPadding={tableNumber ? "pb-36" : "pb-32"}
           enabledLanguages={enabledLanguages}
           locale={locale}
           menus={menus}
         />
       </div>
 
-      <WifiGate
+      <WifiGateModal
         onSkip={() => setGateOpen(false)}
-        onUnlock={() => {
-          setWifiUnlocked(true);
-          setGateOpen(false);
-        }}
+        onUnlock={handleWifiUnlock}
         restaurantId={restaurantId}
         restaurantName={restaurantName}
         visible={gateOpen && !wifiUnlocked}
@@ -114,6 +137,6 @@ export function PublicMenuExperience({
           tableNumber={tableNumber}
         />
       ) : null}
-    </>
+    </div>
   );
 }
