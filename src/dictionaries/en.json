@@ -219,11 +219,13 @@
     "waiterSilenceAlerts": "Silence Alerts",
     "waiterRefreshError": "Unable to refresh requests. Retrying automatically.",
     "waiterUrgentBanner": "Urgent table requests need attention.",
-    "waiterInstallDescription": "Install ReviewBite App for reliable real-time waiter notifications",
+    "waiterInstallDescription": "Install ReviewBite as a standalone app for reliable real-time waiter notifications",
     "waiterInstallApp": "Install App",
-    "waiterIosInstallTitle": "Add ReviewBite to your Home Screen",
-    "waiterIosInstallSteps": "Tap the Share button in Safari, then choose Add to Home Screen.",
-    "waiterInstallMenuHint": "Open your browser menu and choose Install app or Add to Home Screen."
+    "waiterInstallPreparing": "Preparing install...",
+    "waiterIosInstallTitle": "Install ReviewBite on your iPhone",
+    "waiterIosInstallSteps": "In Safari, tap Share, then Add to Home Screen. This installs the ReviewBite PWA as a standalone app.",
+    "waiterAndroidInstallTitle": "Install ReviewBite from Chrome",
+    "waiterAndroidInstallSteps": "Tap the three-dot menu in Chrome, then choose Install app or Add to Home screen."
   },
   "menuManager": {
     "categoriesTitle": "Menu Categories",

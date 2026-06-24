@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Download, X } from "lucide-react";
 import {
-  type BeforeInstallPromptEvent,
+  canNativeInstall,
+  isAndroidDevice,
   isIosDevice,
   isStandaloneDisplay,
+  subscribeInstallPrompt,
+  triggerNativeInstall,
 } from "@/lib/pwa-install";
 import { Button } from "@/components/ui/button";
 
@@ -15,71 +18,67 @@ type PwaInstallPromptProps = {
     installApp: string;
     iosInstallTitle: string;
     iosInstallSteps: string;
-    installMenuHint: string;
+    androidInstallTitle: string;
+    androidInstallSteps: string;
+    installPreparing: string;
     close: string;
   };
 };
 
 export function PwaInstallPrompt({ labels }: PwaInstallPromptProps) {
   const [isInstalled, setIsInstalled] = useState<boolean | null>(null);
+  const [nativeInstallReady, setNativeInstallReady] = useState(false);
   const [installing, setInstalling] = useState(false);
   const [showManualHelp, setShowManualHelp] = useState(false);
-  const deferredPromptRef = useRef<BeforeInstallPromptEvent | null>(null);
+  const [manualMode, setManualMode] = useState<"ios" | "android" | null>(null);
 
   useEffect(() => {
-    function syncInstalledState() {
+    function syncState() {
       setIsInstalled(isStandaloneDisplay());
+      setNativeInstallReady(canNativeInstall());
     }
 
-    syncInstalledState();
+    syncState();
 
-    function handleBeforeInstallPrompt(event: Event) {
-      event.preventDefault();
-      deferredPromptRef.current = event as BeforeInstallPromptEvent;
-    }
-
-    function handleAppInstalled() {
-      setIsInstalled(true);
-      setShowManualHelp(false);
-      deferredPromptRef.current = null;
-    }
-
+    const unsubscribe = subscribeInstallPrompt(syncState);
     const displayModeQuery = window.matchMedia("(display-mode: standalone)");
-    displayModeQuery.addEventListener("change", syncInstalledState);
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    window.addEventListener("appinstalled", handleAppInstalled);
+    displayModeQuery.addEventListener("change", syncState);
+    window.addEventListener("appinstalled", syncState);
 
     return () => {
-      displayModeQuery.removeEventListener("change", syncInstalledState);
-      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-      window.removeEventListener("appinstalled", handleAppInstalled);
+      unsubscribe();
+      displayModeQuery.removeEventListener("change", syncState);
+      window.removeEventListener("appinstalled", syncState);
     };
   }, []);
 
   async function handleInstall() {
-    const promptEvent = deferredPromptRef.current;
-
-    if (promptEvent) {
-      setInstalling(true);
-
-      try {
-        await promptEvent.prompt();
-        const choice = await promptEvent.userChoice;
-
-        if (choice.outcome === "accepted") {
-          setIsInstalled(true);
-          setShowManualHelp(false);
-        }
-      } catch {
-        setShowManualHelp(true);
-      } finally {
-        setInstalling(false);
-        deferredPromptRef.current = null;
-      }
-
+    if (isIosDevice()) {
+      setManualMode("ios");
+      setShowManualHelp(true);
       return;
     }
 
+    setInstalling(true);
+    setShowManualHelp(false);
+
+    const result = await triggerNativeInstall();
+
+    setInstalling(false);
+
+    if (result.ok) {
+      setIsInstalled(true);
+      setShowManualHelp(false);
+      return;
+    }
+
+    if (isAndroidDevice()) {
+      setManualMode("android");
+      setShowManualHelp(true);
+      return;
+    }
+
+    setManualMode("android");
     setShowManualHelp(true);
   }
 
@@ -91,15 +90,20 @@ export function PwaInstallPrompt({ labels }: PwaInstallPromptProps) {
     <div className="space-y-3">
       <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:px-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-medium leading-snug text-slate-900">
-            <span aria-hidden className="mr-1">
-              📲
-            </span>
-            {labels.installDescription}
-          </p>
+          <div className="min-w-0">
+            <p className="text-sm font-medium leading-snug text-slate-900">
+              <span aria-hidden className="mr-1">
+                📲
+              </span>
+              {labels.installDescription}
+            </p>
+            {nativeInstallReady && !isIosDevice() ? (
+              <p className="mt-1 text-xs text-emerald-700">One-tap install is ready.</p>
+            ) : null}
+          </div>
           <Button disabled={installing} onClick={handleInstall} size="sm" type="button">
             <Download className="h-4 w-4" />
-            {installing ? "Installing..." : labels.installApp}
+            {installing ? labels.installPreparing : labels.installApp}
           </Button>
         </div>
       </div>
@@ -109,13 +113,11 @@ export function PwaInstallPrompt({ labels }: PwaInstallPromptProps) {
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="text-sm font-semibold text-indigo-950">
-                {isIosDevice() ? labels.iosInstallTitle : labels.installMenuHint}
+                {manualMode === "ios" ? labels.iosInstallTitle : labels.androidInstallTitle}
               </p>
-              {isIosDevice() ? (
-                <p className="mt-1 text-sm leading-relaxed text-indigo-900">
-                  {labels.iosInstallSteps}
-                </p>
-              ) : null}
+              <p className="mt-1 text-sm leading-relaxed text-indigo-900">
+                {manualMode === "ios" ? labels.iosInstallSteps : labels.androidInstallSteps}
+              </p>
             </div>
             <button
               aria-label={labels.close}

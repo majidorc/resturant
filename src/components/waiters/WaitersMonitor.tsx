@@ -42,7 +42,9 @@ type WaitersMonitorProps = {
     installApp: string;
     iosInstallTitle: string;
     iosInstallSteps: string;
-    installMenuHint: string;
+    androidInstallTitle: string;
+    androidInstallSteps: string;
+    installPreparing: string;
     close: string;
   };
 };
@@ -242,7 +244,9 @@ export function WaitersMonitor({ initialRequests, labels }: WaitersMonitorProps)
           close: labels.close,
           installApp: labels.installApp,
           installDescription: labels.installDescription,
-          installMenuHint: labels.installMenuHint,
+          installPreparing: labels.installPreparing,
+          androidInstallSteps: labels.androidInstallSteps,
+          androidInstallTitle: labels.androidInstallTitle,
           iosInstallSteps: labels.iosInstallSteps,
           iosInstallTitle: labels.iosInstallTitle,
         }}

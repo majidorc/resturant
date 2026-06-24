@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Noto_Sans_Arabic, Noto_Sans_Thai } from "next/font/google";
 import { LocaleProvider } from "@/components/LocaleProvider";
+import { PwaInstallRegistrar } from "@/components/pwa/PwaInstallRegistrar";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
 import { isRtlLocale } from "@/lib/i18n";
@@ -72,6 +73,7 @@ export default async function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <LocaleProvider dict={dict} locale={locale}>
+          <PwaInstallRegistrar />
           {children}
         </LocaleProvider>
       </body>

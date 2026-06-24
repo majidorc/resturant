@@ -67,9 +67,11 @@ export default async function WaitersPage() {
           urgentBanner: d.waiterUrgentBanner,
           installDescription: d.waiterInstallDescription,
           installApp: d.waiterInstallApp,
+          installPreparing: d.waiterInstallPreparing,
           iosInstallTitle: d.waiterIosInstallTitle,
           iosInstallSteps: d.waiterIosInstallSteps,
-          installMenuHint: d.waiterInstallMenuHint,
+          androidInstallTitle: d.waiterAndroidInstallTitle,
+          androidInstallSteps: d.waiterAndroidInstallSteps,
           close: dict.common.close,
         }}
       />
