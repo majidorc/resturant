@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
-import { WaiterRequestMonitor } from "@/components/waiters/WaiterRequestMonitor";
+import { WaitersMonitor } from "@/components/waiters/WaitersMonitor";
 
 export default async function WaitersPage() {
   const session = await auth();
@@ -48,7 +48,7 @@ export default async function WaitersPage() {
         <p className="mt-1 text-sm text-slate-500">{d.waitersSubtitle}</p>
       </div>
 
-      <WaiterRequestMonitor
+      <WaitersMonitor
         initialRequests={pendingRequests.map((request) => ({
           ...request,
           createdAt: request.createdAt.toISOString(),
@@ -60,6 +60,11 @@ export default async function WaitersPage() {
           markComplete: d.waiterMarkComplete,
           noPendingRequests: d.waiterNoPending,
           liveRefreshHint: d.waiterLiveHint,
+          notificationPrompt: d.waiterNotificationPrompt,
+          enableAlerts: d.waiterEnableAlerts,
+          silenceAlerts: d.waiterSilenceAlerts,
+          refreshError: d.waiterRefreshError,
+          urgentBanner: d.waiterUrgentBanner,
         }}
       />
     </div>

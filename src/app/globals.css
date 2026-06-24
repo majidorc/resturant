@@ -72,3 +72,17 @@ html[lang="th"] body {
 .animate-slide-up {
   animation: slide-up 0.45s ease-out both;
 }
+
+@keyframes urgent-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgb(244 63 94 / 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgb(244 63 94 / 0.12);
+  }
+}
+
+.animate-urgent-pulse {
+  animation: urgent-pulse 1s ease-in-out infinite;
+}

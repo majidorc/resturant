@@ -206,7 +206,12 @@
     "waiterTableLabel": "Table",
     "waiterMarkComplete": "Mark as Complete",
     "waiterNoPending": "No pending table requests right now.",
-    "waiterLiveHint": "This screen refreshes automatically every few seconds."
+    "waiterLiveHint": "This screen refreshes automatically every few seconds.",
+    "waiterNotificationPrompt": "ReviewBite requests permission to alert you of urgent customer requests.",
+    "waiterEnableAlerts": "Enable Alerts",
+    "waiterSilenceAlerts": "Silence Alerts",
+    "waiterRefreshError": "Unable to refresh requests. Retrying automatically.",
+    "waiterUrgentBanner": "Urgent table requests need attention."
   },
   "menuManager": {
     "categoriesTitle": "Menu Categories",
