@@ -4,7 +4,7 @@
   "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/dashboard/waiters",
+  "start_url": "/login?pwa=1",
   "name": "ReviewBite Dashboard",
   "short_name": "ReviewBite",
   "description": "Turn Every Table Into a 5-Star Review - Real-time In-house Waiter Hub",

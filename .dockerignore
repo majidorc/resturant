@@ -17,6 +17,9 @@ coverage
 assets
 agent-tools
 **/*.png
+!public/icon-192x192.png
+!public/icon-512x512.png
+!public/apple-touch-icon.png
 **/*.jpg
 **/*.jpeg
 **/*.webp

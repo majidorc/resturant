@@ -224,8 +224,8 @@
     "waiterInstallPreparing": "Preparing install...",
     "waiterIosInstallTitle": "Install ReviewBite on your iPhone",
     "waiterIosInstallSteps": "In Safari, tap Share, then Add to Home Screen. This installs the ReviewBite PWA as a standalone app.",
-    "waiterAndroidInstallTitle": "Install ReviewBite from Chrome",
-    "waiterAndroidInstallSteps": "Tap the three-dot menu in Chrome, then choose Install app or Add to Home screen."
+    "waiterAndroidInstallTitle": "Add ReviewBite to your Home screen",
+    "waiterAndroidInstallSteps": "Tap the three-dot menu in Chrome, then choose Add to Home screen. This installs the ReviewBite PWA as a standalone app."
   },
   "menuManager": {
     "categoriesTitle": "Menu Categories",

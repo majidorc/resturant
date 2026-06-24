@@ -61,7 +61,24 @@ export async function ensureServiceWorkerRegistered() {
 
     await navigator.serviceWorker.register("/sw.js", { scope: "/" });
     await navigator.serviceWorker.ready;
-    return true;
+
+    if (navigator.serviceWorker.controller) {
+      return true;
+    }
+
+    await new Promise<void>((resolve) => {
+      const timeoutId = window.setTimeout(() => resolve(), 4000);
+      navigator.serviceWorker.addEventListener(
+        "controllerchange",
+        () => {
+          window.clearTimeout(timeoutId);
+          resolve();
+        },
+        { once: true },
+      );
+    });
+
+    return Boolean(navigator.serviceWorker.controller);
   } catch {
     return false;
   }
@@ -95,7 +112,7 @@ export async function triggerNativeInstall() {
 
   let promptEvent = getDeferredInstallPrompt();
   if (!promptEvent) {
-    promptEvent = await waitForInstallPrompt(3000);
+    promptEvent = await waitForInstallPrompt(5000);
   }
 
   if (!promptEvent) {
