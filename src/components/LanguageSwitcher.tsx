@@ -11,6 +11,7 @@ import { useLocale } from "@/components/LocaleProvider";
 type LanguageSwitcherProps = {
   className?: string;
   floating?: boolean;
+  flagOnly?: boolean;
   availableLocales?: Locale[];
 };
 
@@ -37,6 +38,7 @@ function setLocaleCookie(locale: Locale) {
 export function LanguageSwitcher({
   className,
   floating = false,
+  flagOnly = false,
   availableLocales,
 }: LanguageSwitcherProps) {
   const router = useRouter();
@@ -108,26 +110,42 @@ export function LanguageSwitcher({
         aria-haspopup="listbox"
         aria-label={dict.languageSwitcher.label}
         className={cn(
-          "flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200",
-          "hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900",
-          open && "border-slate-300 bg-slate-50 shadow-md",
+          flagOnly
+            ? "flex h-10 w-10 items-center justify-center rounded-full text-[1.35rem] leading-none transition-transform duration-200 hover:scale-110"
+            : cn(
+                "flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200",
+                "hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900",
+                open && "border-slate-300 bg-slate-50 shadow-md",
+              ),
         )}
         onClick={() => setOpen((value) => !value)}
         type="button"
       >
-        <Globe className="h-4 w-4 text-slate-500" aria-hidden />
-        <span aria-hidden>{activeOption.flag}</span>
-        <span>{activeOption.label}</span>
-        <ChevronDown
-          className={cn("h-4 w-4 text-slate-400 transition-transform duration-200", open && "rotate-180")}
-          aria-hidden
-        />
+        {flagOnly ? (
+          <span aria-hidden>{activeOption.flag}</span>
+        ) : (
+          <>
+            <Globe className="h-4 w-4 text-slate-500" aria-hidden />
+            <span aria-hidden>{activeOption.flag}</span>
+            <span>{activeOption.label}</span>
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 text-slate-400 transition-transform duration-200",
+                open && "rotate-180",
+              )}
+              aria-hidden
+            />
+          </>
+        )}
       </button>
 
       {open && (
         <div
           className={cn(
-            "absolute left-0 z-50 min-w-[11rem] w-full overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg",
+            "absolute z-50 min-w-[11rem] overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg",
+            flagOnly
+              ? "left-1/2 w-[11rem] -translate-x-1/2"
+              : "left-0 w-full",
             opensUpward ? "bottom-[calc(100%+0.5rem)]" : "top-[calc(100%+0.5rem)]",
           )}
           role="listbox"

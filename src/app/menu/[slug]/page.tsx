@@ -1,7 +1,5 @@
 import { notFound } from "next/navigation";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { PublicMenuExperience } from "@/components/menu/PublicMenuExperience";
-import { RestaurantSocialLinks } from "@/components/menu/RestaurantSocialLinks";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
 import { resolveMenuLocale } from "@/lib/i18n";
@@ -69,54 +67,25 @@ export default async function PublicMenuPage({ params, searchParams }: PageProps
 
   return (
     <main className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <header
-        className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 px-4 py-5 backdrop-blur-md"
-        id="public-menu-header"
-      >
-        <div className="relative mx-auto max-w-lg">
-          <div className="absolute right-0 top-0 z-30">
-            <LanguageSwitcher availableLocales={switcherLocales} />
-          </div>
-
-          <div className="flex flex-col items-center gap-3 pt-2 pr-24 sm:pr-28">
-            {restaurant.logoUrl ? (
-              <img
-                alt={`${restaurant.name} logo`}
-                className="h-16 w-16 rounded-2xl border border-slate-200 object-cover shadow-sm"
-                src={restaurant.logoUrl}
-              />
-            ) : null}
-
-            <div className="text-center">
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
-                {dict.publicMenu.digitalMenu}
-              </p>
-              <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
-                {restaurant.name}
-              </h1>
-              {location ? (
-                <p className="mt-1 text-sm text-slate-500">{location}</p>
-              ) : null}
-              <RestaurantSocialLinks
-                facebookUrl={restaurant.facebookUrl}
-                instagramUrl={restaurant.instagramUrl}
-                locationLabel={dict.publicMenu.openLocation}
-                locationUrl={locationUrl}
-                tiktokUrl={restaurant.tiktokUrl}
-                whatsappUrl={restaurant.whatsappUrl}
-              />
-            </div>
-          </div>
-        </div>
-      </header>
-
       <PublicMenuExperience
         currency={restaurant.currency}
+        digitalMenuLabel={dict.publicMenu.digitalMenu}
         enabledLanguages={enabledLanguages}
         locale={locale}
+        location={location || undefined}
+        logoUrl={restaurant.logoUrl}
         menus={serializedMenus}
         restaurantId={restaurant.id}
         restaurantName={restaurant.name}
+        socialLinks={{
+          facebookUrl: restaurant.facebookUrl,
+          instagramUrl: restaurant.instagramUrl,
+          locationLabel: dict.publicMenu.openLocation,
+          locationUrl: locationUrl,
+          tiktokUrl: restaurant.tiktokUrl,
+          whatsappUrl: restaurant.whatsappUrl,
+        }}
+        switcherLocales={switcherLocales}
         tableNumber={tableNumber}
       />
     </main>

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { TableServiceBar } from "@/components/menu/TableServiceBar";
+import { RestaurantSocialLinks } from "@/components/menu/RestaurantSocialLinks";
 import { MenuList } from "@/components/MenuList";
 import {
   WifiCredentialsCard,
@@ -33,6 +35,18 @@ type PublicMenuExperienceProps = {
   locale: Locale;
   enabledLanguages: MenuLanguage[];
   tableNumber?: string | null;
+  logoUrl?: string | null;
+  location?: string;
+  switcherLocales: Locale[];
+  socialLinks: {
+    facebookUrl: string | null;
+    instagramUrl: string | null;
+    tiktokUrl: string | null;
+    whatsappUrl: string | null;
+    locationUrl?: string | null;
+    locationLabel: string;
+  };
+  digitalMenuLabel: string;
 };
 
 function WifiLockedBanner({ onReopen }: { onReopen: () => void }) {
@@ -40,7 +54,7 @@ function WifiLockedBanner({ onReopen }: { onReopen: () => void }) {
 
   return (
     <div className="border-b border-amber-200 bg-amber-50 px-4 py-3">
-      <div className="mx-auto max-w-2xl text-center sm:text-left">
+      <div className="mx-auto max-w-2xl text-center">
         <p className="text-sm text-amber-950">
           <span aria-hidden className="mr-1">
             🔒
@@ -67,6 +81,11 @@ export function PublicMenuExperience({
   locale,
   enabledLanguages,
   tableNumber,
+  logoUrl,
+  location,
+  switcherLocales,
+  socialLinks,
+  digitalMenuLabel,
 }: PublicMenuExperienceProps) {
   const dict = useDictionary();
   const [gateOpen, setGateOpen] = useState(true);
@@ -87,6 +106,42 @@ export function PublicMenuExperience({
 
   return (
     <div className="relative flex flex-col">
+      <header
+        className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 px-4 py-5 backdrop-blur-md"
+        id="public-menu-header"
+      >
+        <div className="mx-auto flex max-w-lg flex-col items-center justify-center gap-3 text-center">
+          {logoUrl ? (
+            <img
+              alt={`${restaurantName} logo`}
+              className="h-16 w-16 rounded-2xl border border-slate-200 object-cover shadow-sm"
+              src={logoUrl}
+            />
+          ) : null}
+
+          <div className="flex w-full flex-col items-center justify-center space-y-1">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+              {digitalMenuLabel}
+            </p>
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+              {restaurantName}
+            </h1>
+            {location ? <p className="text-sm text-slate-500">{location}</p> : null}
+          </div>
+
+          <RestaurantSocialLinks
+            facebookUrl={socialLinks.facebookUrl}
+            instagramUrl={socialLinks.instagramUrl}
+            locationLabel={socialLinks.locationLabel}
+            locationUrl={socialLinks.locationUrl}
+            tiktokUrl={socialLinks.tiktokUrl}
+            whatsappUrl={socialLinks.whatsappUrl}
+          />
+
+          <LanguageSwitcher availableLocales={switcherLocales} className="mx-auto" flagOnly />
+        </div>
+      </header>
+
       {showLockedBanner ? <WifiLockedBanner onReopen={() => setGateOpen(true)} /> : null}
 
       {showWifiCard && wifiCredentials ? (

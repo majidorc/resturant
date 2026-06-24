@@ -218,7 +218,7 @@ export function MenuList({
     <>
       <div className={dockPadding}>
         <nav className="sticky top-[var(--public-menu-header-h,0px)] z-20 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur-md">
-          <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex justify-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {menus.map((menu) => (
               <button
                 className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
