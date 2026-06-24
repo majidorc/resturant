@@ -15,6 +15,7 @@ import {
   stopTitleFlash,
 } from "@/lib/waiter-alerts";
 import { Button } from "@/components/ui/button";
+import { PwaInstallPrompt } from "@/components/pwa/PwaInstallPrompt";
 
 export type WaiterRequestItem = {
   id: string;
@@ -37,6 +38,12 @@ type WaitersMonitorProps = {
     silenceAlerts: string;
     refreshError: string;
     urgentBanner: string;
+    installDescription: string;
+    installApp: string;
+    iosInstallTitle: string;
+    iosInstallSteps: string;
+    installMenuHint: string;
+    close: string;
   };
 };
 
@@ -230,6 +237,17 @@ export function WaitersMonitor({ initialRequests, labels }: WaitersMonitorProps)
 
   return (
     <div className="space-y-4">
+      <PwaInstallPrompt
+        labels={{
+          close: labels.close,
+          installApp: labels.installApp,
+          installDescription: labels.installDescription,
+          installMenuHint: labels.installMenuHint,
+          iosInstallSteps: labels.iosInstallSteps,
+          iosInstallTitle: labels.iosInstallTitle,
+        }}
+      />
+
       {showPermissionBanner ? (
         <div className="rounded-2xl border border-indigo-200 bg-indigo-50/80 px-4 py-4 shadow-sm sm:px-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

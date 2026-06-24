@@ -218,7 +218,12 @@
     "waiterEnableAlerts": "Enable Alerts",
     "waiterSilenceAlerts": "Silence Alerts",
     "waiterRefreshError": "Unable to refresh requests. Retrying automatically.",
-    "waiterUrgentBanner": "Urgent table requests need attention."
+    "waiterUrgentBanner": "Urgent table requests need attention.",
+    "waiterInstallDescription": "Install ReviewBite App for reliable real-time waiter notifications",
+    "waiterInstallApp": "Install App",
+    "waiterIosInstallTitle": "Add ReviewBite to your Home Screen",
+    "waiterIosInstallSteps": "Tap the Share button in Safari, then choose Add to Home Screen.",
+    "waiterInstallMenuHint": "Open your browser menu and choose Install app or Add to Home Screen."
   },
   "menuManager": {
     "categoriesTitle": "Menu Categories",

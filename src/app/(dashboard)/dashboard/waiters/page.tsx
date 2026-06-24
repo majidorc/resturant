@@ -65,6 +65,12 @@ export default async function WaitersPage() {
           silenceAlerts: d.waiterSilenceAlerts,
           refreshError: d.waiterRefreshError,
           urgentBanner: d.waiterUrgentBanner,
+          installDescription: d.waiterInstallDescription,
+          installApp: d.waiterInstallApp,
+          iosInstallTitle: d.waiterIosInstallTitle,
+          iosInstallSteps: d.waiterIosInstallSteps,
+          installMenuHint: d.waiterInstallMenuHint,
+          close: dict.common.close,
         }}
       />
     </div>
