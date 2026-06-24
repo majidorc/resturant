@@ -5,6 +5,7 @@ import {
   DashboardMobileHeader,
   DashboardSidebar,
 } from "@/components/dashboard/DashboardSidebar";
+import { PwaInstallBanner } from "@/components/pwa/PwaInstallBanner";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
 
@@ -51,6 +52,7 @@ export default async function DashboardLayout({
           )}
         </div>
       </div>
+      <PwaInstallBanner />
     </div>
   );
 }

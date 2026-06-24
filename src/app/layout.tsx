@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Noto_Sans_Arabic, Noto_Sans_Thai } from "next/font/google";
 import { LocaleProvider } from "@/components/LocaleProvider";
@@ -33,6 +33,26 @@ export const metadata: Metadata = {
   title: "ReviewBite | Turn Every Table Into a 5-Star Review",
   description:
     "Digital menus, Wi-Fi lead capture, and automated Google review follow-ups for modern restaurants. reviewbite.co",
+  applicationName: "ReviewBite Dashboard",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "ReviewBite",
+  },
+  icons: {
+    icon: [
+      { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default async function RootLayout({
