@@ -155,7 +155,12 @@
     "noItems": "No menu items available yet.",
     "noItemsCategory": "No items in this category.",
     "closeLightbox": "Close image preview",
-    "openLocation": "Open location on Google Maps"
+    "openLocation": "Open location on Google Maps",
+    "callWaiter": "🛎️ Call Waiter",
+    "requestBill": "🧾 Request Bill",
+    "waiterNotified": "Waiter Notified!",
+    "billRequested": "Bill Requested",
+    "sendingRequest": "Sending…"
   },
   "directory": {
     "title": "Restaurant Directory",
@@ -169,6 +174,7 @@
     "navOverview": "Overview",
     "navMenu": "Menu",
     "navFeedback": "Feedback",
+    "navWaiters": "Waiter Screen",
     "navSettings": "Settings",
     "mobileNav": "Navigation",
     "overviewTitle": "Overview",
@@ -198,7 +204,16 @@
     "colSubmitted": "Submitted",
     "noComment": "No comment provided.",
     "noFeedback": "No customer feedback recorded yet.",
-    "stars": "stars"
+    "stars": "stars",
+    "waitersEyebrow": "Live Service",
+    "waitersTitle": "Waiter Screen",
+    "waitersSubtitle": "Pending table requests from guests scanning table-specific menu QR codes.",
+    "waiterCallType": "Call Waiter",
+    "waiterBillType": "Request Bill",
+    "waiterTableLabel": "Table",
+    "waiterMarkComplete": "Mark as Complete",
+    "waiterNoPending": "No pending table requests right now.",
+    "waiterLiveHint": "This screen refreshes automatically every few seconds."
   },
   "menuManager": {
     "categoriesTitle": "Menu Categories",
@@ -295,7 +310,16 @@
     "savedSuccess": "Settings saved successfully.",
     "printStation": "Print Station",
     "printStationSubtitle": "Download and print this QR code for table signage and guest scans.",
-    "downloadQr": "Download QR Code"
+    "downloadQr": "Download QR Code",
+    "tablesTitle": "Table Service Setup",
+    "tablesSubtitle": "Set how many operational tables you have to generate table-specific menu QR links.",
+    "tablesCount": "Total Operational Tables",
+    "tablesCountHint": "Enter 0 if you do not use table QR codes. Each table gets its own menu link with a ?table= parameter.",
+    "tableQrTitle": "Table Menu QR Links",
+    "tableQrSubtitle": "Share or print a unique QR code per table so guests can call staff from their phone.",
+    "tableQrItemLabel": "Table",
+    "copyTableLink": "Copy Link",
+    "printTableLinks": "Print Table Links"
   },
   "admin": {
     "platformLabel": "Platform Control",

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, Menu, MessageSquareWarning, PanelLeft, Settings, X } from "lucide-react";
+import { LayoutDashboard, Menu, MessageSquareWarning, PanelLeft, Settings, X, BellRing } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SignOutButton } from "@/components/dashboard/SignOutButton";
 import { useDictionary } from "@/components/LocaleProvider";
@@ -13,6 +13,7 @@ const navItems = [
   { href: "/dashboard", key: "navOverview" as const, icon: LayoutDashboard },
   { href: "/dashboard/menu", key: "navMenu" as const, icon: Menu },
   { href: "/dashboard/feedback", key: "navFeedback" as const, icon: MessageSquareWarning },
+  { href: "/dashboard/waiters", key: "navWaiters" as const, icon: BellRing },
   { href: "/dashboard/settings", key: "navSettings" as const, icon: Settings },
 ];
 

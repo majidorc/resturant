@@ -47,6 +47,8 @@ export async function updateRestaurantSettings(
     const logoUrl = formData.get("logoUrl")?.toString().trim() || null;
     const city = formData.get("city")?.toString().trim() || null;
     const country = formData.get("country")?.toString().trim() || null;
+    const tablesCountRaw = formData.get("tablesCount")?.toString().trim() ?? "0";
+    const tablesCount = Number.parseInt(tablesCountRaw, 10);
 
     const instagramResult = parseOptionalHttpUrl(formData.get("instagramUrl"), "Instagram URL");
     if (!instagramResult.ok) {
@@ -93,6 +95,10 @@ export async function updateRestaurantSettings(
       return { error: "Dashboard language must be included in supported menu languages." };
     }
 
+    if (Number.isNaN(tablesCount) || tablesCount < 0 || tablesCount > 500) {
+      return { error: "Total operational tables must be between 0 and 500." };
+    }
+
     const updated = await prisma.restaurant.update({
       where: { id: restaurantId },
       data: {
@@ -109,6 +115,7 @@ export async function updateRestaurantSettings(
         facebookUrl: facebookResult.value,
         tiktokUrl: tiktokResult.value,
         whatsappUrl: whatsappResult.value,
+        tablesCount,
       },
       select: { slug: true },
     });

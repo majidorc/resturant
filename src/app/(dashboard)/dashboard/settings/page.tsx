@@ -31,6 +31,7 @@ export default async function SettingsPage() {
       facebookUrl: true,
       tiktokUrl: true,
       whatsappUrl: true,
+      tablesCount: true,
     },
   });
 

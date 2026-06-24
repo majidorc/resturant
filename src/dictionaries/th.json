@@ -155,13 +155,19 @@
     "noItems": "No menu items available yet.",
     "noItemsCategory": "No items in this category.",
     "closeLightbox": "Close image preview",
-    "openLocation": "Open location on Google Maps"
+    "openLocation": "Open location on Google Maps",
+    "callWaiter": "🛎️ Call Waiter",
+    "requestBill": "🧾 Request Bill",
+    "waiterNotified": "Waiter Notified!",
+    "billRequested": "Bill Requested",
+    "sendingRequest": "Sending…"
   },
   "dashboard": {
     "restaurantLabel": "ร้านอาหาร",
     "navOverview": "ภาพรวม",
     "navMenu": "เมนู",
     "navFeedback": "ฟีดแบ็ก",
+    "navWaiters": "Waiter Screen",
     "navSettings": "การตั้งค่า",
     "mobileNav": "เมนูนำทาง",
     "overviewTitle": "ภาพรวม",
@@ -191,7 +197,16 @@
     "colSubmitted": "ส่งเมื่อ",
     "noComment": "ไม่มีความคิดเห็น",
     "noFeedback": "ยังไม่มีฟีดแบ็กจากลูกค้า",
-    "stars": "ดาว"
+    "stars": "ดาว",
+    "waitersEyebrow": "Live Service",
+    "waitersTitle": "Waiter Screen",
+    "waitersSubtitle": "Pending table requests from guests scanning table-specific menu QR codes.",
+    "waiterCallType": "Call Waiter",
+    "waiterBillType": "Request Bill",
+    "waiterTableLabel": "Table",
+    "waiterMarkComplete": "Mark as Complete",
+    "waiterNoPending": "No pending table requests right now.",
+    "waiterLiveHint": "This screen refreshes automatically every few seconds."
   },
   "menuManager": {
     "categoriesTitle": "Menu Categories",
@@ -291,7 +306,16 @@
     "reviewPreview": "Generated review link",
     "reviewInvalidPlaceId": "Paste a full Google Maps share link or a Place ID starting with ChIJ.",
     "reviewResolving": "Resolving Place ID from your Google Maps link…",
-    "reviewResolveFailed": "Could not read Place ID from that link. Open Google Maps → your business → Share → Copy link, then paste here."
+    "reviewResolveFailed": "Could not read Place ID from that link. Open Google Maps → your business → Share → Copy link, then paste here.",
+    "tablesTitle": "Table Service Setup",
+    "tablesSubtitle": "Set how many operational tables you have to generate table-specific menu QR links.",
+    "tablesCount": "Total Operational Tables",
+    "tablesCountHint": "Enter 0 if you do not use table QR codes. Each table gets its own menu link with a ?table= parameter.",
+    "tableQrTitle": "Table Menu QR Links",
+    "tableQrSubtitle": "Share or print a unique QR code per table so guests can call staff from their phone.",
+    "tableQrItemLabel": "Table",
+    "copyTableLink": "Copy Link",
+    "printTableLinks": "Print Table Links"
   },
   "admin": {
     "platformLabel": "ควบคุมแพลตฟอร์ม",

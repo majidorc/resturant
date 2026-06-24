@@ -35,6 +35,7 @@ type SettingsFormProps = {
     facebookUrl: string | null;
     tiktokUrl: string | null;
     whatsappUrl: string | null;
+    tablesCount: number;
   };
   publicMenuUrl: string;
 };
@@ -143,9 +144,26 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
         </div>
       </SectionCard>
 
-      <MenuQrCode publicMenuUrl={publicMenuUrl} restaurantSlug={restaurant.slug} />
+      <MenuQrCode
+        publicMenuUrl={publicMenuUrl}
+        restaurantSlug={restaurant.slug}
+        tablesCount={restaurant.tablesCount}
+      />
 
       <form action={formAction} className="space-y-6">
+        <SectionCard description={s.tablesSubtitle} title={s.tablesTitle}>
+          <FieldLabel hint={s.tablesCountHint} htmlFor="tablesCount" label={s.tablesCount} />
+          <Input
+            className={fieldInputClass}
+            defaultValue={restaurant.tablesCount}
+            id="tablesCount"
+            min={0}
+            name="tablesCount"
+            placeholder="0"
+            type="number"
+          />
+        </SectionCard>
+
         <SectionCard description={s.logoSubtitle} title={s.logoTitle}>
           <ImageDropzone
             dragLabel={s.logoUpload}

@@ -12,6 +12,16 @@ enum Role {
   TENANT
 }
 
+enum RequestType {
+  CALL_WAITER
+  REQUEST_BILL
+}
+
+enum RequestStatus {
+  PENDING
+  ARCHIVED
+}
+
 model User {
   id        String      @id @default(cuid())
   name      String?
@@ -42,12 +52,26 @@ model Restaurant {
   logoUrl         String?
   city            String?
   country         String?
+  tablesCount     Int                  @default(0)
   menus           Menu[]
   leads           CustomerLead[]
   feedbacks       Feedback[]
-  createdAt       DateTime       @default(now())
+  tableRequests   TableServiceRequest[]
+  createdAt       DateTime             @default(now())
 
   @@index([isActive])
+}
+
+model TableServiceRequest {
+  id           String        @id @default(cuid())
+  restaurantId String
+  restaurant   Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  tableNumber  String
+  type         RequestType
+  status       RequestStatus @default(PENDING)
+  createdAt    DateTime      @default(now())
+
+  @@index([restaurantId, status, createdAt])
 }
 
 model Menu {

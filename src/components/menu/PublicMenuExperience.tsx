@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { TableServiceBar } from "@/components/menu/TableServiceBar";
 import { MenuList } from "@/components/MenuList";
 import { WifiGate } from "@/components/WifiGate";
 import { useDictionary } from "@/components/LocaleProvider";
@@ -27,6 +28,7 @@ type PublicMenuExperienceProps = {
   currency: string;
   locale: Locale;
   enabledLanguages: MenuLanguage[];
+  tableNumber?: string | null;
 };
 
 function WifiLockedBanner({ onReopen }: { onReopen: () => void }) {
@@ -60,7 +62,9 @@ export function PublicMenuExperience({
   currency,
   locale,
   enabledLanguages,
+  tableNumber,
 }: PublicMenuExperienceProps) {
+  const dict = useDictionary();
   const [gateOpen, setGateOpen] = useState(true);
   const [wifiUnlocked, setWifiUnlocked] = useState(false);
 
@@ -96,6 +100,20 @@ export function PublicMenuExperience({
         restaurantName={restaurantName}
         visible={gateOpen && !wifiUnlocked}
       />
+
+      {tableNumber ? (
+        <TableServiceBar
+          labels={{
+            billRequested: dict.publicMenu.billRequested,
+            callWaiter: dict.publicMenu.callWaiter,
+            requestBill: dict.publicMenu.requestBill,
+            sending: dict.publicMenu.sendingRequest,
+            waiterNotified: dict.publicMenu.waiterNotified,
+          }}
+          restaurantId={restaurantId}
+          tableNumber={tableNumber}
+        />
+      ) : null}
     </>
   );
 }

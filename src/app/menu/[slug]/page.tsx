@@ -13,10 +13,17 @@ import { asTranslationField } from "@/lib/translations";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ table?: string | string[] }>;
 };
 
-export default async function PublicMenuPage({ params }: PageProps) {
+export default async function PublicMenuPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const query = await searchParams;
+  const tableParam = query.table;
+  const tableNumber =
+    typeof tableParam === "string" && tableParam.trim().length > 0
+      ? tableParam.trim().slice(0, 32)
+      : null;
   const cookieLocale = await getLocale();
   const dict = getDictionary(cookieLocale);
 
@@ -61,7 +68,7 @@ export default async function PublicMenuPage({ params }: PageProps) {
   const locationUrl = buildGoogleMapsLocationUrl(restaurant.googleReviewUrl);
 
   return (
-    <main className="relative min-h-screen bg-gradient-to-b from-slate-50 to-white pb-28">
+    <main className={`relative min-h-screen bg-gradient-to-b from-slate-50 to-white ${tableNumber ? "pb-36" : "pb-28"}`}>
       <header className="relative border-b border-slate-200 bg-white px-4 py-5">
         <div className="absolute right-4 top-4">
           <LanguageSwitcher availableLocales={switcherLocales} />
@@ -105,6 +112,7 @@ export default async function PublicMenuPage({ params }: PageProps) {
         menus={serializedMenus}
         restaurantId={restaurant.id}
         restaurantName={restaurant.name}
+        tableNumber={tableNumber}
       />
     </main>
   );
