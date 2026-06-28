@@ -5,8 +5,10 @@ import {
   DashboardMobileHeader,
   DashboardSidebar,
 } from "@/components/dashboard/DashboardSidebar";
+import { PlanStatusBanner } from "@/components/plan/PlanStatusBanner";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
+import { resolvePlanAccess } from "@/lib/plan";
 
 export default async function DashboardLayout({
   children,
@@ -28,16 +30,33 @@ export default async function DashboardLayout({
 
   const restaurant = await prisma.restaurant.findUnique({
     where: { userId: session.user.id },
-    select: { name: true, isActive: true },
+    select: {
+      name: true,
+      isActive: true,
+      plan: true,
+      subscriptionStatus: true,
+      trialEndsAt: true,
+    },
   });
 
   const restaurantName = restaurant?.name ?? "My Restaurant";
+  const planAccess = restaurant ? resolvePlanAccess(restaurant) : null;
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-slate-50/50">
-      <DashboardSidebar restaurantName={restaurantName} />
+      <DashboardSidebar hasProAccess={planAccess?.hasProAccess ?? false} restaurantName={restaurantName} />
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <DashboardMobileHeader restaurantName={restaurantName} />
+        <DashboardMobileHeader hasProAccess={planAccess?.hasProAccess ?? false} restaurantName={restaurantName} />
+        {planAccess ? (
+          <PlanStatusBanner
+            labels={{
+              trialActive: d.planTrialActive,
+              trialExpired: d.planTrialExpired,
+              upgradeCta: d.billingUpgradeCta,
+            }}
+            planAccess={planAccess}
+          />
+        ) : null}
         <div className="flex min-w-0 flex-1 flex-col overflow-y-auto p-4 md:p-8">
           {restaurant && !restaurant.isActive ? (
             <div className="mx-auto flex w-full max-w-lg flex-1 items-center">

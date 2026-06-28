@@ -62,6 +62,7 @@ model Restaurant {
   stripeCustomerId       String?
   stripeSubscriptionId   String?
   subscriptionStatus     String?
+  trialEndsAt            DateTime?
   menus                  Menu[]
   leads           CustomerLead[]
   feedbacks       Feedback[]

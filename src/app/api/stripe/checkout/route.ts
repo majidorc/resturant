@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getRequiredRestaurantId } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getAppBaseUrl, getStripe, getStripeProPriceId } from "@/lib/stripe";
+import { resolvePlanAccess } from "@/lib/plan";
 
 export async function POST() {
   try {
@@ -15,6 +16,7 @@ export async function POST() {
         stripeCustomerId: true,
         plan: true,
         subscriptionStatus: true,
+        trialEndsAt: true,
       },
     });
 
@@ -22,7 +24,8 @@ export async function POST() {
       return NextResponse.json({ error: "Restaurant not found." }, { status: 404 });
     }
 
-    if (restaurant.plan === "PRO" && restaurant.subscriptionStatus === "active") {
+    const planAccess = resolvePlanAccess(restaurant);
+    if (planAccess.isPaidPro) {
       return NextResponse.json({ error: "You already have an active Pro subscription." }, { status: 400 });
     }
 

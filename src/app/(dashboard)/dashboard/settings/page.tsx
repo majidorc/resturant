@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SettingsForm } from "./SettingsForm";
 import { BillingUpgradeCard } from "@/components/billing/BillingUpgradeCard";
+import { resolvePlanAccess } from "@/lib/plan";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
 
@@ -35,6 +36,7 @@ export default async function SettingsPage() {
       tablesCount: true,
       plan: true,
       subscriptionStatus: true,
+      trialEndsAt: true,
     },
   });
 
@@ -44,6 +46,7 @@ export default async function SettingsPage() {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const publicMenuUrl = `${baseUrl}/menu/${restaurant.slug}`;
+  const planAccess = resolvePlanAccess(restaurant);
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
@@ -66,13 +69,18 @@ export default async function SettingsPage() {
           proPlan: dict.dashboard.billingProPlan,
           proPrice: dict.dashboard.billingProPrice,
           title: dict.dashboard.billingTitle,
+          trialBadge: dict.dashboard.billingTrialBadge,
+          trialDaysLeft: dict.dashboard.billingTrialDaysLeft,
           upgradeCta: dict.dashboard.billingUpgradeCta,
         }}
-        plan={restaurant.plan}
-        subscriptionStatus={restaurant.subscriptionStatus}
+        planAccess={planAccess}
       />
 
-      <SettingsForm publicMenuUrl={publicMenuUrl} restaurant={restaurant} />
+      <SettingsForm
+        hasProAccess={planAccess.hasProAccess}
+        publicMenuUrl={publicMenuUrl}
+        restaurant={restaurant}
+      />
     </div>
   );
 }

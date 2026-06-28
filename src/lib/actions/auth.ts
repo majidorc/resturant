@@ -3,6 +3,7 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { createUniqueSlug } from "@/lib/slug";
+import { getTrialEndsAtForNewRegistration } from "@/lib/plan";
 
 export type RegisterState = {
   error?: string;
@@ -54,6 +55,7 @@ export async function registerTenant(
           name: restaurantName,
           slug,
           languages: ["en"],
+          trialEndsAt: getTrialEndsAtForNewRegistration(),
         },
       },
     },

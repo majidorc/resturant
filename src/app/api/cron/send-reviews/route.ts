@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendReviewEmail } from "@/lib/mailer";
 import { isValidCronRequest } from "@/lib/cron-auth";
+import { resolvePlanAccess } from "@/lib/plan";
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -36,6 +37,12 @@ export async function GET(request: Request) {
 
     for (const lead of pendingLeads) {
       try {
+        const planAccess = resolvePlanAccess(lead.restaurant);
+        if (!planAccess.hasProAccess) {
+          skipped++;
+          continue;
+        }
+
         const claim = await prisma.customerLead.updateMany({
           where: { id: lead.id, emailSent: false },
           data: { emailSent: true },

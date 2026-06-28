@@ -45,6 +45,8 @@ type MenuManagerProps = {
   menus: MenuData[];
   currency: string;
   languages: MenuLanguage[];
+  canAddCategory: boolean;
+  planLimitHint?: string;
 };
 
 const initialState: ActionState = {};
@@ -117,7 +119,13 @@ function DishImagesField({ initialImages }: { initialImages?: string[] }) {
   );
 }
 
-export function MenuManager({ menus, currency, languages }: MenuManagerProps) {
+export function MenuManager({
+  menus,
+  currency,
+  languages,
+  canAddCategory,
+  planLimitHint,
+}: MenuManagerProps) {
   const dict = useDictionary();
   const t = dict.menuManager;
   const c = dict.common;
@@ -137,19 +145,25 @@ export function MenuManager({ menus, currency, languages }: MenuManagerProps) {
               <h2 className="text-lg font-semibold text-slate-900">{t.categoriesTitle}</h2>
               <p className="text-sm text-slate-500">{t.categoriesSubtitle}</p>
             </div>
-            <Button onClick={() => setShowNewMenu((value) => !value)} type="button" variant="secondary">
-              {showNewMenu ? c.cancel : t.addCategory}
-            </Button>
+            {canAddCategory ? (
+              <Button onClick={() => setShowNewMenu((value) => !value)} type="button" variant="secondary">
+                {showNewMenu ? c.cancel : t.addCategory}
+              </Button>
+            ) : null}
           </div>
 
-          {showNewMenu && (
+          {!canAddCategory && planLimitHint ? (
+            <p className="mt-3 text-sm text-amber-700">{planLimitHint}</p>
+          ) : null}
+
+          {showNewMenu && canAddCategory ? (
             <form action={createMenuAction} className="mt-5 space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <TranslationInputs languages={languages} prefix="name" />
               <Button disabled={creatingMenu} type="submit">
                 {creatingMenu ? c.saving : c.create}
               </Button>
             </form>
-          )}
+          ) : null}
 
           <div className="mt-3">
             <FormAlert message={menuState.error} />

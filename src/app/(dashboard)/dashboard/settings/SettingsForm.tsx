@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { useDictionary } from "@/components/LocaleProvider";
 
 type SettingsFormProps = {
+  hasProAccess: boolean;
   restaurant: {
     wifiSsid: string | null;
     wifiPassword: string | null;
@@ -84,7 +85,7 @@ function FieldLabel({
   );
 }
 
-export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
+export function SettingsForm({ restaurant, publicMenuUrl, hasProAccess }: SettingsFormProps) {
   const dict = useDictionary();
   const s = dict.settings;
   const c = dict.common;
@@ -144,25 +145,31 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
         </div>
       </SectionCard>
 
-      <MenuQrCode
-        publicMenuUrl={publicMenuUrl}
-        restaurantSlug={restaurant.slug}
-        tablesCount={restaurant.tablesCount}
-      />
+      {hasProAccess ? (
+        <MenuQrCode
+          publicMenuUrl={publicMenuUrl}
+          restaurantSlug={restaurant.slug}
+          tablesCount={restaurant.tablesCount}
+        />
+      ) : null}
 
       <form action={formAction} className="space-y-6">
-        <SectionCard description={s.tablesSubtitle} title={s.tablesTitle}>
-          <FieldLabel hint={s.tablesCountHint} htmlFor="tablesCount" label={s.tablesCount} />
-          <Input
-            className={fieldInputClass}
-            defaultValue={restaurant.tablesCount}
-            id="tablesCount"
-            min={0}
-            name="tablesCount"
-            placeholder="0"
-            type="number"
-          />
-        </SectionCard>
+        {hasProAccess ? (
+          <SectionCard description={s.tablesSubtitle} title={s.tablesTitle}>
+            <FieldLabel hint={s.tablesCountHint} htmlFor="tablesCount" label={s.tablesCount} />
+            <Input
+              className={fieldInputClass}
+              defaultValue={restaurant.tablesCount}
+              id="tablesCount"
+              min={0}
+              name="tablesCount"
+              placeholder="0"
+              type="number"
+            />
+          </SectionCard>
+        ) : (
+          <input name="tablesCount" type="hidden" value="0" />
+        )}
 
         <SectionCard description={s.logoSubtitle} title={s.logoTitle}>
           <ImageDropzone
@@ -347,12 +354,18 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {MENU_LANGUAGE_OPTIONS.map((option) => (
                   <label
-                    className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 transition-colors hover:border-slate-300"
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 transition-colors hover:border-slate-300",
+                      !hasProAccess && !enabledLanguages.has(option.value)
+                        ? "cursor-not-allowed opacity-50"
+                        : "cursor-pointer",
+                    )}
                     key={option.value}
                   >
                     <input
                       className="h-4 w-4 rounded border-slate-300"
                       defaultChecked={enabledLanguages.has(option.value)}
+                      disabled={!hasProAccess && !enabledLanguages.has(option.value)}
                       name="languages"
                       type="checkbox"
                       value={option.value}
@@ -364,6 +377,9 @@ export function SettingsForm({ restaurant, publicMenuUrl }: SettingsFormProps) {
                   </label>
                 ))}
               </div>
+              {!hasProAccess ? (
+                <p className="mt-3 text-sm text-amber-700">{s.planLanguageLimitHint}</p>
+              ) : null}
             </div>
           </div>
         </SectionCard>

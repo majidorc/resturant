@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
 import { WaitersMonitor } from "@/components/waiters/WaitersMonitor";
+import { ProFeatureLock } from "@/components/plan/ProFeatureLock";
+import { resolvePlanAccess } from "@/lib/plan";
 
 export default async function WaitersPage() {
   const session = await auth();
@@ -18,7 +20,12 @@ export default async function WaitersPage() {
 
   const restaurant = await prisma.restaurant.findUnique({
     where: { userId: session.user.id },
-    select: { id: true },
+    select: {
+      id: true,
+      plan: true,
+      subscriptionStatus: true,
+      trialEndsAt: true,
+    },
   });
 
   if (!restaurant) {
@@ -36,6 +43,8 @@ export default async function WaitersPage() {
     },
   });
 
+  const planAccess = resolvePlanAccess(restaurant);
+
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6">
       <div>
@@ -48,7 +57,14 @@ export default async function WaitersPage() {
         <p className="mt-1 text-sm text-slate-500">{d.waitersSubtitle}</p>
       </div>
 
-      <WaitersMonitor
+      {!planAccess.hasProAccess ? (
+        <ProFeatureLock
+          description={d.planWaiterLockedDescription}
+          title={d.planWaiterLockedTitle}
+          upgradeCta={d.billingUpgradeCta}
+        />
+      ) : (
+        <WaitersMonitor
         initialRequests={pendingRequests.map((request) => ({
           ...request,
           createdAt: request.createdAt.toISOString(),
@@ -75,6 +91,7 @@ export default async function WaitersPage() {
           close: dict.common.close,
         }}
       />
+      )}
     </div>
   );
 }

@@ -5,6 +5,8 @@ import { getRequiredRestaurantId } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import type { ActionState } from "@/lib/actions/settings";
 import { buildMenuTranslationPayload, getRestaurantMenuLanguages } from "@/lib/menu-form";
+import { PLAN_LIMITS, planUpgradeRequiredMessage } from "@/lib/plan";
+import { getRestaurantPlanAccessById } from "@/lib/plan-server";
 import { parseImagesFieldForRestaurant } from "@/lib/upload-constants";
 import {
   deleteUploadFiles,
@@ -44,6 +46,19 @@ export async function createMenu(
 ): Promise<ActionState> {
   try {
     const { restaurantId } = await getRequiredRestaurantId();
+    const planAccess = await getRestaurantPlanAccessById(restaurantId);
+
+    if (planAccess?.isFreeTier) {
+      const menuCount = await prisma.menu.count({ where: { restaurantId } });
+      if (menuCount >= PLAN_LIMITS.freeMaxMenus) {
+        return {
+          error: planUpgradeRequiredMessage(
+            `Free plans include up to ${PLAN_LIMITS.freeMaxMenus} menu category`,
+          ),
+        };
+      }
+    }
+
     const languages = await getRestaurantMenuLanguages(restaurantId);
     const nameResult = buildMenuTranslationPayload(formData, languages, "name", true);
 

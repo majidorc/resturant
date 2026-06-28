@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getRestaurantPlanAccessById } from "@/lib/plan-server";
 
 const REQUEST_TYPES = new Set(["CALL_WAITER", "REQUEST_BILL"]);
 
@@ -36,6 +37,14 @@ export async function POST(request: Request) {
 
     if (!restaurant.isActive) {
       return NextResponse.json({ error: "Restaurant is not active." }, { status: 403 });
+    }
+
+    const planAccess = await getRestaurantPlanAccessById(restaurant.id);
+    if (!planAccess?.hasProAccess) {
+      return NextResponse.json(
+        { error: "Table service requests require an active Pro plan." },
+        { status: 403 },
+      );
     }
 
     await prisma.tableServiceRequest.create({

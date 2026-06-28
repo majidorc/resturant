@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PLAN_LIMITS } from "@/lib/plan";
+import { countLeadsThisMonth, getRestaurantPlanAccessById } from "@/lib/plan-server";
 
 export async function POST(request: Request) {
   try {
@@ -26,6 +28,9 @@ export async function POST(request: Request) {
         wifiSsid: true,
         wifiPassword: true,
         isActive: true,
+        plan: true,
+        subscriptionStatus: true,
+        trialEndsAt: true,
       },
     });
 
@@ -35,6 +40,31 @@ export async function POST(request: Request) {
 
     if (!restaurant.isActive) {
       return NextResponse.json({ error: "This restaurant is currently unavailable." }, { status: 403 });
+    }
+
+    const planAccess = await getRestaurantPlanAccessById(restaurantId);
+
+    if (planAccess?.isFreeTier) {
+      const existingLead = await prisma.customerLead.findUnique({
+        where: {
+          restaurantId_email: {
+            restaurantId,
+            email: normalizedEmail,
+          },
+        },
+      });
+
+      if (!existingLead) {
+        const leadsThisMonth = await countLeadsThisMonth(restaurantId);
+        if (leadsThisMonth >= PLAN_LIMITS.freeMaxLeadsPerMonth) {
+          return NextResponse.json(
+            {
+              error: `This restaurant has reached the Free plan limit of ${PLAN_LIMITS.freeMaxLeadsPerMonth} leads this month.`,
+            },
+            { status: 403 },
+          );
+        }
+      }
     }
 
     await prisma.customerLead.upsert({

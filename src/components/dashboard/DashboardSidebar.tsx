@@ -19,6 +19,7 @@ const navItems = [
 
 type DashboardSidebarProps = {
   restaurantName: string;
+  hasProAccess: boolean;
 };
 
 function isNavActive(currentPath: string, href: string) {
@@ -30,10 +31,12 @@ function isNavActive(currentPath: string, href: string) {
 function SidebarContent({
   restaurantName,
   currentPath,
+  hasProAccess,
   onNavigate,
 }: {
   restaurantName: string;
   currentPath: string;
+  hasProAccess: boolean;
   onNavigate?: () => void;
 }) {
   const dict = useDictionary();
@@ -50,6 +53,10 @@ function SidebarContent({
 
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navItems.map((item) => {
+          if (item.href === "/dashboard/waiters" && !hasProAccess) {
+            return null;
+          }
+
           const isActive = isNavActive(currentPath, item.href);
           const Icon = item.icon;
 
@@ -80,17 +87,21 @@ function SidebarContent({
   );
 }
 
-export function DashboardSidebar({ restaurantName }: DashboardSidebarProps) {
+export function DashboardSidebar({ restaurantName, hasProAccess }: DashboardSidebarProps) {
   const currentPath = usePathname();
 
   return (
     <aside className="hidden h-full w-64 shrink-0 flex-col justify-between border-r border-slate-200 bg-white lg:flex">
-      <SidebarContent currentPath={currentPath} restaurantName={restaurantName} />
+      <SidebarContent
+        currentPath={currentPath}
+        hasProAccess={hasProAccess}
+        restaurantName={restaurantName}
+      />
     </aside>
   );
 }
 
-export function DashboardMobileHeader({ restaurantName }: DashboardSidebarProps) {
+export function DashboardMobileHeader({ restaurantName, hasProAccess }: DashboardSidebarProps) {
   const currentPath = usePathname();
   const [open, setOpen] = useState(false);
   const dict = useDictionary();
@@ -143,6 +154,7 @@ export function DashboardMobileHeader({ restaurantName }: DashboardSidebarProps)
               </div>
               <SidebarContent
                 currentPath={currentPath}
+                hasProAccess={hasProAccess}
                 onNavigate={() => setOpen(false)}
                 restaurantName={restaurantName}
               />

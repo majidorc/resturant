@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { CreditCard, Loader2 } from "lucide-react";
+import type { PlanAccess } from "@/lib/plan";
 import { Button } from "@/components/ui/button";
 
 type BillingUpgradeCardProps = {
-  plan: "FREE" | "PRO";
-  subscriptionStatus: string | null;
+  planAccess: PlanAccess;
   labels: {
     title: string;
     freePlan: string;
@@ -15,15 +15,18 @@ type BillingUpgradeCardProps = {
     proDescription: string;
     upgradeCta: string;
     activeBadge: string;
+    trialBadge: string;
+    trialDaysLeft: string;
     checkoutError: string;
   };
 };
 
-export function BillingUpgradeCard({ plan, subscriptionStatus, labels }: BillingUpgradeCardProps) {
+export function BillingUpgradeCard({ planAccess, labels }: BillingUpgradeCardProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isActivePro = plan === "PRO" && subscriptionStatus === "active";
+  const isPaidPro = planAccess.isPaidPro;
+  const showUpgrade = !isPaidPro;
 
   async function handleUpgrade() {
     setLoading(true);
@@ -55,17 +58,26 @@ export function BillingUpgradeCard({ plan, subscriptionStatus, labels }: Billing
         <div className="min-w-0 flex-1">
           <h2 className="text-base font-semibold text-slate-900">{labels.title}</h2>
           <p className="mt-1 text-sm text-slate-500">
-            {isActivePro ? labels.proPlan : labels.freePlan}
-            {isActivePro ? (
+            {isPaidPro
+              ? labels.proPlan
+              : planAccess.isTrialActive
+                ? labels.trialDaysLeft.replace("{days}", String(planAccess.daysLeftInTrial ?? 0))
+                : labels.freePlan}
+            {isPaidPro ? (
               <span className="ml-2 inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">
                 {labels.activeBadge}
+              </span>
+            ) : null}
+            {planAccess.isTrialActive ? (
+              <span className="ml-2 inline-flex rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-800">
+                {labels.trialBadge}
               </span>
             ) : null}
           </p>
         </div>
       </div>
 
-      {!isActivePro ? (
+      {showUpgrade ? (
         <div className="mt-5 rounded-2xl border border-slate-950 bg-slate-950 p-5 text-white">
           <p className="text-sm font-medium text-slate-300">{labels.proPlan}</p>
           <p className="mt-2 text-3xl font-semibold">{labels.proPrice}</p>

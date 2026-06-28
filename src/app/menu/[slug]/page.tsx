@@ -8,6 +8,8 @@ import { buildGoogleMapsLocationUrl } from "@/lib/google-place-id";
 import { prisma } from "@/lib/prisma";
 import type { Locale } from "@/types/dictionary";
 import { asTranslationField } from "@/lib/translations";
+import { PLAN_LIMITS } from "@/lib/plan";
+import { resolvePlanAccess } from "@/lib/plan";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -45,12 +47,18 @@ export default async function PublicMenuPage({ params, searchParams }: PageProps
     notFound();
   }
 
+  const planAccess = resolvePlanAccess(restaurant);
+  const activeMenus = planAccess.hasProAccess
+    ? restaurant.menus
+    : restaurant.menus.slice(0, PLAN_LIMITS.freeMaxMenus);
+  const effectiveTableNumber = planAccess.hasProAccess ? tableNumber : null;
+
   const enabledLanguages = parseMenuLanguages(restaurant.languages);
   const locale = resolveMenuLocale(cookieLocale, restaurant.languages, restaurant.uiLanguage);
   const switcherLocales = enabledLanguages.filter((language): language is Locale =>
     isMenuLanguage(language),
   );
-  const serializedMenus = restaurant.menus.map((menu) => ({
+  const serializedMenus = activeMenus.map((menu) => ({
     id: menu.id,
     name: asTranslationField(menu.name),
     items: menu.items.map((item) => ({
@@ -86,7 +94,7 @@ export default async function PublicMenuPage({ params, searchParams }: PageProps
           whatsappUrl: restaurant.whatsappUrl,
         }}
         switcherLocales={switcherLocales}
-        tableNumber={tableNumber}
+        tableNumber={effectiveTableNumber}
       />
     </main>
   );

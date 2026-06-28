@@ -15,6 +15,8 @@ import {
 import { deleteUploadFile } from "@/lib/upload-cleanup";
 import { parseOptionalHttpUrl } from "@/lib/social-urls";
 import { parseGoogleReviewInput } from "@/lib/google-place-id";
+import { PLAN_LIMITS, planUpgradeRequiredMessage } from "@/lib/plan";
+import { getRestaurantPlanAccessById } from "@/lib/plan-server";
 
 export type ActionState = {
   error?: string;
@@ -27,6 +29,8 @@ export async function updateRestaurantSettings(
 ): Promise<ActionState> {
   try {
     const { restaurantId } = await getRequiredRestaurantId();
+    const planAccess = await getRestaurantPlanAccessById(restaurantId);
+    const isFreeTier = planAccess?.isFreeTier ?? true;
 
     const wifiSsid = formData.get("wifiSsid")?.toString().trim() || null;
     const wifiPassword = formData.get("wifiPassword")?.toString() || null;
@@ -93,6 +97,20 @@ export async function updateRestaurantSettings(
 
     if (!languages.includes(uiLanguage)) {
       return { error: "Dashboard language must be included in supported menu languages." };
+    }
+
+    if (isFreeTier && languages.length > PLAN_LIMITS.freeMaxLanguages) {
+      return {
+        error: planUpgradeRequiredMessage(
+          `Free plans include up to ${PLAN_LIMITS.freeMaxLanguages} menu language`,
+        ),
+      };
+    }
+
+    if (isFreeTier && tablesCount > 0) {
+      return {
+        error: planUpgradeRequiredMessage("Table QR codes and the Waiter Screen"),
+      };
     }
 
     if (Number.isNaN(tablesCount) || tablesCount < 0 || tablesCount > 500) {

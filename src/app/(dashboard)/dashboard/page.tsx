@@ -7,6 +7,8 @@ import { MetricCard } from "@/components/dashboard/MetricCard";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
 import { interpolate } from "@/lib/get-dictionary";
+import { resolvePlanAccess } from "@/lib/plan";
+import { ExportTenantLeadsButton } from "@/components/dashboard/ExportTenantLeadsButton";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -20,7 +22,13 @@ export default async function DashboardPage() {
 
   const restaurant = await prisma.restaurant.findUnique({
     where: { userId: session.user.id },
-    select: { id: true, name: true },
+    select: {
+      id: true,
+      name: true,
+      plan: true,
+      subscriptionStatus: true,
+      trialEndsAt: true,
+    },
   });
 
   if (!restaurant) {
@@ -50,28 +58,39 @@ export default async function DashboardPage() {
   const conversionRate =
     totalLeads === 0 ? 0 : Math.round((emailedLeads / totalLeads) * 100);
 
+  const planAccess = resolvePlanAccess(restaurant);
+
   return (
     <div className="mx-auto w-full max-w-7xl space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{d.overviewTitle}</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          {interpolate(d.overviewSubtitle, { restaurantName: restaurant.name })}
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{d.overviewTitle}</h1>
+          <p className="mt-1 text-sm text-slate-500">
+            {interpolate(d.overviewSubtitle, { restaurantName: restaurant.name })}
+          </p>
+        </div>
+        {planAccess.hasProAccess ? <ExportTenantLeadsButton label={d.exportLeadsCsv} /> : null}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className={`grid gap-4 ${planAccess.hasProAccess ? "sm:grid-cols-2 xl:grid-cols-3" : "sm:grid-cols-1"}`}>
         <MetricCard
           hint={d.totalLeadsHint}
           label={d.totalLeads}
           value={String(totalLeads)}
         />
-        <MetricCard
-          hint={interpolate(d.reviewConversionHint, { count: emailedLeads })}
-          label={d.reviewConversion}
-          trend={conversionRate > 0 ? `${conversionRate}%` : undefined}
-          value={`${conversionRate}%`}
-        />
-        <MetricCard hint={d.internalFeedbackHint} label={d.internalFeedback} value={String(feedbackCount)} />
+        {planAccess.hasProAccess ? (
+          <>
+            <MetricCard
+              hint={interpolate(d.reviewConversionHint, { count: emailedLeads })}
+              label={d.reviewConversion}
+              trend={conversionRate > 0 ? `${conversionRate}%` : undefined}
+              value={`${conversionRate}%`}
+            />
+            <MetricCard hint={d.internalFeedbackHint} label={d.internalFeedback} value={String(feedbackCount)} />
+          </>
+        ) : (
+          <MetricCard hint={d.planAnalyticsLockedHint} label={d.planAnalyticsLocked} value="Pro" />
+        )}
       </div>
 
       <Card>

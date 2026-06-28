@@ -6,6 +6,8 @@ import { getLocale } from "@/lib/i18n-server";
 import { MenuManager } from "./MenuManager";
 import { parseMenuLanguages } from "@/lib/locale";
 import { asTranslationField } from "@/lib/translations";
+import { PLAN_LIMITS } from "@/lib/plan";
+import { resolvePlanAccess } from "@/lib/plan";
 
 export default async function MenuManagementPage() {
   const session = await auth();
@@ -19,7 +21,14 @@ export default async function MenuManagementPage() {
 
   const restaurant = await prisma.restaurant.findUnique({
     where: { userId: session.user.id },
-    select: { id: true, currency: true, languages: true },
+    select: {
+      id: true,
+      currency: true,
+      languages: true,
+      plan: true,
+      subscriptionStatus: true,
+      trialEndsAt: true,
+    },
   });
 
   if (!restaurant) {
@@ -51,6 +60,10 @@ export default async function MenuManagementPage() {
     })),
   }));
 
+  const planAccess = resolvePlanAccess(restaurant);
+  const canAddCategory =
+    planAccess.hasProAccess || serializedMenus.length < PLAN_LIMITS.freeMaxMenus;
+
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
       <div>
@@ -58,7 +71,13 @@ export default async function MenuManagementPage() {
         <p className="mt-1 text-sm text-slate-500">{dict.dashboard.menuSubtitle}</p>
       </div>
 
-      <MenuManager currency={restaurant.currency} languages={languages} menus={serializedMenus} />
+      <MenuManager
+        canAddCategory={canAddCategory}
+        currency={restaurant.currency}
+        languages={languages}
+        menus={serializedMenus}
+        planLimitHint={planAccess.isFreeTier ? dict.dashboard.planMenuLimitHint : undefined}
+      />
     </div>
   );
 }
