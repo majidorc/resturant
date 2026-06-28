@@ -99,7 +99,7 @@
     "proTier": {
       "name": "แผน Pro Growth",
       "badge": "ยอดนิยม",
-      "price": "$49",
+      "price": "฿100",
       "subtitle": "ต่อสาขา เรียกเก็บรายเดือน",
       "cta": "อัปเกรดเป็น Pro",
       "features": [
@@ -186,6 +186,14 @@
     "settingsEyebrow": "การกำหนดค่า",
     "settingsTitle": "การตั้งค่า",
     "settingsSubtitle": "อัปเดต Wi-Fi การแปลภาษา ลิงก์เมนูสาธารณะ และปลายทางรีวิว Google",
+    "billingTitle": "Billing & Plan",
+    "billingFreePlan": "You are on the Free plan.",
+    "billingProPlan": "Pro Growth Tier",
+    "billingProPrice": "฿100 / month",
+    "billingProDescription": "Per venue, billed monthly through Stripe.",
+    "billingUpgradeCta": "Upgrade to Pro",
+    "billingActiveBadge": "Active",
+    "billingCheckoutError": "Unable to start checkout. Please try again.",
     "accountDeactivatedTitle": "บัญชีถูกปิดใช้งาน",
     "accountDeactivatedMessage": "ร้านของคุณถูกปิดใช้งานโดยผู้ดูแลแพลตฟอร์ม เมนูสาธารณะและการเก็บ Wi-Fi ถูกปิดแล้ว กรุณาติดต่อฝ่ายสนับสนุน",
     "feedbackEyebrow": "ฟีดแบ็กจากลูกค้า",

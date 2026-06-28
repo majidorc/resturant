@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SettingsForm } from "./SettingsForm";
+import { BillingUpgradeCard } from "@/components/billing/BillingUpgradeCard";
 import { getDictionary } from "@/lib/get-dictionary";
 import { getLocale } from "@/lib/i18n-server";
 
@@ -32,6 +33,8 @@ export default async function SettingsPage() {
       tiktokUrl: true,
       whatsappUrl: true,
       tablesCount: true,
+      plan: true,
+      subscriptionStatus: true,
     },
   });
 
@@ -53,6 +56,21 @@ export default async function SettingsPage() {
         </h1>
         <p className="mt-1 text-sm text-slate-500">{dict.dashboard.settingsSubtitle}</p>
       </div>
+
+      <BillingUpgradeCard
+        labels={{
+          activeBadge: dict.dashboard.billingActiveBadge,
+          checkoutError: dict.dashboard.billingCheckoutError,
+          freePlan: dict.dashboard.billingFreePlan,
+          proDescription: dict.dashboard.billingProDescription,
+          proPlan: dict.dashboard.billingProPlan,
+          proPrice: dict.dashboard.billingProPrice,
+          title: dict.dashboard.billingTitle,
+          upgradeCta: dict.dashboard.billingUpgradeCta,
+        }}
+        plan={restaurant.plan}
+        subscriptionStatus={restaurant.subscriptionStatus}
+      />
 
       <SettingsForm publicMenuUrl={publicMenuUrl} restaurant={restaurant} />
     </div>

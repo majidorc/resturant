@@ -100,7 +100,7 @@
     "proTier": {
       "name": "Pro Growth Tier",
       "badge": "Most Popular",
-      "price": "$49",
+      "price": "฿100",
       "subtitle": "Per venue, billed monthly.",
       "cta": "Upgrade to Pro",
       "features": [
@@ -193,6 +193,14 @@
     "settingsEyebrow": "Configuration",
     "settingsTitle": "Settings",
     "settingsSubtitle": "Update Wi-Fi credentials, localization, your public menu link, and Google review destination.",
+    "billingTitle": "Billing & Plan",
+    "billingFreePlan": "You are on the Free plan.",
+    "billingProPlan": "Pro Growth Tier",
+    "billingProPrice": "฿100 / month",
+    "billingProDescription": "Per venue, billed monthly through Stripe.",
+    "billingUpgradeCta": "Upgrade to Pro",
+    "billingActiveBadge": "Active",
+    "billingCheckoutError": "Unable to start checkout. Please try again.",
     "accountDeactivatedTitle": "Account Deactivated",
     "accountDeactivatedMessage": "Your restaurant has been deactivated by the platform administrator. Your public menu and Wi-Fi capture are offline. Contact support for assistance.",
     "feedbackEyebrow": "Guest Feedback",
